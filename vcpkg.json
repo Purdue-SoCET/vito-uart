@@ -8,6 +8,7 @@
   "dependencies": [
     "nyu-cmake",
     "nyu-util",
-    "catch2"
+    "catch2",
+    "purdnyuart"
   ]
 }

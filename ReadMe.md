@@ -1,4 +1,3 @@
-# NYU ProcDesign Development Template
+# vito-uart
 
-A template for doing SystemVerilog development for the NYU Processor Design
-team.
+Vito's UART implementation
