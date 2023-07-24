@@ -5,9 +5,10 @@ add_executable(tests)
 target_sources(tests PRIVATE
   AHBUart.cpp
 )
+nyu_add_sv(tests bus_protocol_if.sv AHBUart_tl.sv)
 nyu_link_sv(tests PRIVATE ahbuart)
 nyu_target_verilate(tests
-  TOP_MODULES AHBUart
+  TOP_MODULES AHBUart_tl
   ARGS COVERAGE
 )
 target_link_libraries(tests PRIVATE Catch2::Catch2WithMain nyu::covrecorder)

@@ -23,8 +23,10 @@ add_custom_target(UpdateVcpkgBaseline
 project(project VERSION 1.0.0)
 
 find_package(nyu-cmake CONFIG REQUIRED)
+find_package(purdnyuart CONFIG REQUIRED)
 
 add_library(ahbuart INTERFACE)
+nyu_link_sv(ahbuart INTERFACE nyu::uart)
 
 add_subdirectory(rtl)
 
