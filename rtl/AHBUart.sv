@@ -134,6 +134,7 @@ module AHBUart #(
   logic [1:0] wFIFOCount;
   logic [1:0] wIndex;
   logic [7:0] wFIFO[2:0];
+  logic wStart;
 
   assign txData = wFIFO[wIndex];
 
@@ -142,12 +143,15 @@ module AHBUart #(
       wIndex <= 0;
       txValid <= 0;
       done <= 1;
+      wStart <= 0;
     end else if (done && bp.wen && bp.addr == TX_DATA) begin
       wIndex <= 0;
       done   <= 0;
-    end else if (wIndex == 0 || (wIndex != wFIFOCount && txDone)) begin
+      wStart <= 1;
+    end else if (wStart || (wIndex != wFIFOCount && txDone)) begin
       txValid <= 1;
       wIndex  <= wIndex + 1;
+      wStart  <= 0;
     end else begin
       if (txValid) txValid <= 0;
       if (wIndex == wFIFOCount && txDone) done <= 1;
