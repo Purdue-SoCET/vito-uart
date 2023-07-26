@@ -36,10 +36,10 @@ module AHBUart #(
     bus_protocol_if.peripheral_vital bp
 );
   typedef enum logic [31:0] {
-    RX_STATE,
-    RX_DATA,
-    TX_STATE,
-    TX_DATA
+    RX_STATE = 0,
+    RX_DATA  = 4,
+    TX_STATE = 8,
+    TX_DATA  = 12
   } ADDRS;
 
   // Not meaningful in a UART context
@@ -53,18 +53,18 @@ module AHBUart #(
   logic [15:0] txRate;
   logic [ 7:0] txData;
 
-  logic rxErr, rxClk, rxDone, rxReset;
-  logic txValid, txClk, txDone, txReset;
+  logic rxErr, rxClk, rxDone;
+  logic txValid, txClk, txDone;
+
+  logic syncReset;
 
   always_ff @(posedge clk, negedge nReset) begin
     if (bp.wen && nReset) begin
       case (bp.addr)
-        RX_STATE: rxReset <= 0;
-        TX_STATE: txReset <= 0;
+        RX_STATE, TX_STATE: syncReset <= 1;
       endcase
     end else begin
-      rxReset <= 1;
-      txReset <= 1;
+      syncReset <= 0;
     end
   end
 
@@ -74,23 +74,21 @@ module AHBUart #(
   );
 
   UartRxEn uartRx (
-      .nReset(rxReset & nReset),
-      .en(rxClk),
-      .in(rx),
+      .en  (rxClk),
+      .in  (rx),
       .data(rxData),
       .done(rxDone),
-      .err(rxErr),
+      .err (rxErr),
       .*
   );
 
   UartTxEn uartTx (
-      .nReset(txReset & nReset),
-      .en(txClk),
-      .data(txData),
+      .en   (txClk),
+      .data (txData),
       .valid(txValid),
-      .out(tx),  // verilator lint_off PINCONNECTEMPTY
-      .busy(),  // verilator lint_on PINCONNECTEMPTY
-      .done(txDone),
+      .out  (tx),  // verilator lint_off PINCONNECTEMPTY
+      .busy (),  // verilator lint_on PINCONNECTEMPTY
+      .done (txDone),
       .*
   );
 
