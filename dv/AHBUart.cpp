@@ -13,7 +13,7 @@ static void reset(VAHBUart& uart) {
 }
 
 TEST_CASE("AHBUart, reset") {
-  VAHBUart uart;
+  auto& uart {*(new VAHBUart)};
 
   reset(uart);
 
@@ -23,6 +23,6 @@ TEST_CASE("AHBUart, reset") {
 }
 
 TEST_CASE("AHBUart") {
-  VAHBUart uart;
+  auto& uart {*(new VAHBUart)};
   REQUIRE(1);
 }
