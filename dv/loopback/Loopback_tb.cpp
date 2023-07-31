@@ -21,7 +21,7 @@ static void send(auto& lb, std::uint8_t val) {
 }
 
 TEST_CASE("VLoopback_tb") {
-  auto& lb {*(new VLoopback_tb)};
+  auto& lb {nyu::getDUT<VLoopback_tb>()};
   nyu::tracer trace {lb, "loopback.fst"};
   reset(lb, trace);
 
