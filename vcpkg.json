@@ -1,8 +1,8 @@
 {
-  "name": "nyu-template",
+  "name": "ahb-uart",
   "version": "1.0.0",
-  "description": "NYU Processor Design's Template Repo",
-  "homepage": "https://github.com/NYU-Processor-Design/component-template",
+  "description": "AHB Uart",
+  "homepage": "https://github.com/NYU-Processor-Design/AHBUart",
   "maintainers": [],
   "license": "CC0-1.0",
   "dependencies": [
