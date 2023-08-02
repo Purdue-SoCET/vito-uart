@@ -148,7 +148,7 @@ module AHBUart #(
       wStart <= 1;
     end else if (wStart || (wIndex != wFIFOCount && txDone)) begin
       txValid <= 1;
-      wIndex  <= wIndex + 1;
+      wIndex  <= wIndex + !wStart;
       wStart  <= 0;
     end else begin
       if (txValid) txValid <= 0;

@@ -1,3 +1,6 @@
+#include <array>
+#include <cstdint>
+
 #include <catch2/catch_test_macros.hpp>
 #include <NyuTestUtil.hpp>
 
@@ -20,9 +23,9 @@ static void send(auto& lb, std::uint8_t val) {
   lb.valid = 0;
 }
 
-TEST_CASE("VLoopback_tb") {
+TEST_CASE("VLoopback_tb, rx") {
   auto& lb {nyu::getDUT<VLoopback_tb>()};
-  nyu::tracer trace {lb, "loopback.fst"};
+  nyu::tracer trace {lb, "loopback_rx.fst"};
   reset(lb, trace);
 
   lb.ren = 1;
@@ -37,4 +40,48 @@ TEST_CASE("VLoopback_tb") {
   nyu::tick(trace);
 
   REQUIRE((lb.rdata & 0xFF) == 0x11);
+}
+
+union write_queue {
+  std::uint32_t data;
+  struct {
+    std::array<std::uint8_t, 3> wBuf;
+    std::uint8_t wCount;
+  };
+};
+
+TEST_CASE("VLoopback_tb, tx") {
+  auto& lb {nyu::getDUT<VLoopback_tb>()};
+  nyu::tracer trace {lb, "loopback_tx.fst"};
+  reset(lb, trace);
+
+  write_queue q {
+      .wBuf = {0xAA, 0xBB, 0xCC},
+      .wCount = 3,
+  };
+
+  lb.wen = 1;
+  lb.strobe = 0xF;
+  lb.addr = 12;
+  lb.wdata = q.data;
+
+  nyu::tick(trace);
+
+  lb.wen = 0;
+
+  while(!lb.done_rx)
+    nyu::tick(trace);
+  REQUIRE(lb.data_rx == 0xAA);
+
+  nyu::tick(trace);
+
+  while(!lb.done_rx)
+    nyu::tick(trace);
+  REQUIRE(lb.data_rx == 0xBB);
+
+  nyu::tick(trace);
+
+  while(!lb.done_rx)
+    nyu::tick(trace);
+  REQUIRE(lb.data_rx == 0xCC);
 }
