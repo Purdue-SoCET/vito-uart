@@ -167,8 +167,10 @@ module AHBUart #(
   logic [31:0] wStatus;
 
   // Data registers are tiny FIFOs
-  // data[3]:   Bytes in queue, 0 is treated the same as 1, >3 is same as 3
-  // data[2-0]: FIFO, 0 is first in, 2 is last in
+  // data[31:24]: Number of bytes in queue, 0 is treated the same as 1, >3 is same as 3
+  // data[23:16]: 3rd byte in queue
+  // data[15: 8]: 2nd byte in queue
+  // data[ 7: 0]: 1st byte in queue
   logic [31:0] rData;
   logic [31:0] wData;
 
@@ -215,7 +217,7 @@ module AHBUart #(
         if (done) begin
           if (bp.strobe[3]) begin
             wFIFOCountExt <= bpData[3];
-            wFIFOCount <= bpData[3] > 3 ? 3 : 2'(|bpData[3] ? bpData[3] : 8'b1);
+            wFIFOCount <= bpData[3] > 3 ? 3 : |bpData[3] ? 2'(bpData[3]) : 1;
           end
           if (bp.strobe[2]) wFIFO[2] <= bpData[2];
           if (bp.strobe[1]) wFIFO[1] <= bpData[1];
