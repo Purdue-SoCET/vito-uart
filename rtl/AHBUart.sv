@@ -69,7 +69,7 @@ module AHBUart #(
   end
 
   BaudRateGenVar bg (
-      .phase(0),
+      .phase(1'b0),
       .*
   );
 
