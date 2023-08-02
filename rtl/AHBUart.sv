@@ -158,8 +158,8 @@ module AHBUart #(
 
   // We're only compatible with 32-bit words
 
-  // status[31:24]: Counter LSB
-  // status[23:16]: Counter MSB
+  // status[31:24]: Counter MSB
+  // status[23:16]: Counter LSB
   // status[15: 2]: Reserved/Do nothing
   // status[1]: err
   // status[0]: done/avail
@@ -175,9 +175,9 @@ module AHBUart #(
   logic [ 7:0] bpData  [3:0];
 
   always_comb begin
-    rStatus = {rxRate[7:0], rxRate[15:8], 14'(0), err, avail};
+    rStatus = {rxRate[15:8], rxRate[7:0], 14'(0), err, avail};
     rData   = {rFIFOCount, rFIFO[2], rFIFO[1], rFIFO[0]};
-    wStatus = {txRate[7:0], txRate[15:8], 15'(0), done};
+    wStatus = {txRate[15:8], txRate[7:0], 15'(0), done};
     wData   = {wFIFOCountExt, wFIFO[2], wFIFO[1], wFIFO[0]};
     bpData  = {bp.wdata[31:24], bp.wdata[23:16], bp.wdata[15:8], bp.wdata[7:0]};
   end
@@ -202,13 +202,13 @@ module AHBUart #(
     end else if (bp.wen) begin
       case (bp.addr)
         RX_STATE: begin
-          if (bp.strobe[3]) rxRate[7:0] <= bpData[3];
-          if (bp.strobe[2]) rxRate[15:8] <= bpData[2];
+          if (bp.strobe[2]) rxRate[7:0] <= bpData[2];
+          if (bp.strobe[3]) rxRate[15:8] <= bpData[3];
         end
 
         TX_STATE: begin
-          if (bp.strobe[3]) txRate[7:0] <= bpData[3];
-          if (bp.strobe[2]) txRate[15:8] <= bpData[2];
+          if (bp.strobe[2]) txRate[7:0] <= bpData[2];
+          if (bp.strobe[3]) txRate[15:8] <= bpData[3];
         end
 
         TX_DATA:
