@@ -23,10 +23,10 @@ static void reset(VLoopback_tb& lb, nyu::tracer<VLoopback_tb>& trace) {
   nyu::reset(trace);
 }
 
-static void send(auto& lb, std::uint8_t val) {
+static void send(auto& lb, nyu::tracer<VLoopback_tb>& trace, std::uint8_t val) {
   lb.data_tx = val;
   lb.valid = 1;
-  nyu::tick(lb);
+  nyu::tick(trace);
   lb.valid = 0;
 }
 
@@ -54,47 +54,57 @@ TEST_CASE("VLoopback_tb, reset") {
   nyu::tracer trace {lb, "loopback_reset.fst"};
   reset(lb, trace);
 
-  RxStatus rx_status;
-  TxStatus tx_status;
-
   lb.ren = 1;
   lb.addr = RX_STATUS;
-
   nyu::tick(trace);
 
-  rx_status.data = lb.rdata;
-
+  RxStatus rx_status {.data {lb.rdata}};
   REQUIRE(rx_status.rate == 324);
 
   lb.addr = TX_STATUS;
-
   nyu::tick(trace);
 
-  tx_status.data = lb.rdata;
-
+  TxStatus tx_status {.data {lb.rdata}};
   REQUIRE(tx_status.rate == 5207);
 }
+
+union RxData {
+  std::uint32_t data;
+  struct {
+    std::array<std::uint8_t, 3> rBuf;
+    std::uint8_t rCount;
+  };
+};
 
 TEST_CASE("VLoopback_tb, rx") {
   auto& lb {nyu::getDUT<VLoopback_tb>()};
   nyu::tracer trace {lb, "loopback_rx.fst"};
   reset(lb, trace);
 
-  lb.ren = 1;
-  lb.addr = RX_STATUS;
+  constexpr std::array<std::uint8_t, 3> seq {0xAA, 0xBB, 0xCC};
+  send(lb, trace, seq[0]);
 
-  send(lb, 0x11);
+  for(unsigned i {1}; i < seq.size();) {
+    if(lb.done_tx)
+      send(lb, trace, seq[i++]);
+    else
+      nyu::tick(trace);
+  }
 
-  while(!(lb.rdata & 1))
+  while(!lb.done_tx)
     nyu::tick(trace);
 
+  lb.ren = 1;
   lb.addr = RX_DATA;
   nyu::tick(trace);
 
-  REQUIRE((lb.rdata & 0xFF) == 0x11);
+  RxData q {.data {lb.rdata}};
+
+  REQUIRE(q.rBuf == std::array<std::uint8_t, 3> {0xAA, 0xBB, 0xCC});
+  REQUIRE(q.rCount == 3);
 }
 
-union write_queue {
+union TxData {
   std::uint32_t data;
   struct {
     std::array<std::uint8_t, 3> wBuf;
@@ -107,7 +117,7 @@ TEST_CASE("VLoopback_tb, tx") {
   nyu::tracer trace {lb, "loopback_tx.fst"};
   reset(lb, trace);
 
-  write_queue q {
+  TxData q {
       .wBuf = {0xAA, 0xBB, 0xCC},
       .wCount = 3,
   };
