@@ -146,4 +146,10 @@ TEST_CASE("VLoopback_tb, tx") {
   while(!lb.done_rx)
     nyu::tick(trace);
   REQUIRE(lb.data_rx == 0xCC);
+
+  lb.addr = TX_STATUS;
+  lb.ren = 1;
+  nyu::tick(trace, 4240);
+
+  REQUIRE((lb.rdata & 1) == 1);
 }

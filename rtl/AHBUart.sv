@@ -128,8 +128,8 @@ module AHBUart #(
     end
   end
 
-  logic [7:0] wFIFOCountExt;
-  logic [1:0] wFIFOCount;
+  logic [7:0] wFIFOCount;
+  logic [1:0] wFIFOMaxIndex;
   logic [1:0] wIndex;
   logic [7:0] wFIFO[2:0];
   logic wStart;
@@ -146,13 +146,13 @@ module AHBUart #(
       wIndex <= 0;
       done   <= 0;
       wStart <= 1;
-    end else if (wStart || (wIndex != wFIFOCount && txDone)) begin
+    end else if (wStart || (wIndex != wFIFOMaxIndex && txDone)) begin
       txValid <= 1;
       wIndex  <= wIndex + !wStart;
       wStart  <= 0;
     end else begin
       if (txValid) txValid <= 0;
-      if (wIndex == wFIFOCount && txDone) done <= 1;
+      if (wIndex == wFIFOMaxIndex && txDone) done <= 1;
     end
   end
 
@@ -180,7 +180,7 @@ module AHBUart #(
     rStatus = {rxRate[15:8], rxRate[7:0], 14'(0), err, avail};
     rData   = {rFIFOCount, rFIFO[2], rFIFO[1], rFIFO[0]};
     wStatus = {txRate[15:8], txRate[7:0], 15'(0), done};
-    wData   = {wFIFOCountExt, wFIFO[2], wFIFO[1], wFIFO[0]};
+    wData   = {wFIFOCount, wFIFO[2], wFIFO[1], wFIFO[0]};
     bpData  = {bp.wdata[31:24], bp.wdata[23:16], bp.wdata[15:8], bp.wdata[7:0]};
   end
 
@@ -190,8 +190,8 @@ module AHBUart #(
       txRate <= 16'(DefaultTxRate);
       bp.rdata <= 0;
 
-      wFIFOCountExt <= 0;
       wFIFOCount <= 0;
+      wFIFOMaxIndex <= 0;
       wFIFO <= '{default: 0};
 
     end else if (bp.ren) begin
@@ -216,8 +216,8 @@ module AHBUart #(
         TX_DATA:
         if (done) begin
           if (bp.strobe[3]) begin
-            wFIFOCountExt <= bpData[3];
-            wFIFOCount <= bpData[3] > 3 ? 3 : |bpData[3] ? 2'(bpData[3]) : 1;
+            wFIFOCount <= bpData[3];
+            wFIFOMaxIndex <= bpData[3] > 3 ? 2 : |bpData[3] ? 2'(bpData[3] - 8'b1) : 0;
           end
           if (bp.strobe[2]) wFIFO[2] <= bpData[2];
           if (bp.strobe[1]) wFIFO[1] <= bpData[1];
