@@ -174,34 +174,48 @@ module AHBUart #(
   logic [31:0] rData;
   logic [31:0] wData;
 
-  logic [ 7:0] bpData  [3:0];
+  always_ff @(posedge clk, negedge nReset) begin
+    if (!nReset) begin
+      rStatus <= 0;
+      rData   <= 0;
+      wStatus <= 1;
+      wData   <= 0;
+    end else begin
+      rStatus <= {rxRate[15:8], rxRate[7:0], 14'(0), err, avail};
+      rData   <= {rFIFOCount, rFIFO[2], rFIFO[1], rFIFO[0]};
+      wStatus <= {txRate[15:8], txRate[7:0], 15'(0), done};
+      wData   <= {wFIFOCount, wFIFO[2], wFIFO[1], wFIFO[0]};
+    end
+  end
+
+  logic [7:0] bpData[3:0];
 
   always_comb begin
-    rStatus = {rxRate[15:8], rxRate[7:0], 14'(0), err, avail};
-    rData   = {rFIFOCount, rFIFO[2], rFIFO[1], rFIFO[0]};
-    wStatus = {txRate[15:8], txRate[7:0], 15'(0), done};
-    wData   = {wFIFOCount, wFIFO[2], wFIFO[1], wFIFO[0]};
-    bpData  = {bp.wdata[31:24], bp.wdata[23:16], bp.wdata[15:8], bp.wdata[7:0]};
+    bpData = {bp.wdata[31:24], bp.wdata[23:16], bp.wdata[15:8], bp.wdata[7:0]};
+
+    if (bp.ren) begin
+      case (bp.addr)
+        RX_STATE: bp.rdata = rStatus;
+        RX_DATA:  bp.rdata = rData;
+        TX_STATE: bp.rdata = wStatus;
+        TX_DATA:  bp.rdata = wData;
+      endcase
+    end else begin
+      bp.rdata = 0;
+    end
   end
 
   always_ff @(posedge clk, negedge nReset) begin
     if (!nReset) begin
       rxRate <= 16'(DefaultRxRate);
       txRate <= 16'(DefaultTxRate);
-      bp.rdata <= 0;
 
       wFIFOCount <= 0;
       wFIFOMaxIndex <= 0;
       wFIFO <= '{default: 0};
+    end
 
-    end else if (bp.ren) begin
-      case (bp.addr)
-        RX_STATE: bp.rdata <= rStatus;
-        RX_DATA:  bp.rdata <= rData;
-        TX_STATE: bp.rdata <= wStatus;
-        TX_DATA:  bp.rdata <= wData;
-      endcase
-    end else if (bp.wen) begin
+    if (bp.wen) begin
       case (bp.addr)
         RX_STATE: begin
           if (bp.strobe[2]) rxRate[7:0] <= bpData[2];
