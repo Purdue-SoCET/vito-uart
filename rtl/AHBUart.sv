@@ -24,8 +24,7 @@
 
 
 module AHBUart #(
-    int DefaultRxRate = 324,  // Sure why not
-    int DefaultTxRate = 5207  // Chosen by fair dice roll
+    int DefaultRate = 5207  // Chosen by fair dice roll
 ) (
     input clk,
     input nReset,
@@ -47,10 +46,9 @@ module AHBUart #(
   assign bp.request_stall = 0;
 
   // Uart stuff
-  logic [15:0] rxRate;
   logic [ 7:0] rxData;
 
-  logic [15:0] txRate;
+  logic [15:0] rate;
   logic [ 7:0] txData;
 
   logic rxErr, rxClk, rxDone;
@@ -59,7 +57,9 @@ module AHBUart #(
   logic syncReset;
 
   always_ff @(posedge clk, negedge nReset) begin
-    if (bp.wen && nReset) begin
+    if (!nReset) begin
+      syncReset <= 1;
+    end else if (bp.wen) begin
       case (bp.addr)
         RX_STATE, TX_STATE: syncReset <= 1;
       endcase
@@ -68,7 +68,9 @@ module AHBUart #(
     end
   end
 
-  BaudRateGenVar bg (
+  // Params set "clock rate" to 2**16, and "min baud rate" to 1
+  // This is equivalent to "please give me 16-bit counters"
+  BaudRateGen #(2 ** 16, 1) bg (
       .phase(1'b0),
       .*
   );
@@ -158,8 +160,8 @@ module AHBUart #(
 
   // We're only compatible with 32-bit words
 
-  // status[31:24]: Counter MSB
-  // status[23:16]: Counter LSB
+  // status[31:24]: wStatus only: Counter MSB
+  // status[23:16]: wStatus only: Counter LSB
   // status[15: 2]: Reserved/Do nothing
   // status[1]: err
   // status[0]: done/avail
@@ -181,9 +183,9 @@ module AHBUart #(
       wStatus <= 1;
       wData   <= 0;
     end else begin
-      rStatus <= {rxRate[15:8], rxRate[7:0], 14'(0), err, avail};
+      rStatus <= {30'(0), err, avail};
       rData   <= {rFIFOCount, rFIFO[2], rFIFO[1], rFIFO[0]};
-      wStatus <= {txRate[15:8], txRate[7:0], 15'(0), done};
+      wStatus <= {rate, 15'(0), done};
       wData   <= {wFIFOCount, wFIFO[2], wFIFO[1], wFIFO[0]};
     end
   end
@@ -207,8 +209,7 @@ module AHBUart #(
 
   always_ff @(posedge clk, negedge nReset) begin
     if (!nReset) begin
-      rxRate <= 16'(DefaultRxRate);
-      txRate <= 16'(DefaultTxRate);
+      rate <= 16'(DefaultRate);
 
       wFIFOCount <= 0;
       wFIFOMaxIndex <= 0;
@@ -217,14 +218,9 @@ module AHBUart #(
 
     if (bp.wen) begin
       case (bp.addr)
-        RX_STATE: begin
-          if (bp.strobe[2]) rxRate[7:0] <= bpData[2];
-          if (bp.strobe[3]) rxRate[15:8] <= bpData[3];
-        end
-
         TX_STATE: begin
-          if (bp.strobe[2]) txRate[7:0] <= bpData[2];
-          if (bp.strobe[3]) txRate[15:8] <= bpData[3];
+          if (bp.strobe[2]) rate[7:0] <= bpData[2];
+          if (bp.strobe[3]) rate[15:8] <= bpData[3];
         end
 
         TX_DATA:

@@ -14,8 +14,7 @@ enum ADDRS {
 };
 
 static void reset(VLoopback_tb& lb, nyu::tracer<VLoopback_tb>& trace) {
-  lb.rxRate = 324;
-  lb.txRate = 5207;
+  lb.rate = 5207;
   lb.wen = 0;
   lb.ren = 0;
   lb.valid = 0;
@@ -55,12 +54,6 @@ TEST_CASE("VLoopback_tb, reset") {
   reset(lb, trace);
 
   lb.ren = 1;
-  lb.addr = RX_STATUS;
-  nyu::tick(trace);
-
-  RxStatus rx_status {.data {lb.rdata}};
-  REQUIRE(rx_status.rate == 324);
-
   lb.addr = TX_STATUS;
   nyu::tick(trace);
 
@@ -149,7 +142,7 @@ TEST_CASE("VLoopback_tb, tx") {
 
   lb.addr = TX_STATUS;
   lb.ren = 1;
-  nyu::tick(trace, 4240);
+  nyu::tick(trace, 5046);
 
   REQUIRE((lb.rdata & 1) == 1);
 }

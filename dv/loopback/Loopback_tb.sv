@@ -4,13 +4,12 @@ module Loopback_tb (
     input syncReset,
 
     input logic [7:0] data_tx,
-    input logic [15:0] txRate,
+    input logic [15:0] rate,
     input valid,
     output busy,
     output done_tx,
 
     output logic [7:0] data_rx,
-    input logic [15:0] rxRate,
     output done_rx,
     output err,
 
@@ -28,13 +27,26 @@ module Loopback_tb (
   logic rxClk;
   logic txClk;
 
-  BaudRateGenVar bg (
-      .phase(0),
+  BaudRateGen #(2**16, 1) bg (
+      .phase(1'b0),
       .*
   );
 
   logic inAHB;
+  logic syncInAHB;
+
   logic outAHB;
+  logic syncOutAHB;
+  
+  always_ff @(posedge clk, negedge nReset) begin
+    if(!nReset) begin
+      syncInAHB <= 1;
+      syncOutAHB <= 1;
+    end else begin
+      syncInAHB <= inAHB;
+      syncOutAHB <= outAHB;
+    end
+  end
 
   UartTxEn tx (
       .en  (txClk),
@@ -47,7 +59,7 @@ module Loopback_tb (
   UartRxEn rx (
       .en  (rxClk),
       .data(data_rx),
-      .in  (outAHB),
+      .in  (syncOutAHB),
       .done(done_rx),
       .*
   );
@@ -67,7 +79,7 @@ module Loopback_tb (
   end
 
   AHBUart uart (
-      .rx(inAHB),
+      .rx(syncInAHB),
       .tx(outAHB),
       .*
   );

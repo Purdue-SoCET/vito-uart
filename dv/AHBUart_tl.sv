@@ -1,6 +1,5 @@
 module AHBUart_tl #(
-    int DefaultRxRate = 324,  // Sure why not
-    int DefaultTxRate = 5207  // Chosen by fair dice roll
+    int DefaultRate = 5207  // Chosen by fair dice roll
 ) (
     input clk,
     input nReset,
@@ -33,6 +32,6 @@ module AHBUart_tl #(
     request_stall = bp.request_stall;
   end
 
-  AHBUart #(DefaultRxRate, DefaultTxRate) uart (.*);
+  AHBUart #(DefaultRate) uart (.*);
 
 endmodule
