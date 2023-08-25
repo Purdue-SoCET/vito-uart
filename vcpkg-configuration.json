@@ -7,7 +7,7 @@
   "registries": [
     {
       "kind": "git",
-      "baseline": "a7adbea40a7f8786c3ec35e470b8a1427c53deee",
+      "baseline": "78f50d1f7f6f21a9fb28b9a7a3cab021e600830c",
       "repository": "https://github.com/NYU-Processor-Design/nyu-registry.git",
       "packages": [
         "nyu-*",

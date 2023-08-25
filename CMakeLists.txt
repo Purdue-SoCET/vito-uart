@@ -20,7 +20,7 @@ add_custom_target(UpdateVcpkgBaseline
   ${VCPKG_ROOT_DIR}/vcpkg x-update-baseline
 )
 
-project(AHBUart VERSION 1.0.0)
+project(AHBUart VERSION 2.0.0)
 
 find_package(nyu-cmake CONFIG REQUIRED)
 find_package(purdnyuart CONFIG REQUIRED)

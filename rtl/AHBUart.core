@@ -1,5 +1,5 @@
 CAPI=2:
-name: socet:AHBUart:1.0.0
+name: socet:AHBUart:2.0.0
 description: AHB Uart
 
 filesets:
