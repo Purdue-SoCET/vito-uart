@@ -56,7 +56,7 @@ module AHBUart #(
 
   logic syncReset;
 
-  always_ff @(posedge clk, negedge nReset) begin
+  always_ff @(posedge clk) begin
     if (!nReset) begin
       syncReset <= 1;
     end else if (bp.wen) begin
@@ -97,7 +97,7 @@ module AHBUart #(
   // State variables, done is handled by the transmit FIFO
   logic err, avail, done;
 
-  always_ff @(posedge clk, negedge nReset) begin
+  always_ff @(posedge clk) begin
     if (!nReset) begin
       err   <= 0;
       avail <= 0;
@@ -113,7 +113,7 @@ module AHBUart #(
   logic [7:0] rFIFOCount;
   logic [7:0] rFIFO[2:0];
 
-  always_ff @(posedge clk, negedge nReset) begin
+  always_ff @(posedge clk) begin
     if (!nReset) begin
       rFIFOCount <= 0;
       rFIFO <= '{default: 0};
@@ -138,7 +138,7 @@ module AHBUart #(
 
   assign txData = wFIFO[wIndex];
 
-  always_ff @(posedge clk, negedge nReset) begin
+  always_ff @(posedge clk) begin
     if (!nReset) begin
       wIndex <= 0;
       txValid <= 0;
@@ -176,7 +176,7 @@ module AHBUart #(
   logic [31:0] rData;
   logic [31:0] wData;
 
-  always_ff @(posedge clk, negedge nReset) begin
+  always_ff @(posedge clk) begin
     if (!nReset) begin
       rStatus <= 0;
       rData   <= 0;
@@ -193,8 +193,12 @@ module AHBUart #(
   logic [7:0] bpData[3:0];
 
   always_comb begin
-    bpData = {bp.wdata[31:24], bp.wdata[23:16], bp.wdata[15:8], bp.wdata[7:0]};
-
+    // bpData = {bp.wdata[31:24], bp.wdata[23:16], bp.wdata[15:8], bp.wdata[7:0]};
+    bpData[0] = bp.wdata[7:0];
+    bpData[1] = bp.wdata[15:8];
+    bpData[2] = bp.wdata[23:16];
+    bpData[3] = bp.wdata[31:24];
+    bp.rdata = 0;
     if (bp.ren) begin
       case (bp.addr)
         RX_STATE: bp.rdata = rStatus;
@@ -207,7 +211,7 @@ module AHBUart #(
     end
   end
 
-  always_ff @(posedge clk, negedge nReset) begin
+  always_ff @(posedge clk) begin
     if (!nReset) begin
       rate <= 16'(DefaultRate);
 
