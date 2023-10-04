@@ -205,6 +205,7 @@ module AHBUart #(
         RX_DATA:  bp.rdata = rData;
         TX_STATE: bp.rdata = wStatus;
         TX_DATA:  bp.rdata = wData;
+        default: bp.rdata = 0;
       endcase
     end else begin
       bp.rdata = 0;
@@ -218,7 +219,7 @@ module AHBUart #(
       wFIFOCount <= 0;
       wFIFOMaxIndex <= 0;
       wFIFO <= '{default: 0};
-    end
+    end else begin
 
     if (bp.wen) begin
       case (bp.addr)
@@ -238,6 +239,7 @@ module AHBUart #(
           if (bp.strobe[0]) wFIFO[0] <= bpData[0];
         end
       endcase
+    end
     end
   end
 endmodule
