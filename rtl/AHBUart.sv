@@ -102,8 +102,8 @@ module AHBUart #(
       err   <= 0;
       avail <= 0;
     end else if (bp.ren) begin
-      err   <= rxErr || ((bp.addr == RX_STATE) && err);
-      avail <= rxDone || ((bp.addr == RX_DATA) && avail);
+      err   <= rxErr || ((bp.addr != RX_STATE) && err);
+      avail <= rxDone || ((bp.addr != RX_DATA) && avail);
     end else begin
       err   <= rxErr || err;
       avail <= rxDone || avail;
