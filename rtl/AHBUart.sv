@@ -34,6 +34,7 @@ module AHBUart #(
 
     bus_protocol_if.peripheral_vital bp
 );
+    //what does this do lmao
   typedef enum logic [31:0] {
     RX_STATE = 0,
     RX_DATA  = 4,
@@ -84,6 +85,21 @@ module AHBUart #(
       .*
   );
 
+  // socetlib_fifo fifoRx (
+  //   .CLK(clk),
+  //   .nRST(nReset),
+  //   .WEN(), //input
+  //   .REN(), //input
+  //   .clear(), //input
+  //   .wdata(), //input
+  //   .full(), //output
+  //   .empty(), //output
+  //   .underrun(), //ouput
+  //   .overrun(), //output
+  //   .count(), //output
+  //   .rdata() //output
+  // );
+
   UartTxEn uartTx (
       .en   (txClk),
       .data (txData),
@@ -94,19 +110,19 @@ module AHBUart #(
       .*
   );
 
-  // socetlib_fifo fifo (
-  //   .CLK(),
-  //   .nRST(),
-  //   .WEN(),
-  //   .REN(),
-  //   .clear(),
-  //   .wdata(),
-  //   .full(),
-  //   .empty(),
-  //   .underrun(), 
-  //   .overrun(),
-  //   .count(),
-  //   .rdata()
+  // socetlib_fifo fifoTx (
+  //   .CLK(clk),
+  //   .nRST(nReset),
+  //   .WEN(), //input
+  //   .REN(), //input
+  //   .clear(), //input
+  //   .wdata(), //input
+  //   .full(), //output
+  //   .empty(), //output
+  //   .underrun(), //ouput
+  //   .overrun(), //output
+  //   .count(), //output
+  //   .rdata() //output
   // );
 
   // State variables, done is handled by the transmit FIFO
@@ -125,6 +141,7 @@ module AHBUart #(
     end
   end
 
+    // Old buffer start?
   logic [7:0] rFIFOCount;
   logic [7:0] rFIFO[2:0];
 
