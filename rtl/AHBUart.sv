@@ -94,6 +94,21 @@ module AHBUart #(
       .*
   );
 
+  // socetlib_fifo fifo (
+  //   .CLK(),
+  //   .nRST(),
+  //   .WEN(),
+  //   .REN(),
+  //   .clear(),
+  //   .wdata(),
+  //   .full(),
+  //   .empty(),
+  //   .underrun(), 
+  //   .overrun(),
+  //   .count(),
+  //   .rdata()
+  // );
+
   // State variables, done is handled by the transmit FIFO
   logic err, avail, done;
 
