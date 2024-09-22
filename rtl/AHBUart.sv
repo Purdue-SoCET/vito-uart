@@ -32,6 +32,9 @@ module AHBUart #(
     input  rx,
     output tx,
 
+    input cts, // "clear to send"
+    output rts, // "ready to send"
+
     bus_protocol_if.peripheral_vital bp
 );
     //what does this do lmao
@@ -42,9 +45,9 @@ module AHBUart #(
     TX_DATA  = 12
   } ADDRS;
 
-  // Not meaningful in a UART context
-  assign bp.error = 0;
-  assign bp.request_stall = 0;
+  // Might actually be useful now that we have a buffer // Not meaningful in a UART context
+  // assign bp.error = 0;
+  // assign bp.request_stall = 0;
 
   // Uart stuff
   logic [ 7:0] rxData;
