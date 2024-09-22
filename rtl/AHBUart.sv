@@ -193,6 +193,8 @@ module AHBUart #(
     end
   end
 
+  //old buffer end?
+
   // We're only compatible with 32-bit words
 
   // status[31:24]: wStatus only: Counter MSB
