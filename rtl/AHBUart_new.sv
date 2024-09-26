@@ -38,20 +38,43 @@ module AHBUart #(
 
     bus_protocol_if.peripheral_vital bp
 );
-    //reset mechanics?
-    logic syncReset;
-
+    // bp address types
+    typedef enum logic [31:0] {
+      RX_DATA = 0,             // address to read Rx data
+      TX_DATA  = 4,            // address to write Tx data
+      RX_STATE = 8,            // address to see Rx buffer state
+      TX_STATE  = 12,          // address to see Tx buffer state
+      BUFFER_CLEAR = 16,       // address to clear Rx and Tx buffers
+      USE_FLOW_CONTROL = 20   // address to turn flow control on or off
+      //PAUSE = , //consider implementing later
+      //BAUD_RATE = , //consider implementing later
+      //ERROR_STATE =  //consider implementing later
+    } ADDRS;
+    
+    // configuration bits
+    logic use_flow_control;
+    logic buffer_clear;
+    //logic [?:?] error_state; // will implement later
     always_ff @(posedge clk) begin
-      if (!nReset) begin
-        syncReset <= 1;
-      end else if (bp.wen) begin
-        case (bp.addr)
-          RX_STATE, TX_STATE: syncReset <= 1; // what does this do?
-        endcase
-      end else begin
-        syncReset <= 0;
-      end
+        if(!nReset) begin
+            use_flow_control <= 1'b1;
+            buffer_clear <= 1'b1;
+        end else begin
+            if(bp.addr == USE_FLOW_CONTROL && bp.WEN) begin
+                use_flow_control <= bp.wdata != 32'b0;
+            end else begin
+                use_flow_control <= use_flow_control;
+            end
+
+            if(bp.addr == BUFFER_CLEAR && bp.WEN && bp.wdata != 32'b0) begin
+                buffer_clear = 1'b1;
+            end else begin
+                buffer_clear = 1'b0;
+            end
+        end
     end
+    
+    
 
     // UART signals
     logic [15:0] rate;
