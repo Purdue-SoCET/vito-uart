@@ -33,8 +33,8 @@ module AHBUart #(
     input  rx,
     output tx,
 
-    input cts, // "clear to send", set this high if not in use
-    output rts, // "ready to send"
+    input cts,
+    output rts,
 
     bus_protocol_if.peripheral_vital bp
 );
@@ -178,8 +178,8 @@ module AHBUart #(
     end
 
     //buffer Tx to UART Tx
-    if(cts && !txBusy) begin //is txDone or txBusy for this spot?
-      txData <= fifoTx_rdata;
+      if((cts || !use_flow_control) && !txBusy) begin //is txDone or txBusy for this spot?
+      txData <= fifoTx_rdata; //should i account for buffer capacity, maybe not?
       txValid <= 1'b1;
       fifoTx_REN <= 1'b1;
     end else begin
@@ -189,9 +189,8 @@ module AHBUart #(
     end
   end
 
-
-    //TODO: work out bp stuff later
-    // buffer - bus signal mechanics
+    
+    // bus signal mechanics
     always_ff @(posedge clk) begin
         // bus to Tx buffer
         if(bp.addr == TX_DATA && bp.WEN) begin
@@ -203,21 +202,21 @@ module AHBUart #(
         end
 
         // Rx buffer to bus
+        fifoRx_REN <= 1'b0
         if(bp.addr == RX_DATA && bp.REN) begin
             bp.rdata <= fifoRx_rdata;
             fifoRx_REN <= 1'b1;
+        // Rx state to bus
+        end else if (bp.addr == RX_STATE && bp.REN) begin
+            bp.rdata <= fifoRx_count;
+        // Tx state to bus
+        end else if (bp.addr == TX_STATE && bp.REN) begin
+            bp.rdata <= fifoTx_count;
         end else begin
             bp.rdata <= 8'b0;
-            fifoRx_REN <= 1'b0;
-
         end
-
-        // reading buffer counts
-        //if(bp.addr == RX_STATE && bp.REN) begin
-        //
-        //end
-        //if(bp.addr == TX_STATE && bp.REN) begin
-        //
-        //end
     end
+
+    // some error cases (probably not finished)
+    assign bp.error = fifoTx_overrun || fifoRx_underrun;
 endmodule
