@@ -55,7 +55,7 @@ module AHBUart #(
     logic [15:0] rate;
     logic use_flow_control;
     logic buffer_clear;
-    //logic [?:?] error_state; // will implement later
+    //logic [?:?] error_state; // might implement later
     always_ff @(posedge clk) begin
         if(!nReset) begin
             rate <= DefaultRate;
@@ -64,7 +64,7 @@ module AHBUart #(
         end else begin
             // set value for rate
             if(bp.addr == BAUD_RATE && bp.WEN) begin
-                rate <= bp.wdata; //may have to reduce to 16 bits somehow...
+                rate <= bp.wdata[15:0];
             end else begin
                 rate <= 16'b0;
             end
@@ -164,6 +164,9 @@ module AHBUart #(
       .rdata(fifoTx_rdata) //output
     );
 
+    //buffer clearing
+    assign fifoRx_clear = buffer_clear;
+    assign fifoTx_clear = buffer_clear;
 
   // UART - buffer signal mechanics
   assign rts = fifoRx_full;
@@ -194,7 +197,7 @@ module AHBUart #(
     always_ff @(posedge clk) begin
         // bus to Tx buffer
         if(bp.addr == TX_DATA && bp.WEN) begin
-            fifoTx_wdata <= bp.wdata;
+            fifoTx_wdata <= bp.wdata[7:0];
             fifoTx_WEN <= 1'b1;
         end else begin
             fifoTx_wdata <= 8'b0;
@@ -204,16 +207,16 @@ module AHBUart #(
         // Rx buffer to bus
         fifoRx_REN <= 1'b0
         if(bp.addr == RX_DATA && bp.REN) begin
-            bp.rdata <= fifoRx_rdata;
+            bp.rdata <= {24'b0, fifoRx_rdata};
             fifoRx_REN <= 1'b1;
         // Rx state to bus
         end else if (bp.addr == RX_STATE && bp.REN) begin
-            bp.rdata <= fifoRx_count;
+            bp.rdata <= {29'b0, fifoRx_count}; //this may not be right probably
         // Tx state to bus
         end else if (bp.addr == TX_STATE && bp.REN) begin
-            bp.rdata <= fifoTx_count;
+            bp.rdata <= {29'b0, fifoTx_count};
         end else begin
-            bp.rdata <= 8'b0;
+            bp.rdata <= 32'b0;
         end
     end
 
