@@ -196,11 +196,28 @@ module AHBUart #(
         // bus to Tx buffer
         if(bp.addr == TX_DATA && bp.WEN) begin
             fifoTx_wdata <= bp.wdata;
+            fifoTx_WEN <= 1'b1;
+        end else begin
+            fifoTx_wdata <= 8'b0;
+            fifoTx_WEN <= 1'b0;
         end
 
-        //Rx buffer to bus
+        // Rx buffer to bus
         if(bp.addr == RX_DATA && bp.REN) begin
             bp.rdata <= fifoRx_rdata;
+            fifoRx_REN <= 1'b1;
+        end else begin
+            bp.rdata <= 8'b0;
+            fifoRx_REN <= 1'b0;
+
         end
+
+        // reading buffer counts
+        //if(bp.addr == RX_STATE && bp.REN) begin
+        //
+        //end
+        //if(bp.addr == TX_STATE && bp.REN) begin
+        //
+        //end
     end
 endmodule
