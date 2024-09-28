@@ -40,12 +40,12 @@ module AHBUart #(
 );
     // bp address types
     typedef enum logic [31:0] {
-      RX_DATA = 0,             // address to read Rx data
+      RX_DATA = 0,             // address to read Rx data // Question: would it be better to merge Rx and Tx data addresses?
       TX_DATA  = 4,            // address to write Tx data
       RX_STATE = 8,            // address to see Rx buffer state
       TX_STATE  = 12,          // address to see Tx buffer state
       BUFFER_CLEAR = 16,       // address to clear Rx and Tx buffers
-      USE_FLOW_CONTROL = 20   // address to turn flow control on or off
+      USE_FLOW_CONTROL = 20    // address to turn flow control on or off
       //PAUSE = , //consider implementing later
       //BAUD_RATE = , //consider implementing later
       //ERROR_STATE =  //consider implementing later
@@ -60,15 +60,18 @@ module AHBUart #(
             use_flow_control <= 1'b1;
             buffer_clear <= 1'b1;
         end else begin
+            // set value for use_flow_control
             if(bp.addr == USE_FLOW_CONTROL && bp.WEN) begin
-                use_flow_control <= bp.wdata != 32'b0;
+                use_flow_control <= |bp.wdata;
             end else begin
                 use_flow_control <= use_flow_control;
             end
 
-            if(bp.addr == BUFFER_CLEAR && bp.WEN && bp.wdata != 32'b0) begin
+            // set value for buffer_clear
+            if(bp.addr == BUFFER_CLEAR && bp.WEN && |bp.wdata) begin
                 buffer_clear = 1'b1;
             end else begin
+                //only hold buffer clear for one cycle if possible
                 buffer_clear = 1'b0;
             end
         end
