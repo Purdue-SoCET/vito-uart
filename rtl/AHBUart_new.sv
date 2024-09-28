@@ -44,22 +44,31 @@ module AHBUart #(
       TX_DATA  = 4,            // address to write Tx data
       RX_STATE = 8,            // address to see Rx buffer state
       TX_STATE  = 12,          // address to see Tx buffer state
-      BUFFER_CLEAR = 16,       // address to clear Rx and Tx buffers
-      USE_FLOW_CONTROL = 20    // address to turn flow control on or off
+      BAUD_RATE = 16,          // address to change baud rate
+      BUFFER_CLEAR = 20,       // address to clear Rx and Tx buffers
+      USE_FLOW_CONTROL = 24    // address to turn flow control on or off
       //PAUSE = , //consider implementing later
-      //BAUD_RATE = , //consider implementing later
       //ERROR_STATE =  //consider implementing later
     } ADDRS;
     
     // configuration bits
+    logic [15:0] rate;
     logic use_flow_control;
     logic buffer_clear;
     //logic [?:?] error_state; // will implement later
     always_ff @(posedge clk) begin
         if(!nReset) begin
+            rate <= DefaultRate;
             use_flow_control <= 1'b1;
             buffer_clear <= 1'b1;
         end else begin
+            // set value for rate
+            if(bp.addr == BAUD_RATE && bp.WEN) begin
+                rate <= bp.wdata; //may have to reduce to 16 bits somehow...
+            end else begin
+                rate <= 16'b0;
+            end
+            
             // set value for use_flow_control
             if(bp.addr == USE_FLOW_CONTROL && bp.WEN) begin
                 use_flow_control <= |bp.wdata;
@@ -79,8 +88,7 @@ module AHBUart #(
     
     
 
-    // UART signals
-    logic [15:0] rate;
+    // UART signal
     logic [7:0] rxData;
     logic [7:0] txData;
     logic rxErr, rxClk, rxDone;
@@ -156,12 +164,13 @@ module AHBUart #(
       .rdata(fifoTx_rdata) //output
     );
 
-  
+
+  // UART - buffer signal mechanics
   assign rts = fifoRx_full;
   always_ff @(posedge clk) begin
     //UART Rx to buffer Rx
     if(rxDone && !rxErr) begin
-      fifoRx_wdata <= rxData;
+      fifoRx_wdata <= rxData; //do i need to account for overflow, probably not?
       fifoRx_WEN <= 1'b1;
     end else begin
       fifoRx_wdata <= 8'b0;
@@ -181,5 +190,17 @@ module AHBUart #(
   end
 
 
-  //TODO: work out bp stuff later
+    //TODO: work out bp stuff later
+    // buffer - bus signal mechanics
+    always_ff @(posedge clk) begin
+        // bus to Tx buffer
+        if(bp.addr == TX_DATA && bp.WEN) begin
+            fifoTx_wdata <= bp.wdata;
+        end
+
+        //Rx buffer to bus
+        if(bp.addr == RX_DATA && bp.REN) begin
+            bp.rdata <= fifoRx_rdata;
+        end
+    end
 endmodule
