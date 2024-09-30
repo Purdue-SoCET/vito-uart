@@ -18,11 +18,10 @@
 *
 *   Created by:   Vito Gamberini
 *   Email:        vito@gamberini.email
-*   Modified by:  Michael Li
+*   Modified by:  Michael Li, Yash Singh 
 *   Date Created: 9/21/2024
 *   Description:  Modification of AHB wrapper for PurdNyUart
 */
-
 
 module AHBUart #(
     int DefaultRate = 5207  // Chosen by fair dice roll
@@ -62,13 +61,12 @@ module AHBUart #(
             use_flow_control <= 1'b1;
             buffer_clear <= 1'b1;
         end else begin
-            // set value for rate
+            // set value for rate 
             if(bp.addr == BAUD_RATE && bp.WEN) begin
-                rate <= bp.wdata[15:0];
+                rate <= bp.wdata[15:0]; // setting the bus protocol write data = first 16 bits? 0x0F ex.
             end else begin
-                rate <= 16'b0;
+                rate <= 16'b0; 
             end
-            
             // set value for use_flow_control
             if(bp.addr == USE_FLOW_CONTROL && bp.WEN) begin
                 use_flow_control <= |bp.wdata;
@@ -92,7 +90,7 @@ module AHBUart #(
     logic [7:0] rxData;
     logic [7:0] txData;
     logic rxErr, rxClk, rxDone;
-    logic txValid, txClk, txBusy, txDone; //da fuk is txValid, ask about txDone (only on for one cycle or persist?)
+    logic txValid, txClk, txBusy, txDone; 
   
     // Params set "clock rate" to 2**16, and "min baud rate" to 1
     // This is equivalent to "please give me 16-bit counters"
@@ -173,18 +171,32 @@ module AHBUart #(
   always_ff @(posedge clk) begin
     //UART Rx to buffer Rx
     if(rxDone && !rxErr) begin
+        if (fifoRx_overrun) begin
+         fifoRx_wdata <= fifoRx_wdata;
+         fifoRx_WEN <= 1'b0;
+        // do we want to keep or flush out the old data in the fifo register if its full and the rx wants to send in more data?         
+        end else begin
+        // alt, check with fifo clear
       fifoRx_wdata <= rxData; //do i need to account for overflow, probably not?
       fifoRx_WEN <= 1'b1;
+        end
     end else begin
-      fifoRx_wdata <= 8'b0;
+      fifoRx_wdata <= 8'b0; // clear out the data in the fifo and disable writing into it
       fifoRx_WEN <= 1'b0;
     end
 
     //buffer Tx to UART Tx
-      if((cts || !use_flow_control) && !txBusy) begin //is txDone or txBusy for this spot?
-      txData <= fifoTx_rdata; //should i account for buffer capacity, maybe not?
-      txValid <= 1'b1;
-      fifoTx_REN <= 1'b1;
+      if((cts || !use_flow_control) && !txBusy && txDone) begin //is txDone or txBusy for this spot?? A: either signal should be fine, they are the converse of each other and I don't think its meaningful when
+                                                                  //both are high
+        if (fifoTx_underrun) begin
+        txData <= fifoTx_rdata;
+        txValid <= 1'b0;
+        fifoRx_REN < 1'b1;
+        end else begin
+        txData <= fifoTx_rdata; //should i account for buffer capacity, maybe not? // should be fine, both are 8 bits...
+        txValid <= 1'b1; // the ts signal is valid
+        fifoTx_REN <= 1'b1;
+        end
     end else begin
       txData <= 8'b0;
       txValid <= 1'b0;
@@ -197,29 +209,41 @@ module AHBUart #(
     always_ff @(posedge clk) begin
         // bus to Tx buffer
         if(bp.addr == TX_DATA && bp.WEN) begin
-            fifoTx_wdata <= bp.wdata[7:0];
-            fifoTx_WEN <= 1'b1;
-        end else begin
-            fifoTx_wdata <= 8'b0;
-            fifoTx_WEN <= 1'b0;
+            fifoTx_wdata <= bp.wdata[7:0]; // assume we r sending it through the first byte at a time right now
+            fifoTx_WEN <= 1'b1; 
+        end 
+        else begin
+            fifoTx_wdata <= 8'b0; // else writing nothing into the TX from the bus
+            fifoTx_WEN <= 1'b0; // write signal is disabled
         end
-
         // Rx buffer to bus
-        fifoRx_REN <= 1'b0
         if(bp.addr == RX_DATA && bp.REN) begin
             bp.rdata <= {24'b0, fifoRx_rdata};
             fifoRx_REN <= 1'b1;
         // Rx state to bus
         end else if (bp.addr == RX_STATE && bp.REN) begin
-            bp.rdata <= {29'b0, fifoRx_count}; //this may not be right probably
+            bp.rdata <= {27'b0, err, avail, fifoRx_count}; // include rr signal to state whether its a receiver error explicitly or not
         // Tx state to bus
         end else if (bp.addr == TX_STATE && bp.REN) begin
-            bp.rdata <= {29'b0, fifoTx_count};
+            bp.rdata <= {13'b0, rate, txDone, fifoTx_count};
         end else begin
             bp.rdata <= 32'b0;
         end
     end
-
-    // some error cases (probably not finished)
-    assign bp.error = fifoTx_overrun || fifoRx_underrun;
+    
+ assign bp.error = fifoRx_overrun || fifoTx_underrun;
+ logic err, avail;
+    
+ always_ff @(posedge clk) begin
+    if (!nReset) begin
+      err   <= 0;
+      avail <= 0;
+    end else if (bp.ren) begin
+      err   <= rxErr || ((bp.addr != RX_STATE) && err);
+      avail <= rxDone || ((bp.addr != RX_DATA) && avail);
+    end else begin
+      err   <= rxErr || err; // if there is an exisiting error it persists
+      avail <= rxDone || avail;
+    end
+  end
 endmodule
