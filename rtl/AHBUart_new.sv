@@ -185,10 +185,10 @@ module AHBUart #(
 
             // set value for buffer_clear
             if(bp.addr == BUFFER_CLEAR && bp.wen && |bp.wdata) begin
-                buffer_clear = 1'b1;
+                buffer_clear <= 1'b1;
             end else begin
                 //only hold buffer clear for one cycle if possible
-                buffer_clear = 1'b0;
+                buffer_clear <= 1'b0;
             end
         end
     end
