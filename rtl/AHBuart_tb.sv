@@ -49,7 +49,8 @@ initial begin
   bp.wen = 0;
 
   #100;
- 
+
+        $display("Test completed!");
         $finish;
 end
 endmodule
