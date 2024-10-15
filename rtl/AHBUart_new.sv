@@ -48,7 +48,7 @@ module socetlib_fifo #(
     // Width can be any number of bits > 1, but depth must be a power-of-2 to accomodate addressing scheme
     // Address bits should not be changed by the user.
     generate
-        if(DEPTH == 0 || (DEPTH & (DEPTH - 1) != 0)) begin
+        if(DEPTH == 0 || (DEPTH && (DEPTH - 1) != 0)) begin
             $error("%m: DEPTH must be a power of 2 >= 1!");
         end
 
@@ -133,7 +133,7 @@ endmodule
 //uart implementation
 
 module AHBUart #(
-    int DefaultRate = 5207  // Chosen by fair dice roll
+    logic [15:0] DefaultRate = 5207  // Chosen by fair dice roll
 ) (
     input clk,
     input nReset,
@@ -347,7 +347,7 @@ module AHBUart #(
             bp.rdata <= {27'b0, err, avail, fifoRx_count}; // include rr signal to state whether its a receiver error explicitly or not
         // Tx state to bus
         end else if (bp.addr == TX_STATE && bp.ren) begin
-            bp.rdata <= {13'b0, rate, txDone, fifoTx_count};
+            bp.rdata <= {12'b0, rate, txDone, fifoTx_count}; //note to self: check that formatting is right
         end else begin
             bp.rdata <= 32'b0;
         end
@@ -368,4 +368,303 @@ module AHBUart #(
       avail <= rxDone || avail;
     end
   end
+endmodule
+
+
+//temporarily adding files here until i figure out what going on
+module BaudRateGen #(
+    int MaxClockRate = 100 * 10 ** 6,
+    int MinBaudRate  = 9600,
+    int Oversample   = 16
+) (
+    input clk,
+    input nReset,
+    input syncReset,
+
+    input phase,
+    input [txWidth-1:0] rate,
+
+    output logic rxClk,
+    output logic txClk
+);
+
+  localparam int txWidth = $clog2(MaxClockRate / MinBaudRate);
+  localparam int rxShift = $clog2(Oversample);
+  localparam int rxWidth = txWidth - rxShift;
+
+  // Unreasonable to test these full-width
+  /* verilator coverage_off */
+  logic [txWidth-1:0] totalWait;
+  logic [txWidth-1:0] postWait;
+  logic [txWidth-1:0] preWait;
+  /* verilator coverage_on */
+  logic inWait;
+
+  logic [rxWidth-1:0] rxRate;
+  logic [rxWidth-1:0] offset;
+
+  logic [rxWidth-1:0] rxCount;
+  logic [txWidth-1:0] txCount;
+
+  always_comb begin
+    rxRate    = rate[txWidth-1:rxShift];
+    offset    = rxRate - ((rxRate >> 1) + 1);
+
+    totalWait = rate - {rxRate, 4'b0};
+    preWait   = rate - (totalWait >> 1);
+    postWait  = rate - preWait + txWidth'(rate[0]) + txWidth'(offset);
+    inWait    = txCount > preWait || txCount < postWait;
+
+    rxClk     = (rxRate > 1) ? (!inWait && rxCount == 0) ^ phase : phase;
+    txClk     = (rate > 1) ? (txCount == 0) ^ phase : phase;
+  end
+
+  always @(posedge clk, negedge nReset) begin
+    if (!nReset || syncReset || (txCount == 0)) begin
+      rxCount <= rxRate - offset - 1;
+    end else if (rxCount == 0) begin
+      rxCount <= rxRate - 1;
+    end else if (!inWait) begin
+      rxCount <= rxCount - 1;
+    end
+
+    if (!nReset || syncReset || (txCount == 0)) begin
+      txCount <= rate - 1;
+    end else begin
+      txCount <= txCount - 1;
+    end
+  end
+endmodule
+
+module UartRx #(
+    int Oversample = 16
+) (
+    input clk,
+    input nReset,
+
+    input in,
+
+    output logic [7:0] data,
+
+    output done,
+    output err
+);
+
+  localparam sampleWidth = $clog2(Oversample);
+  localparam fullSampleCount = sampleWidth'(Oversample - 1);
+  localparam halfSampleCount = sampleWidth'(Oversample / 2);
+
+  // verilog_format: off
+  enum logic [2:0] {
+    IDLE,
+    START,
+    DATA_A,
+    DATA_B,
+    STOP,
+    ERROR
+  } curState , nextState;
+  // verilog_format: on
+
+  logic rise, fall, cmp;
+
+  always_ff @(posedge clk, negedge nReset) begin
+    cmp <= !nReset ? 1 : in;
+  end
+
+  always_comb begin
+    rise = in & ~cmp;
+    fall = ~in & cmp;
+  end
+
+  logic edgeDetect;
+  logic badSync;
+  logic reSync;
+  logic advance;
+  logic badStop;
+  logic fastStart;
+
+  always_comb begin
+    edgeDetect = fall || rise;
+    badSync = edgeDetect && edgeCmp && (sampleCount >= halfSampleCount);
+    reSync = edgeDetect && (sampleCount < halfSampleCount);
+    advance = reSync || (sampleCount == 0);
+    badStop = in == 0 && sampleCount == halfSampleCount;
+    fastStart = fall && sampleCount < halfSampleCount;
+    done = advance && (readCount == 0);
+    err = nextState == ERROR;
+  end
+
+  logic [sampleWidth-1:0] sampleCount;
+  logic edgeCmp;
+
+  always_ff @(posedge clk, negedge nReset) begin
+    if (!nReset) begin
+      sampleCount <= fullSampleCount;
+      edgeCmp     <= 0;
+      curState    <= IDLE;
+    end else begin
+      curState <= nextState;
+
+      if (curState != nextState) begin
+        edgeCmp     <= edgeDetect;
+        sampleCount <= fullSampleCount;
+      end else begin
+        edgeCmp     <= edgeDetect ? edgeDetect : edgeCmp;
+        sampleCount <= sampleCount - 1;
+      end
+    end
+  end
+
+  logic [7:0] readBuf;
+  logic [3:0] readCount;
+
+  always_ff @(posedge clk, negedge nReset) begin
+    if (!nReset) begin
+      readCount <= 8;
+      data <= 0;
+    end else begin
+
+      if (readCount == 0) begin
+        data <= readBuf;
+      end
+
+      if (nextState != DATA_A && nextState != DATA_B) begin
+        readCount <= 8;
+      end else if (sampleCount == halfSampleCount) begin
+        readCount <= readCount - 1;
+        readBuf   <= {in, readBuf[7:1]};
+      end
+
+    end
+  end
+
+  always_comb begin
+
+    nextState = curState;
+
+    case (curState)
+
+      IDLE:
+      if (fall) begin
+        nextState = START;
+      end
+
+      START:
+      if (badSync) begin
+        nextState = ERROR;
+      end else if (advance) begin
+        nextState = DATA_A;
+      end
+
+      DATA_A:
+      if (badSync) begin
+        nextState = ERROR;
+      end else if (advance) begin
+        nextState = readCount > 0 ? DATA_B : STOP;
+      end
+
+      DATA_B:
+      if (badSync) begin
+        nextState = ERROR;
+      end else if (advance) begin
+        nextState = readCount > 0 ? DATA_A : STOP;
+      end
+
+      STOP:
+      if (badSync || badStop) begin
+        nextState = ERROR;
+      end else if (fastStart) begin
+        nextState = START;
+      end else if (advance) begin
+        nextState = IDLE;
+      end
+
+      // ERROR
+      default: nextState = IDLE;
+
+    endcase
+  end
+
+endmodule
+
+module UartTx (
+    input clk,
+    input nReset,
+
+    input logic [7:0] data,
+    input valid,
+
+    output out,
+
+    output busy,
+    output done
+);
+
+  // verilog_format: off
+  enum logic [1:0] {
+    IDLE,
+    START,
+    DATA,
+    STOP
+  } curState, nextState;
+  // verilog_format: on
+
+  logic [7:0] writeBuf;
+  logic [3:0] writeCount;
+  logic enterStart;
+
+  always_comb begin
+    done = nextState == STOP;
+    busy = nextState != IDLE;
+  end
+
+  always_comb begin
+    if (nextState == DATA) begin
+      out = writeBuf[0];
+    end else if (nextState == START) begin
+      out = 0;
+    end else begin
+      out = 1;
+    end
+  end
+
+  always_ff @(posedge clk, negedge nReset) begin
+    if (!nReset) begin
+      curState   <= IDLE;
+      writeCount <= 8;
+      writeBuf   <= 0;
+      enterStart <= 0;
+    end else begin
+      curState <= nextState;
+
+      if ((nextState == STOP || nextState == IDLE) && valid) begin
+        enterStart <= 1;
+        writeCount <= 8;
+        writeBuf   <= data;
+      end
+
+      if (nextState == START) begin
+        enterStart <= 0;
+      end
+
+      if (nextState == DATA) begin
+        writeCount <= writeCount - 1;
+        writeBuf   <= 8'(writeBuf[7:1]);
+      end
+
+    end
+  end
+
+  always_comb begin
+    case (curState)
+      IDLE: nextState = enterStart ? START : curState;
+
+      START: nextState = DATA;
+
+      DATA: nextState = |writeCount ? curState : STOP;
+
+      STOP: nextState = enterStart ? START : IDLE;
+    endcase
+  end
+
 endmodule
