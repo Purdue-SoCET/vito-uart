@@ -30,7 +30,8 @@ always #5 clk = ~clk; // toggle the value of the clock every 5 nanoseconds..
 
 initial begin
   //initialize the bus_protocol signals
-        $dumpfile("uart_wv.vcd");
+        //$dumpfile("uart_wv.vcd");
+        $dumpfile("uart_wv.fst");
         $dumpvars(0, uart_tb);
   
   clk = 1;
