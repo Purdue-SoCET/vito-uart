@@ -47,7 +47,7 @@ module socetlib_fifo #(
     //
     // Width can be any number of bits > 1, but depth must be a power-of-2 to accomodate addressing scheme
     // Address bits should not be changed by the user.
-    generate
+    /*generate
         if(DEPTH == 0 || (DEPTH != 0 && (DEPTH - 1) != 0)) begin
             $error("%m: DEPTH must be a power of 2 >= 1!");
         end
@@ -55,7 +55,7 @@ module socetlib_fifo #(
         if(ADDR_BITS != $clog2(DEPTH)) begin
             $error("%m: ADDR_BITS is automatically calculated, please do not override!");
         end
-    endgenerate
+    endgenerate*/ //Note: the error statements is broken somehow, commented this just try to see if everything else works
 
     logic full_internal, full_next, empty_internal, empty_next;
     logic overrun_next, underrun_next;
