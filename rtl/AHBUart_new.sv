@@ -48,7 +48,7 @@ module socetlib_fifo #(
     // Width can be any number of bits > 1, but depth must be a power-of-2 to accomodate addressing scheme
     // Address bits should not be changed by the user.
     generate
-        if(DEPTH == 0 || (DEPTH && (DEPTH - 1) != 0)) begin
+        if(DEPTH == 0 || (DEPTH != 0 && (DEPTH - 1) != 0)) begin
             $error("%m: DEPTH must be a power of 2 >= 1!");
         end
 
@@ -436,18 +436,19 @@ module BaudRateGen #(
   end
 endmodule
 
-module UartRx #(
+module UartRxEn #(
     int Oversample = 16
 ) (
     input clk,
     input nReset,
 
+    input en,
     input in,
 
     output logic [7:0] data,
 
-    output done,
-    output err
+    output logic done,
+    output logic err
 );
 
   localparam sampleWidth = $clog2(Oversample);
@@ -468,7 +469,7 @@ module UartRx #(
   logic rise, fall, cmp;
 
   always_ff @(posedge clk, negedge nReset) begin
-    cmp <= !nReset ? 1 : in;
+    cmp <= !nReset ? 1 : en ? in : cmp;
   end
 
   always_comb begin
@@ -483,19 +484,20 @@ module UartRx #(
   logic badStop;
   logic fastStart;
 
+  logic [sampleWidth-1:0] sampleCount;
+  logic [3:0] readCount;
+  logic edgeCmp;
+
   always_comb begin
-    edgeDetect = fall || rise;
+    edgeDetect = en ? fall || rise : 0;
     badSync = edgeDetect && edgeCmp && (sampleCount >= halfSampleCount);
     reSync = edgeDetect && (sampleCount < halfSampleCount);
-    advance = reSync || (sampleCount == 0);
-    badStop = in == 0 && sampleCount == halfSampleCount;
-    fastStart = fall && sampleCount < halfSampleCount;
+    advance = reSync || (en && (sampleCount == 0));
     done = advance && (readCount == 0);
+    badStop = en && in == 0 && sampleCount == halfSampleCount;
+    fastStart = en && fall && sampleCount < halfSampleCount;
     err = nextState == ERROR;
   end
-
-  logic [sampleWidth-1:0] sampleCount;
-  logic edgeCmp;
 
   always_ff @(posedge clk, negedge nReset) begin
     if (!nReset) begin
@@ -503,20 +505,19 @@ module UartRx #(
       edgeCmp     <= 0;
       curState    <= IDLE;
     end else begin
-      curState <= nextState;
+      curState <= en ? nextState : curState;
 
       if (curState != nextState) begin
-        edgeCmp     <= edgeDetect;
-        sampleCount <= fullSampleCount;
+        edgeCmp     <= en ? edgeDetect : edgeCmp;
+        sampleCount <= en ? fullSampleCount : sampleCount;
       end else begin
-        edgeCmp     <= edgeDetect ? edgeDetect : edgeCmp;
-        sampleCount <= sampleCount - 1;
+        edgeCmp     <= (en && edgeDetect) ? edgeDetect : edgeCmp;
+        sampleCount <= en ? sampleCount - 1 : sampleCount;
       end
     end
   end
 
   logic [7:0] readBuf;
-  logic [3:0] readCount;
 
   always_ff @(posedge clk, negedge nReset) begin
     if (!nReset) begin
@@ -525,14 +526,14 @@ module UartRx #(
     end else begin
 
       if (readCount == 0) begin
-        data <= readBuf;
+        data <= en ? readBuf : data;
       end
 
       if (nextState != DATA_A && nextState != DATA_B) begin
-        readCount <= 8;
+        readCount <= en ? 8 : readCount;
       end else if (sampleCount == halfSampleCount) begin
-        readCount <= readCount - 1;
-        readBuf   <= {in, readBuf[7:1]};
+        readCount <= en ? readCount - 1 : readCount;
+        readBuf   <= en ? {in, readBuf[7:1]} : readBuf;
       end
 
     end
@@ -587,17 +588,18 @@ module UartRx #(
 
 endmodule
 
-module UartTx (
+module UartTxEn (
     input clk,
     input nReset,
 
+    input en,
     input logic [7:0] data,
     input valid,
 
-    output out,
+    output logic out,
 
-    output busy,
-    output done
+    output logic busy,
+    output logic done
 );
 
   // verilog_format: off
@@ -609,12 +611,14 @@ module UartTx (
   } curState, nextState;
   // verilog_format: on
 
-  logic [7:0] writeBuf;
-  logic [3:0] writeCount;
+  logic hasData;
   logic enterStart;
 
+  logic [7:0] writeBuf;
+  logic [3:0] writeCount;
+
   always_comb begin
-    done = nextState == STOP;
+    done = en & (nextState == STOP);
     busy = nextState != IDLE;
   end
 
@@ -633,23 +637,30 @@ module UartTx (
       curState   <= IDLE;
       writeCount <= 8;
       writeBuf   <= 0;
+      hasData    <= 0;
       enterStart <= 0;
     end else begin
-      curState <= nextState;
+      curState <= en ? nextState : curState;
 
-      if ((nextState == STOP || nextState == IDLE) && valid) begin
-        enterStart <= 1;
-        writeCount <= 8;
-        writeBuf   <= data;
+      if (nextState == STOP || nextState == IDLE) begin
+        if (valid) begin
+          enterStart <= en ? 1 : enterStart;
+          hasData    <= 1;
+          writeCount <= 8;
+          writeBuf   <= data;
+        end else if (hasData) begin
+          enterStart <= en ? 1 : enterStart;
+        end
       end
 
       if (nextState == START) begin
-        enterStart <= 0;
+        hasData <= en ? 0 : hasData;
+        enterStart <= en ? 0 : enterStart;
       end
 
       if (nextState == DATA) begin
-        writeCount <= writeCount - 1;
-        writeBuf   <= 8'(writeBuf[7:1]);
+        writeCount <= en ? writeCount - 1 : writeCount;
+        writeBuf   <= en ? 8'(writeBuf[7:1]) : writeBuf;
       end
 
     end
