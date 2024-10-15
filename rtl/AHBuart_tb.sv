@@ -44,7 +44,7 @@ initial begin
   nReset = 1;
   bp.addr = 24;
   bp.wen = 1;
-  bp.wdata = 8'h0F;
+  bp.wdata = 32'h0F;
   #20;
   bp.wen = 0;
 
