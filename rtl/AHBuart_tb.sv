@@ -16,7 +16,7 @@ logic clk, nReset, rx, tx, cts, rts;
 //declaring an instance of the UART bus if
 bus_protocol_if bp(); // this is where the concrete data information is coming from
 
-AHBuart uart_1 (
+AHBUart uart_1 (
         .clk(clk),
         .nReset(nReset),
         .rx(rx),
