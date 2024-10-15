@@ -90,7 +90,7 @@ initial begin
 
   #100;
  
-finish;
+        $finish;
 end
 endmodule
 
