@@ -1,6 +1,5 @@
-/*
-*   Copyright 2023 Purdue University
-*
+/*Copyright 2023 Purdue University
+*   uodated
 *   Licensed under the Apache License, Version 2.0 (the "License");
 *   you may not use this file except in compliance with the License.
 *   You may obtain a copy of the License at
@@ -18,13 +17,123 @@
 *
 *   Created by:   Vito Gamberini
 *   Email:        vito@gamberini.email
-*   Date Created: 07/13/2023
-*   Description:  AHB wrapper for PurdNyUart
+*   Modified by:  Michael Li, Yash Singh
+*   Date Created: 9/21/2024
+*   Description:  Modification of AHB wrapper for PurdNyUart
 */
 
 
+/* manually inserting the socetFIFO errors while this gets sorted out...*/
+module socetlib_fifo #(
+    parameter type T = logic [7:0], // total FIFO entries
+    parameter DEPTH = 8,
+    parameter ADDR_BITS = $clog2(DEPTH)
+)(
+    input CLK,
+    input nRST,
+    input WEN,
+    input REN,
+    input clear,
+    input T wdata,
+    output logic full,
+    output logic empty,
+    output logic underrun,
+    output logic overrun,
+    output logic [ADDR_BITS-1:0] count,
+    output T rdata
+);
+
+    // Parameter checking
+    //
+    // Width can be any number of bits > 1, but depth must be a power-of-2 to accomodate addressing scheme
+    // Address bits should not be changed by the user.
+    /*generate
+        if(DEPTH == 0 || (DEPTH != 0 && (DEPTH - 1) != 0)) begin
+            $error("%m: DEPTH must be a power of 2 >= 1!");
+        end
+
+        if(ADDR_BITS != $clog2(DEPTH)) begin
+            $error("%m: ADDR_BITS is automatically calculated, please do not override!");
+        end
+    endgenerate*/ //Note: the error statements is broken somehow, commented this just try to see if everything else works
+
+    logic full_internal, full_next, empty_internal, empty_next;
+    logic overrun_next, underrun_next;
+    logic [ADDR_BITS-1:0] write_ptr, write_ptr_next, read_ptr, read_ptr_next;
+    T [DEPTH-1:0] fifo, fifo_next;
+
+    always_ff @(posedge CLK, negedge nRST) begin
+        if(!nRST) begin
+            fifo <= '{default: '0};
+            write_ptr <= '0;
+            read_ptr <= '0;
+            full_internal <= 1'b0;
+            empty_internal <= 1'b1;
+            overrun <= 1'b0;
+            underrun <= 1'b0;
+        end else begin
+            fifo <= fifo_next;
+            write_ptr <= write_ptr_next;
+            read_ptr <= read_ptr_next;
+            full_internal <= full_next;
+            empty_internal <= empty_next;
+            overrun <= overrun_next;
+            underrun <= underrun_next;
+        end
+    end
+
+    always_comb begin
+        fifo_next = fifo;
+        full_next = full_internal;
+        empty_next = empty_internal;
+        write_ptr_next = write_ptr;
+        read_ptr_next = read_ptr;
+        overrun_next = overrun;
+        underrun_next = underrun;
+
+        if(clear) begin
+            // No need to actually reset FIFO data,
+            // changing pointers/flags to "empty" state is OK
+            full_next = 1'b0;
+            empty_next = 1'b1;
+            write_ptr_next = '0;
+            read_ptr_next = '0;
+            overrun_next = 1'b0;
+            underrun_next = 1'b0;
+        end else begin
+            if(REN && !empty) begin
+                read_ptr_next = read_ptr + 1;
+                full_next = 1'b0;
+                empty_next = (read_ptr_next == write_ptr_next);
+            end else if(REN && empty) begin
+                underrun_next = 1'b1;
+            end
+
+            if(WEN && !full) begin
+                write_ptr_next = write_ptr + 1;
+                fifo_next[write_ptr] = wdata;
+                empty_next = 1'b0;
+                full_next = (write_ptr_next == read_ptr_next);
+            end else if(WEN && full) begin
+                overrun_next = 1'b1;
+            end
+        end
+    end
+
+    //assign count = (write_ptr > read_ptr) ? (write_ptr - read_ptr) : (ADDR_BITS - (read_ptr - write_ptr));
+    assign count = write_ptr - read_ptr;
+    assign rdata = fifo[read_ptr];
+
+    assign full = full_internal;
+    assign empty = empty_internal;
+
+
+endmodule
+
+//uart implementation
+
 module AHBUart #(
-    int DefaultRate = 5207  // Chosen by fair dice roll
+    logic [15:0] DefaultRate = 5207  // Chosen by fair dice roll
 ) (
     input clk,
     input nReset,
@@ -32,35 +141,68 @@ module AHBUart #(
     input  rx,
     output tx,
 
-    input cts, // "clear to send"
-    output rts, // "ready to send"
+    input cts,
+    output rts,
 
     bus_protocol_if.peripheral_vital bp
 );
-    //what does this do lmao
-  typedef enum logic [31:0] {
-    RX_STATE = 0,
-    RX_DATA  = 4,
-    TX_STATE = 8,
-    TX_DATA  = 12
-  } ADDRS;
+    // bp address types
+    typedef enum logic [31:0] {
+      RX_DATA = 0,             // address to read Rx data // Question: would it be better to merge Rx and Tx data addresses?
+      TX_DATA  = 4,            // address to write Tx data
+      RX_STATE = 8,            // address to see Rx buffer state
+      TX_STATE  = 12,          // address to see Tx buffer state
+      BAUD_RATE = 16,          // address to change baud rate
+      BUFFER_CLEAR = 20,       // address to clear Rx and Tx buffers
+      USE_FLOW_CONTROL = 24    // address to turn flow control on or off
+      //PAUSE = , //consider implementing later
+      //ERROR_STATE =  //consider implementing later
+    } ADDRS;
 
-  // Might actually be useful now that we have a buffer // Not meaningful in a UART context
-  // assign bp.error = 0;
-  // assign bp.request_stall = 0;
+    // configuration bits
+    logic [15:0] rate;
+    logic use_flow_control;
+    logic buffer_clear;
+    //logic [?:?] error_state; // might implement later
+    always_ff @(posedge clk) begin
+        if(!nReset) begin
+            rate <= DefaultRate;
+            use_flow_control <= 1'b1;
+            buffer_clear <= 1'b1;
+        end else begin
+            // set value for rate
+            if(bp.addr == BAUD_RATE && bp.wen) begin
+                rate <= bp.wdata[15:0]; // setting the bus protocol write data = first 16 bits? 0x0F ex.
+            end else begin
+                rate <= 16'b0;
+            end
+            // set value for use_flow_control
+            if(bp.addr == USE_FLOW_CONTROL && bp.wen) begin
+                use_flow_control <= |bp.wdata;
+            end else begin
+                use_flow_control <= use_flow_control;
+            end
 
-  // Uart stuff
-  logic [ 7:0] rxData;
+            // set value for buffer_clear
+            if(bp.addr == BUFFER_CLEAR && bp.wen && |bp.wdata) begin
+                buffer_clear <= 1'b1;
+            end else begin
+                //only hold buffer clear for one cycle if possible
+                buffer_clear <= 1'b0;
+            end
+        end
+    end
 
-  logic [15:0] rate;
-  logic [ 7:0] txData;
 
-  logic rxErr, rxClk, rxDone;
-  logic txValid, txClk, txDone;
 
-  logic syncReset;
+    // UART signal
+    logic [7:0] rxData;
+    logic [7:0] txData;
+    logic rxErr, rxClk, rxDone;
+    logic txValid, txClk, txBusy, txDone;
+    logic syncReset;
 
-  always_ff @(posedge clk) begin
+    always_ff @(posedge clk) begin
     if (!nReset) begin
       syncReset <= 1;
     end else if (bp.wen) begin
@@ -70,68 +212,151 @@ module AHBUart #(
     end else begin
       syncReset <= 0;
     end
+    end
+
+    // Params set "clock rate" to 2**16, and "min baud rate" to 1
+    // This is equivalent to "please give me 16-bit counters"
+    BaudRateGen #(2 ** 16, 1) bg (
+        .phase(1'b0),
+        .*
+    );
+
+    UartRxEn uartRx (
+        .en  (rxClk),
+        .in  (rx),
+        .data(rxData),
+        .done(rxDone),
+        .err (rxErr),
+        .*
+    );
+
+    UartTxEn uartTx (
+        .en   (txClk),
+        .data (txData),
+        .valid(txValid),
+        .out  (tx),  // verilator lint_off PINCONNECTEMPTY
+        .busy (txBusy),  // verilator lint_on PINCONNECTEMPTY
+        .done (txDone),
+        .*
+    );
+
+    //fifoRx signals
+    logic fifoRx_WEN, fifoRx_REN, fifoRx_clear;
+    logic [7:0] fifoRx_wdata;
+    logic fifoRx_full, fifoRx_empty, fifoRx_underrun, fifoRx_overrun;
+    logic [$clog2(8)-1:0] fifoRx_count; //current buffer capacity is 8
+    logic [7:0] fifoRx_rdata;
+
+    socetlib_fifo fifoRx (
+      .CLK(clk),
+      .nRST(nReset),
+      .WEN(fifoRx_WEN), //input
+      .REN(fifoRx_REN), //input
+      .clear(fifoRx_clear), //input
+      .wdata(fifoRx_wdata), //input
+      .full(fifoRx_full), //output
+      .empty(fifoRx_empty), //output
+      .underrun(fifoRx_underrun), //ouput
+      .overrun(fifoRx_overrun), //output
+      .count(fifoRx_count), //output
+      .rdata(fifoRx_rdata) //output
+    );
+
+    //fifoTx signals
+    logic fifoTx_WEN, fifoTx_REN, fifoTx_clear;
+    logic [7:0] fifoTx_wdata;
+    logic fifoTx_full, fifoTx_empty, fifoTx_underrun, fifoTx_overrun;
+    logic [$clog2(8)-1:0] fifoTx_count; //current buffer capacity is 8
+    logic [7:0] fifoTx_rdata;
+
+    socetlib_fifo fifoTx (
+      .CLK(clk),
+      .nRST(nReset),
+      .WEN(fifoTx_WEN), //input
+      .REN(fifoTx_REN), //input
+      .clear(fifoTx_clear), //input
+      .wdata(fifoTx_wdata), //input
+      .full(fifoTx_full), //output
+      .empty(fifoTx_empty), //output
+      .underrun(fifoTx_underrun), //ouput
+      .overrun(fifoTx_overrun), //output
+      .count(fifoTx_count), //output
+      .rdata(fifoTx_rdata) //output
+    );
+
+    //buffer clearing
+    assign fifoRx_clear = buffer_clear;
+    assign fifoTx_clear = buffer_clear;
+
+  // UART - buffer signal mechanics
+  assign rts = fifoRx_full;
+  always_ff @(posedge clk) begin
+    //UART Rx to buffer Rx
+    if(rxDone && !rxErr) begin
+        if (fifoRx_overrun) begin
+         fifoRx_wdata <= fifoRx_wdata;
+         fifoRx_WEN <= 1'b0;
+        // do we want to keep or flush out the old data in the fifo register if its full and the rx wants to send in more data?
+        end else begin
+        // alt, check with fifo clear
+      fifoRx_wdata <= rxData; //do i need to account for overflow, probably not?
+      fifoRx_WEN <= 1'b1;
+        end
+    end else begin
+      fifoRx_wdata <= 8'b0; // clear out the data in the fifo and disable writing into it
+      fifoRx_WEN <= 1'b0;
+    end
+
+    //buffer Tx to UART Tx
+      if((cts || !use_flow_control) && !txBusy && txDone) begin //is txDone or txBusy for this spot?? A: either signal should be fine, they are the converse of each other and I don't think its meaningful when
+                                                                  //both are high
+        if (fifoTx_underrun) begin
+        txData <= fifoTx_rdata;
+        txValid <= 1'b0;
+        fifoRx_REN <= 1'b1;
+        end else begin
+        txData <= fifoTx_rdata; //should i account for buffer capacity, maybe not? // should be fine, both are 8 bits...
+        txValid <= 1'b1; // the ts signal is valid
+        fifoTx_REN <= 1'b1;
+        end
+    end else begin
+      txData <= 8'b0;
+      txValid <= 1'b0;
+      fifoTx_REN <= 1'b0;
+    end
   end
 
-  // Params set "clock rate" to 2**16, and "min baud rate" to 1
-  // This is equivalent to "please give me 16-bit counters"
-  BaudRateGen #(2 ** 16, 1) bg (
-      .phase(1'b0),
-      .*
-  );
 
-  UartRxEn uartRx (
-      .en  (rxClk),
-      .in  (rx),
-      .data(rxData),
-      .done(rxDone),
-      .err (rxErr),
-      .*
-  );
+    // bus signal mechanics
+    always_ff @(posedge clk) begin
+        // bus to Tx buffer
+        if(bp.addr == TX_DATA && bp.wen) begin
+            fifoTx_wdata <= bp.wdata[7:0]; // assume we r sending it through the first byte at a time right now
+            fifoTx_WEN <= 1'b1;
+        end
+        else begin
+            fifoTx_wdata <= 8'b0; // else writing nothing into the TX from the bus
+            fifoTx_WEN <= 1'b0; // write signal is disabled
+        end
+        // Rx buffer to bus
+        if(bp.addr == RX_DATA && bp.ren) begin
+            bp.rdata <= {24'b0, fifoRx_rdata};
+            fifoRx_REN <= 1'b1;
+        // Rx state to bus
+        end else if (bp.addr == RX_STATE && bp.ren) begin
+            bp.rdata <= {27'b0, err, avail, fifoRx_count}; // include rr signal to state whether its a receiver error explicitly or not
+        // Tx state to bus
+        end else if (bp.addr == TX_STATE && bp.ren) begin
+            bp.rdata <= {12'b0, rate, txDone, fifoTx_count}; //note to self: check that formatting is right
+        end else begin
+            bp.rdata <= 32'b0;
+        end
+    end
 
-  // socetlib_fifo fifoRx (
-  //   .CLK(clk),
-  //   .nRST(nReset),
-  //   .WEN(), //input
-  //   .REN(), //input
-  //   .clear(), //input
-  //   .wdata(), //input
-  //   .full(), //output
-  //   .empty(), //output
-  //   .underrun(), //ouput
-  //   .overrun(), //output
-  //   .count(), //output
-  //   .rdata() //output
-  // );
+ assign bp.error = fifoRx_overrun || fifoTx_underrun;
+ logic err, avail;
 
-  UartTxEn uartTx (
-      .en   (txClk),
-      .data (txData),
-      .valid(txValid),
-      .out  (tx),  // verilator lint_off PINCONNECTEMPTY
-      .busy (),  // verilator lint_on PINCONNECTEMPTY
-      .done (txDone),
-      .*
-  );
-
-  // socetlib_fifo fifoTx (
-  //   .CLK(clk),
-  //   .nRST(nReset),
-  //   .WEN(), //input
-  //   .REN(), //input
-  //   .clear(), //input
-  //   .wdata(), //input
-  //   .full(), //output
-  //   .empty(), //output
-  //   .underrun(), //ouput
-  //   .overrun(), //output
-  //   .count(), //output
-  //   .rdata() //output
-  // );
-
-  // State variables, done is handled by the transmit FIFO
-  logic err, avail, done;
-
-  always_ff @(posedge clk) begin
+ always_ff @(posedge clk) begin
     if (!nReset) begin
       err   <= 0;
       avail <= 0;
@@ -139,144 +364,318 @@ module AHBUart #(
       err   <= rxErr || ((bp.addr != RX_STATE) && err);
       avail <= rxDone || ((bp.addr != RX_DATA) && avail);
     end else begin
-      err   <= rxErr || err;
+      err   <= rxErr || err; // if there is an exisiting error it persists
       avail <= rxDone || avail;
     end
   end
+endmodule
 
-    // Old buffer start?
-  logic [7:0] rFIFOCount;
-  logic [7:0] rFIFO[2:0];
 
-  always_ff @(posedge clk) begin
-    if (!nReset) begin
-      rFIFOCount <= 0;
-      rFIFO <= '{default: 0};
-    end else if (bp.ren && bp.addr == RX_DATA) begin
-      if (rxDone) begin
-        rFIFO[0]   <= rxData;
-        rFIFOCount <= 1;
-      end else begin
-        rFIFOCount <= 0;
-      end
-    end else if (rxDone) begin
-      if (rFIFOCount < 3) rFIFO[2'(rFIFOCount)] <= rxData;
-      rFIFOCount <= rFIFOCount + 1;
-    end
-  end
+//temporarily adding files here until i figure out what going on
+module BaudRateGen #(
+    int MaxClockRate = 100 * 10 ** 6,
+    int MinBaudRate  = 9600,
+    int Oversample   = 16
+) (
+    input clk,
+    input nReset,
+    input syncReset,
 
-  logic [7:0] wFIFOCount;
-  logic [1:0] wFIFOMaxIndex;
-  logic [1:0] wIndex;
-  logic [7:0] wFIFO[2:0];
-  logic wStart;
+    input phase,
+    input [txWidth-1:0] rate,
 
-  assign txData = wFIFO[wIndex];
+    output logic rxClk,
+    output logic txClk
+);
 
-  always_ff @(posedge clk) begin
-    if (!nReset) begin
-      wIndex <= 0;
-      txValid <= 0;
-      done <= 1;
-      wStart <= 0;
-    end else if (done && bp.wen && bp.addr == TX_DATA) begin
-      wIndex <= 0;
-      done   <= 0;
-      wStart <= 1;
-    end else if (wStart || (wIndex != wFIFOMaxIndex && txDone)) begin
-      txValid <= 1;
-      wIndex  <= wIndex + !wStart;
-      wStart  <= 0;
-    end else begin
-      if (txValid) txValid <= 0;
-      if (wIndex == wFIFOMaxIndex && txDone) done <= 1;
-    end
-  end
+  localparam int txWidth = $clog2(MaxClockRate / MinBaudRate);
+  localparam int rxShift = $clog2(Oversample);
+  localparam int rxWidth = txWidth - rxShift;
 
-  //old buffer end?
+  // Unreasonable to test these full-width
+  /* verilator coverage_off */
+  logic [txWidth-1:0] totalWait;
+  logic [txWidth-1:0] postWait;
+  logic [txWidth-1:0] preWait;
+  /* verilator coverage_on */
+  logic inWait;
 
-  // We're only compatible with 32-bit words
+  logic [rxWidth-1:0] rxRate;
+  logic [rxWidth-1:0] offset;
 
-  // status[31:24]: wStatus only: Counter MSB
-  // status[23:16]: wStatus only: Counter LSB
-  // status[15: 2]: Reserved/Do nothing
-  // status[1]: err
-  // status[0]: done/avail
-  logic [31:0] rStatus;
-  logic [31:0] wStatus;
-
-  // Data registers are tiny FIFOs
-  // data[31:24]: Number of bytes in queue, 0 is treated the same as 1, >3 is same as 3
-  // data[23:16]: 3rd byte in queue
-  // data[15: 8]: 2nd byte in queue
-  // data[ 7: 0]: 1st byte in queue
-  logic [31:0] rData;
-  logic [31:0] wData;
-
-  always_ff @(posedge clk) begin
-    if (!nReset) begin
-      rStatus <= 0;
-      rData   <= 0;
-      wStatus <= 1;
-      wData   <= 0;
-    end else begin
-      rStatus <= {30'(0), err, avail};
-      rData   <= {rFIFOCount, rFIFO[2], rFIFO[1], rFIFO[0]};
-      wStatus <= {rate, 15'(0), done};
-      wData   <= {wFIFOCount, wFIFO[2], wFIFO[1], wFIFO[0]};
-    end
-  end
-
-  logic [7:0] bpData[3:0];
+  logic [rxWidth-1:0] rxCount;
+  logic [txWidth-1:0] txCount;
 
   always_comb begin
-    // bpData = {bp.wdata[31:24], bp.wdata[23:16], bp.wdata[15:8], bp.wdata[7:0]};
-    bpData[0] = bp.wdata[7:0];
-    bpData[1] = bp.wdata[15:8];
-    bpData[2] = bp.wdata[23:16];
-    bpData[3] = bp.wdata[31:24];
-    bp.rdata = 0;
-    if (bp.ren) begin
-      case (bp.addr)
-        RX_STATE: bp.rdata = rStatus;
-        RX_DATA:  bp.rdata = rData;
-        TX_STATE: bp.rdata = wStatus;
-        TX_DATA:  bp.rdata = wData;
-        default: bp.rdata = 0;
-      endcase
-    end else begin
-      bp.rdata = 0;
-    end
+    rxRate    = rate[txWidth-1:rxShift];
+    offset    = rxRate - ((rxRate >> 1) + 1);
+
+    totalWait = rate - {rxRate, 4'b0};
+    preWait   = rate - (totalWait >> 1);
+    postWait  = rate - preWait + txWidth'(rate[0]) + txWidth'(offset);
+    inWait    = txCount > preWait || txCount < postWait;
+
+    rxClk     = (rxRate > 1) ? (!inWait && rxCount == 0) ^ phase : phase;
+    txClk     = (rate > 1) ? (txCount == 0) ^ phase : phase;
   end
 
-  always_ff @(posedge clk) begin
+  always @(posedge clk, negedge nReset) begin
+    if (!nReset || syncReset || (txCount == 0)) begin
+      rxCount <= rxRate - offset - 1;
+    end else if (rxCount == 0) begin
+      rxCount <= rxRate - 1;
+    end else if (!inWait) begin
+      rxCount <= rxCount - 1;
+    end
+
+    if (!nReset || syncReset || (txCount == 0)) begin
+      txCount <= rate - 1;
+    end else begin
+      txCount <= txCount - 1;
+    end
+  end
+endmodule
+
+module UartRxEn #(
+    int Oversample = 16
+) (
+    input clk,
+    input nReset,
+
+    input en,
+    input in,
+
+    output logic [7:0] data,
+
+    output logic done,
+    output logic err
+);
+
+  localparam sampleWidth = $clog2(Oversample);
+  localparam fullSampleCount = sampleWidth'(Oversample - 1);
+  localparam halfSampleCount = sampleWidth'(Oversample / 2);
+
+  // verilog_format: off
+  enum logic [2:0] {
+    IDLE,
+    START,
+    DATA_A,
+    DATA_B,
+    STOP,
+    ERROR
+  } curState , nextState;
+  // verilog_format: on
+
+  logic rise, fall, cmp;
+
+  always_ff @(posedge clk, negedge nReset) begin
+    cmp <= !nReset ? 1 : en ? in : cmp;
+  end
+
+  always_comb begin
+    rise = in & ~cmp;
+    fall = ~in & cmp;
+  end
+
+  logic edgeDetect;
+  logic badSync;
+  logic reSync;
+  logic advance;
+  logic badStop;
+  logic fastStart;
+
+  logic [sampleWidth-1:0] sampleCount;
+  logic [3:0] readCount;
+  logic edgeCmp;
+
+  always_comb begin
+    edgeDetect = en ? fall || rise : 0;
+    badSync = edgeDetect && edgeCmp && (sampleCount >= halfSampleCount);
+    reSync = edgeDetect && (sampleCount < halfSampleCount);
+    advance = reSync || (en && (sampleCount == 0));
+    done = advance && (readCount == 0);
+    badStop = en && in == 0 && sampleCount == halfSampleCount;
+    fastStart = en && fall && sampleCount < halfSampleCount;
+    err = nextState == ERROR;
+  end
+
+  always_ff @(posedge clk, negedge nReset) begin
     if (!nReset) begin
-      rate <= 16'(DefaultRate);
-
-      wFIFOCount <= 0;
-      wFIFOMaxIndex <= 0;
-      wFIFO <= '{default: 0};
+      sampleCount <= fullSampleCount;
+      edgeCmp     <= 0;
+      curState    <= IDLE;
     end else begin
+      curState <= en ? nextState : curState;
 
-    if (bp.wen) begin
-      case (bp.addr)
-        TX_STATE: begin
-          if (bp.strobe[2]) rate[7:0] <= bpData[2];
-          if (bp.strobe[3]) rate[15:8] <= bpData[3];
-        end
-
-        TX_DATA:
-        if (done) begin
-          if (bp.strobe[3]) begin
-            wFIFOCount <= bpData[3];
-            wFIFOMaxIndex <= bpData[3] > 3 ? 2 : |bpData[3] ? 2'(bpData[3] - 8'b1) : 0;
-          end
-          if (bp.strobe[2]) wFIFO[2] <= bpData[2];
-          if (bp.strobe[1]) wFIFO[1] <= bpData[1];
-          if (bp.strobe[0]) wFIFO[0] <= bpData[0];
-        end
-      endcase
-    end
+      if (curState != nextState) begin
+        edgeCmp     <= en ? edgeDetect : edgeCmp;
+        sampleCount <= en ? fullSampleCount : sampleCount;
+      end else begin
+        edgeCmp     <= (en && edgeDetect) ? edgeDetect : edgeCmp;
+        sampleCount <= en ? sampleCount - 1 : sampleCount;
+      end
     end
   end
+
+  logic [7:0] readBuf;
+
+  always_ff @(posedge clk, negedge nReset) begin
+    if (!nReset) begin
+      readCount <= 8;
+      data <= 0;
+    end else begin
+
+      if (readCount == 0) begin
+        data <= en ? readBuf : data;
+      end
+
+      if (nextState != DATA_A && nextState != DATA_B) begin
+        readCount <= en ? 8 : readCount;
+      end else if (sampleCount == halfSampleCount) begin
+        readCount <= en ? readCount - 1 : readCount;
+        readBuf   <= en ? {in, readBuf[7:1]} : readBuf;
+      end
+
+    end
+  end
+
+  always_comb begin
+
+    nextState = curState;
+
+    case (curState)
+
+      IDLE:
+      if (fall) begin
+        nextState = START;
+      end
+
+      START:
+      if (badSync) begin
+        nextState = ERROR;
+      end else if (advance) begin
+        nextState = DATA_A;
+      end
+
+      DATA_A:
+      if (badSync) begin
+        nextState = ERROR;
+      end else if (advance) begin
+        nextState = readCount > 0 ? DATA_B : STOP;
+      end
+
+      DATA_B:
+      if (badSync) begin
+        nextState = ERROR;
+      end else if (advance) begin
+        nextState = readCount > 0 ? DATA_A : STOP;
+      end
+
+      STOP:
+      if (badSync || badStop) begin
+        nextState = ERROR;
+      end else if (fastStart) begin
+        nextState = START;
+      end else if (advance) begin
+        nextState = IDLE;
+      end
+
+      // ERROR
+      default: nextState = IDLE;
+
+    endcase
+  end
+
+endmodule
+
+module UartTxEn (
+    input clk,
+    input nReset,
+
+    input en,
+    input logic [7:0] data,
+    input valid,
+
+    output logic out,
+
+    output logic busy,
+    output logic done
+);
+
+  // verilog_format: off
+  enum logic [1:0] {
+    IDLE,
+    START,
+    DATA,
+    STOP
+  } curState, nextState;
+  // verilog_format: on
+
+  logic hasData;
+  logic enterStart;
+
+  logic [7:0] writeBuf;
+  logic [3:0] writeCount;
+
+  always_comb begin
+    done = en & (nextState == STOP);
+    busy = nextState != IDLE;
+  end
+
+  always_comb begin
+    if (nextState == DATA) begin
+      out = writeBuf[0];
+    end else if (nextState == START) begin
+      out = 0;
+    end else begin
+      out = 1;
+    end
+  end
+
+  always_ff @(posedge clk, negedge nReset) begin
+    if (!nReset) begin
+      curState   <= IDLE;
+      writeCount <= 8;
+      writeBuf   <= 0;
+      hasData    <= 0;
+      enterStart <= 0;
+    end else begin
+      curState <= en ? nextState : curState;
+
+      if (nextState == STOP || nextState == IDLE) begin
+        if (valid) begin
+          enterStart <= en ? 1 : enterStart;
+          hasData    <= 1;
+          writeCount <= 8;
+          writeBuf   <= data;
+        end else if (hasData) begin
+          enterStart <= en ? 1 : enterStart;
+        end
+      end
+
+      if (nextState == START) begin
+        hasData <= en ? 0 : hasData;
+        enterStart <= en ? 0 : enterStart;
+      end
+
+      if (nextState == DATA) begin
+        writeCount <= en ? writeCount - 1 : writeCount;
+        writeBuf   <= en ? 8'(writeBuf[7:1]) : writeBuf;
+      end
+
+    end
+  end
+
+  always_comb begin
+    case (curState)
+      IDLE: nextState = enterStart ? START : curState;
+
+      START: nextState = DATA;
+
+      DATA: nextState = |writeCount ? curState : STOP;
+
+      STOP: nextState = enterStart ? START : IDLE;
+    endcase
+  end
+
 endmodule
