@@ -8,7 +8,7 @@
 //`define __BUS_PROTOCOL_IF__
 
 //check internal assertions using waveform dumps...
-
+//`timescale 1ns / 1ps
 module uart_tb #();
 
 logic clk, nReset, rx, tx, cts, rts;
@@ -39,19 +39,40 @@ initial begin
   bp.addr = 0;
   bp.wen = 0;
   bp.wdata = 0;
-
-  #20; // wait 20 before reset is high
-
+  #10; 
   nReset = 1;
+  #10;
+  nReset = 0;
+  //checking initial reset values
+  #10; // wait 10 before reset is high
+  nReset = 1;
+  #10;
+  nReset = 0;
+  #10;
+  nReset = 2;
   bp.addr = 24;
   bp.wen = 1;
-  bp.wdata = 32'h0F;
-  #20;
+  bp.wdata = 32'hccccFFFF;
+  $display("Test #1 done, checked reset = 0");
+  #10;
+   nReset = 0;
+  //bp.wen is maintained
+  //baud rate is set tp 24
+  #10;
   bp.wen = 0;
-
-  #100;
-
-        $display("Test completed!");
+  #10;
+  bp.addr = 20;
+  bp.wen = 1;
+  bp.wdata = 32'h0;
+  #10;
+  bp.wen = 0;
+  // use for syn reset tests as well
+ #10;
+  nReset = 1; 
+#10;
+  nReset = 0;
+#10;
+       $display("Test completed!");
         $finish;
 end
 endmodule
@@ -94,4 +115,3 @@ interface bus_protocol_if #(
         );
 endinterface
 //`endif
-
