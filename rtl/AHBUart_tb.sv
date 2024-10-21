@@ -75,10 +75,10 @@ module uart_tb #();
                 reset_all;
         
                 //note: uart modules are currently disconnected from each other
-                uart1.rx = 0;
-                uart2.rx = 0;
-                uart1.cts = 0;
-                uart2.cts = 0;
+                rx1 = 0;
+                rx2 = 0;
+                cts1 = 0;
+                cts2 = 0;
                 #10; 
                 
                 //Reset test
