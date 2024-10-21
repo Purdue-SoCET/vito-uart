@@ -11,6 +11,8 @@
 //`timescale 1ns / 1ps
 module uart_tb #();
 
+        integer test_num;
+        
         logic clk;
         logic nRst1, rx1, tx1, cts1, rts1;
         logic nRst2, rx2, tx2, cts2, rts2;
@@ -82,6 +84,8 @@ module uart_tb #();
                 #10; 
                 
                 //Reset test
+                test_num = 0;
+                
                 nRst1 = 1;
                 nRst2 = 1;
                 #10;
@@ -98,6 +102,8 @@ module uart_tb #();
                 $display("Test #1 done, checked reset");
                 
                 //Configuration test
+                test_num++;
+                
                 nRst1 = 1;
                 bp1.addr = 24;
                 bp1.wen = 1;
