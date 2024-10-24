@@ -30,14 +30,20 @@ module AHBUart_tapeout_wrapper #(
     input clk, // 1
     input nReset, // 1
     input [3:0] control, // 4
-    inout [7:0] data, 
+    input [7:0] tx_data, // input to the fifo, and then the transceiver..which is then sent out again by tx
+    output [7:0] rx_data, // received from rx, output from the reciever, to the fifo..which is then sent out by the data line
     
     input  rx, // 1
     output tx,
 
     input cts, // 1
     output rts,
+    output err 
 
+    // PIN COUNT:
+    // rx_data, tx_data 8/8 bidirectional (bidirectional lines are handled in the tapeout wrapper file)
+    // clk-1, nReset-1, control-4, rx-1, cts-4, 8/8 in 
+    // tx, rts, err, 3/8 out
 );
 
   logic [1:0] rate_control;
@@ -72,7 +78,7 @@ module AHBUart_tapeout_wrapper #(
               rate <= 16'b0;
             end
              ///   
-            if((ren_wen == BUFFER_CLEAR) && |data) begin // if the read and write direction pin is enabled simultaneously, and non-zero data exists in the line 
+            if((ren_wen == BUFFER_CLEAR) && (rx_data || tx_data)) begin // if the read and write direction pin is enabled simultaneously, and non-zero data exists on the rx_data and tx_data
                 buffer_clear <= 1'b1;
             end else begin
                 buffer_clear <= 1'b0; // else the buffer is not clear 
@@ -214,8 +220,8 @@ module AHBUart_tapeout_wrapper #(
     // bus signal mechanics
     always_ff @(posedge clk) begin
         // bus to Tx buffer
-        if((ren_wen == to_TX) && |data ) begin
-            fifoTx_wdata <= data; // assume we r sending it through the first byte at a time right now
+        if((ren_wen == to_TX) && |tx_data ) begin
+            fifoTx_wdata <= tx_data; // assume we r sending it through the first byte at a time right now
             fifoTx_WEN <= 1'b1;
         end
         else begin
@@ -223,13 +229,23 @@ module AHBUart_tapeout_wrapper #(
             fifoTx_WEN <= 1'b0; // write signal is disabled
         end
         // Rx buffer to bus
-        if((ren_wen == from_RX) && ~|data) begin
-            data <= fifoRx_rdata;
+        if((ren_wen == from_RX) && ~|rx_data) begin // checking if theres only 0's in the rx_data line...
+            rx_data <= fifoRx_rdata;
             fifoRx_REN <= 1'b1;
         end else begin
-            data <= 8'b0;
+            rx_data <= 8'b0;
             fifoRx_REN <= 1'b0;
         end
       end
+
+    always_ff @(posedge clk) begin
+    if (!nReset) begin
+        err   <= 0;
+    end else if (ren_wen) begin
+        err   <= rxErr || ((ren_wen != from_RX) && err); // checks for a mismatch between errors 
+    end else begin
+      err   <= rxErr || err; // if there is an exisiting error it persists, 
+    end
+    end   
 
 endmodule
