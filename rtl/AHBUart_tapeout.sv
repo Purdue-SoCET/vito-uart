@@ -67,7 +67,7 @@ module AHBUart_tapeout_wrapper #(
         endcase
     end
     
-        always_ff @(posedge clk, negedge nReset ) begin
+        always_ff @(posedge clk, negedge nReset) begin
         if(!nReset) begin
             rate <= DefaultRate;
             new_rate <= DefaultRate;
@@ -93,7 +93,7 @@ module AHBUart_tapeout_wrapper #(
     logic txValid, txClk, txBusy, txDone;
     logic syncReset;
 
-    always_ff @(posedge clk) begin
+            always_ff @(posedge clk, negedge nReset) begin
     if (!nReset) begin
       syncReset <= 1;
     end else if (ren_wen) begin // check if ren_wen is beyond idle..
@@ -181,7 +181,7 @@ module AHBUart_tapeout_wrapper #(
 
   // UART - buffer signal mechanics
   assign rts = fifoRx_full;
-  always_ff @(posedge clk) begin
+            always_ff @(posedge clk, negedge nReset) begin
     //UART Rx to buffer Rx
     if(rxDone && !rxErr) begin
         if (fifoRx_overrun) begin
@@ -244,7 +244,7 @@ module AHBUart_tapeout_wrapper #(
         end
       end
 
-    always_ff @(posedge clk) begin
+            always_ff @(posedge clk, negedge nReset) begin
     if (!nReset) begin
         err   <= 0;
     end else if (ren_wen) begin
