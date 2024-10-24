@@ -17,7 +17,7 @@
 *
 *   Created by:   Vito Gamberini
 *   Email:        vito@gamberini.email
-*   Modified by:  Michael Li, Yash Singh
+*   Modified by:  Michael Li, Yash Singh 
 *   Date Created: 9/21/2024
 *   Description:  Modification of AHB wrapper for Tape out Nov 10 testing.
 */
@@ -27,47 +27,55 @@
 module AHBUart_tapeout_wrapper #(
     logic [15:0] DefaultRate = 5207  // Chosen by fair dice roll
 ) (
-    input clk,
-    input nReset,
-    input [4:0] control,
+    input clk, // 1
+    input nReset, // 1
+    input [3:0] control, // 4
     inout [7:0] data, 
     
-    input  rx,
+    input  rx, // 1
     output tx,
 
-    input cts,
+    input cts, // 1
     output rts,
 
 );
 
-  logic [2:0] rate_control;
-  logic [1:0] ren_wen;
-  assign ren_wen = control[4:3];
-  assign rate_control = control[2:0];
-  
+  logic [1:0] rate_control;
+  logic [15:0] new_rate;
+  logic [1:0] ren_wen; // act as the direction
+  assign ren_wen = control[3:2];
+  assign rate_control = control[1:0];
+    
+  typedef enum logic [1:0] {
+        IDLE = 0;
+        to_TX = 1;
+        from_RX = 2;
+        BUFFER_CLEAR = 3;
+  } data_line_state;
+
+  always_comb begin
+        case(rate_control) begin
+            2'b01: new_rate = 16384;
+            2'b10: new_rate = 34816;
+            2'b11: new_rate = 53248;
+        endcase
+    end
+    
     always_ff @(posedge clk) begin
         if(!nReset) begin
             rate <= DefaultRate;
+            new_rate <= DefaultRate;
         end else begin
             if(|rate_control) begin
-              case(rate_control) begin
-                3'b001: rate = 16384;
-                3'b010: rate = 22528; // 22,528
-                3'b011: rate = 28672; // 28,672
-                3'b100: rate = 34816;
-                3'b101: rate = 40960;
-                3'b110: rate = 47104;
-                3'b111: rate = 53248;
-                default: rate = DefaultRate;
-              endcase
+              rate <= new_rate;
             end else begin
-                rate <= 16'b0;
+              rate <= 16'b0;
             end
-                
-            if((ren_wen == 2'b11) && |data) begin
+             ///   
+            if((ren_wen == BUFFER_CLEAR) && |data) begin // if the read and write direction pin is enabled simultaneously, and non-zero data exists in the line 
                 buffer_clear <= 1'b1;
             end else begin
-                buffer_clear <= 1'b0;
+                buffer_clear <= 1'b0; // else the buffer is not clear 
             end
         end
     end
@@ -82,9 +90,9 @@ module AHBUart_tapeout_wrapper #(
     always_ff @(posedge clk) begin
     if (!nReset) begin
       syncReset <= 1;
-    end else if (ren_wen) begin
+    end else if (ren_wen) begin // check if ren_wen is beyond idle..
       case (ren_wen)
-        2'b01, 2'b10: syncReset <= 1;
+        to_TX, from_RX: syncReset <= 1; // if in read or write enable...
       endcase
     end else begin
       syncReset <= 0;
@@ -206,7 +214,7 @@ module AHBUart_tapeout_wrapper #(
     // bus signal mechanics
     always_ff @(posedge clk) begin
         // bus to Tx buffer
-      if((ren_wen == 2'b01) && |data ) begin
+        if((ren_wen == to_TX) && |data ) begin
             fifoTx_wdata <= data; // assume we r sending it through the first byte at a time right now
             fifoTx_WEN <= 1'b1;
         end
@@ -215,7 +223,7 @@ module AHBUart_tapeout_wrapper #(
             fifoTx_WEN <= 1'b0; // write signal is disabled
         end
         // Rx buffer to bus
-      if((ren_wen == 2'b10) && ~|data) begin
+        if((ren_wen == from_RX) && ~|data) begin
             data <= fifoRx_rdata;
             fifoRx_REN <= 1'b1;
         end else begin
