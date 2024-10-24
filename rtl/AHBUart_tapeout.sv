@@ -67,7 +67,7 @@ module AHBUart_tapeout_wrapper #(
         endcase
     end
     
-    always_ff @(posedge clk) begin
+        always_ff @(posedge clk, negedge nReset ) begin
         if(!nReset) begin
             rate <= DefaultRate;
             new_rate <= DefaultRate;
@@ -218,8 +218,13 @@ module AHBUart_tapeout_wrapper #(
   end
 
     // bus signal mechanics
-    always_ff @(posedge clk) begin
-        // bus to Tx buffer
+        always_ff @(posedge clk, negedge nReset) begin
+        if (!nReset) begin
+            fifoTx_wdata <= 8'b0;
+            fifoTx_WEN <= 1'b0;
+            rx_data <= 8'b0;
+            fifoRx_REN <= 1'b0;
+        end else begin
         if((ren_wen == to_TX) && |tx_data ) begin
             fifoTx_wdata <= tx_data; // assume we r sending it through the first byte at a time right now
             fifoTx_WEN <= 1'b1;
@@ -235,6 +240,7 @@ module AHBUart_tapeout_wrapper #(
         end else begin
             rx_data <= 8'b0;
             fifoRx_REN <= 1'b0;
+        end
         end
       end
 
