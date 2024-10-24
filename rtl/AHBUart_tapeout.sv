@@ -48,16 +48,27 @@ module AHBUart_tapeout_wrapper #(
 
   logic [1:0] rate_control;
   logic [15:0] new_rate;
-  logic [1:0] ren_wen; // act as the direction
+  logic [1:0] ren_wen, ren_wen_nidle; // act as the direction
   assign ren_wen = control[3:2];
   assign rate_control = control[1:0];
-    
+  // tristate logic handling...
+  
   typedef enum logic [1:0] {
         IDLE = 0;
         to_TX = 1;
         from_RX = 2;
         BUFFER_CLEAR = 3;
-  } data_line_state;
+  } prev_ren_wen, data_state, next_data_state;
+
+    always_ff@(posedge clk, negedge nReset) begin
+    if (!nReset) begin
+        ren_wen <= IDLE;
+        prev_ren_wen <= IDLE;
+    end else begin
+        ren_wen_nidle <= ren_wen ^ prev_ren_wen;
+        prev_ren_wen <= ren_wen;
+    end 
+    end
 
   always_comb begin
         case(rate_control) begin
@@ -78,7 +89,7 @@ module AHBUart_tapeout_wrapper #(
               rate <= 16'b0;
             end
              ///   
-            if((ren_wen == BUFFER_CLEAR) && (rx_data || tx_data)) begin // if the read and write direction pin is enabled simultaneously, and non-zero data exists on the rx_data and tx_data
+            if((ren_wen_nidle == BUFFER_CLEAR) && (rx_data || tx_data)) begin // if the read and write direction pin is enabled simultaneously, and non-zero data exists on the rx_data and tx_data
                 buffer_clear <= 1'b1;
             end else begin
                 buffer_clear <= 1'b0; // else the buffer is not clear 
@@ -93,7 +104,7 @@ module AHBUart_tapeout_wrapper #(
     logic txValid, txClk, txBusy, txDone;
     logic syncReset;
 
-            always_ff @(posedge clk, negedge nReset) begin
+    always_ff @(posedge clk, negedge nReset) begin
     if (!nReset) begin
       syncReset <= 1;
     end else if (ren_wen) begin // check if ren_wen is beyond idle..
@@ -225,7 +236,7 @@ module AHBUart_tapeout_wrapper #(
             rx_data <= 8'b0;
             fifoRx_REN <= 1'b0;
         end else begin
-        if((ren_wen == to_TX) && |tx_data ) begin
+            if((ren_wen_nidle == to_TX) && |tx_data ) begin
             fifoTx_wdata <= tx_data; // assume we r sending it through the first byte at a time right now
             fifoTx_WEN <= 1'b1;
         end
@@ -234,7 +245,7 @@ module AHBUart_tapeout_wrapper #(
             fifoTx_WEN <= 1'b0; // write signal is disabled
         end
         // Rx buffer to bus
-        if((ren_wen == from_RX) && ~|rx_data) begin // checking if theres only 0's in the rx_data line...
+            if((ren_wen_nidle == from_RX) && ~|rx_data) begin // checking if theres only 0's in the rx_data line...
             rx_data <= fifoRx_rdata;
             fifoRx_REN <= 1'b1;
         end else begin
@@ -248,7 +259,7 @@ module AHBUart_tapeout_wrapper #(
     if (!nReset) begin
         err   <= 0;
     end else if (ren_wen) begin
-        err   <= rxErr || ((ren_wen != from_RX) && err); // checks for a mismatch between errors 
+        err   <= rxErr || ((ren_wen_nidle != from_RX) && err); // checks for a mismatch between errors 
     end else begin
       err   <= rxErr || err; // if there is an exisiting error it persists, 
     end
