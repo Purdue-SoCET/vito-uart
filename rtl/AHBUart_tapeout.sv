@@ -46,9 +46,9 @@ module AHBUart_tapeout_wrapper #(
     // tx, rts, err, 3/8 out
 );
 
-  logic [1:0] rate_control;
+  logic [1:0] rate_control, ren_wen;
   logic [15:0] new_rate;
-  logic [1:0] ren_wen, ren_wen_nidle; // act as the direction
+  logic [1:0]  ren_wen_nidle, prev_ren_wen; // act as the direction
   assign ren_wen = control[3:2];
   assign rate_control = control[1:0];
   // tristate logic handling...
@@ -58,12 +58,12 @@ module AHBUart_tapeout_wrapper #(
         to_TX = 1;
         from_RX = 2;
         BUFFER_CLEAR = 3;
-  } prev_ren_wen, data_state, next_data_state;
+  } data_state_t;
 
     always_ff@(posedge clk, negedge nReset) begin
     if (!nReset) begin
-        ren_wen <= IDLE;
-        prev_ren_wen <= IDLE;
+        pren_ren_wen <= IDLE;
+        ren_wen_idle <= IDLE;
     end else begin
         ren_wen_nidle <= ren_wen ^ prev_ren_wen;
         prev_ren_wen <= ren_wen;
@@ -75,10 +75,11 @@ module AHBUart_tapeout_wrapper #(
             2'b01: new_rate = 16384;
             2'b10: new_rate = 34816;
             2'b11: new_rate = 53248;
+            default: new_rate = DefaultRate;
         endcase
     end
     
-        always_ff @(posedge clk, negedge nReset) begin
+    always_ff @(posedge clk, negedge nReset) begin
         if(!nReset) begin
             rate <= DefaultRate;
             new_rate <= DefaultRate;
@@ -107,8 +108,8 @@ module AHBUart_tapeout_wrapper #(
     always_ff @(posedge clk, negedge nReset) begin
     if (!nReset) begin
       syncReset <= 1;
-    end else if (ren_wen) begin // check if ren_wen is beyond idle..
-      case (ren_wen)
+    end else if (ren_wen_nidle) begin // check if ren_wen is beyond idle..
+        case (ren_wen_nidle)
         to_TX, from_RX: syncReset <= 1; // if in read or write enable...
       endcase
     end else begin
@@ -192,7 +193,7 @@ module AHBUart_tapeout_wrapper #(
 
   // UART - buffer signal mechanics
   assign rts = fifoRx_full;
-            always_ff @(posedge clk, negedge nReset) begin
+  always_ff @(posedge clk, negedge nReset) begin
     //UART Rx to buffer Rx
     if(rxDone && !rxErr) begin
         if (fifoRx_overrun) begin
@@ -255,13 +256,14 @@ module AHBUart_tapeout_wrapper #(
         end
       end
 
-            always_ff @(posedge clk, negedge nReset) begin
+    logic err;
+    always_ff @(posedge clk, negedge nReset) begin
     if (!nReset) begin
         err   <= 0;
-    end else if (ren_wen) begin
+    end else if (ren_wen_nidle) begin
         err   <= rxErr || ((ren_wen_nidle != from_RX) && err); // checks for a mismatch between errors 
     end else begin
-      err   <= rxErr || err; // if there is an exisiting error it persists, 
+        err   <= rxErr || err; // if there is an exisiting error it persists, 
     end
     end   
 
