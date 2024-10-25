@@ -60,12 +60,22 @@ module AHBUart_tapeout_wrapper #(
         BUFFER_CLEAR = 3;
   } data_state_t;
 
+    // host: 
+    // ren = 10, idle = 00
+
+    //ren, wen xxx 
+    // ren idle wen idle 
+
     always_ff@(posedge clk, negedge nReset) begin
     if (!nReset) begin
-        pren_ren_wen <= IDLE;
-        ren_wen_idle <= IDLE;
+        prev_ren_wen <= IDLE;
+        ren_wen_nidle <= IDLE;
     end else begin
-        ren_wen_nidle <= ren_wen ^ prev_ren_wen;
+        if (ren_wen == IDLE) begin
+            ren_wen_nidle <= prev_ren_wen;
+        end else begin
+            ren_wen_nidle <= IDLE;
+        end
         prev_ren_wen <= ren_wen;
     end 
     end
