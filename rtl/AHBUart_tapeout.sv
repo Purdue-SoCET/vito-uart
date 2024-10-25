@@ -60,12 +60,6 @@ module AHBUart_tapeout_wrapper #(
         BUFFER_CLEAR = 3;
   } data_state_t;
 
-    // host: 
-    // ren = 10, idle = 00
-
-    //ren, wen xxx 
-    // ren idle wen idle 
-
     always_ff@(posedge clk, negedge nReset) begin
     if (!nReset) begin
         prev_ren_wen <= IDLE;
@@ -82,9 +76,9 @@ module AHBUart_tapeout_wrapper #(
 
   always_comb begin
         case(rate_control) begin
-            2'b01: new_rate = 16384;
-            2'b10: new_rate = 34816;
-            2'b11: new_rate = 53248;
+            2'b01: new_rate = 9600;
+            2'b10: new_rate = 50000;
+            2'b11: new_rate = 115200;
             default: new_rate = DefaultRate;
         endcase
     end
@@ -97,10 +91,10 @@ module AHBUart_tapeout_wrapper #(
             if(|rate_control) begin
               rate <= new_rate;
             end else begin
-              rate <= 16'b0;
+              rate <= DefaultRate;
             end
              ///   
-            if((ren_wen_nidle == BUFFER_CLEAR) && (rx_data || tx_data)) begin // if the read and write direction pin is enabled simultaneously, and non-zero data exists on the rx_data and tx_data
+            if(ren_wen_nidle == BUFFER_CLEAR) begin // if the read and write direction pin is enabled simultaneously, and non-zero data exists on the rx_data and tx_data
                 buffer_clear <= 1'b1;
             end else begin
                 buffer_clear <= 1'b0; // else the buffer is not clear 
