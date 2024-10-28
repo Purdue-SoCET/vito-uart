@@ -67,7 +67,7 @@ module uart_tb #();
     endtask 
 
 	task read_tx_data;
-		input integer baud_rate
+		input integer baud_rate;
     begin
 		//add stuff here :)
     end
