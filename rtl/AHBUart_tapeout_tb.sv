@@ -53,12 +53,12 @@ module uart_tb #();
 		rate_control = 2'b0;
 		tx_data = 8'b0;
 		
-		nRst = 1;
+		nRst = 1'b0;
 		#10;
 
 		cts = 1'b1;
 		
-		nRst = 0;
+		nRst = 1'b1;
 		#10;
 	endtask
 
@@ -111,15 +111,16 @@ module uart_tb #();
 		//Test 0: Reset test
 		test_num = 0;
 		
-		nRst = 1;
-		#10;
 		nRst = 0;
+		#10;
+		nRst = 1;
 		//checking initial reset values
 		#10; // wait 10 before reset is high
 		$display("Test #1 done, checked reset");
 		
 		//Test 1: writing to Tx_buffer
 		test_num++;
+		reset_all;
 		tx_buffer_write(8'h1);
 		#10;
 		tx_buffer_write(8'h2);
