@@ -49,11 +49,13 @@ module AHBUart_tapeout_wrapper #(
 );
 
     logic [1:0] rate_control, ren_wen;
-    logic [15:0] new_rate;
+    logic [15:0] rate, new_rate;
     logic [1:0]  ren_wen_nidle, prev_ren_wen; // act as the direction
     assign ren_wen = control[3:2];
     assign rate_control = control[1:0];
     // tristate logic handling...
+
+    logic buffer_clear;
     
     //configurations for ren_wen and derivatives
     typedef enum logic [1:0] {
@@ -270,7 +272,7 @@ module AHBUart_tapeout_wrapper #(
     end
 
     //logic to make sure err persists
-    logic err;
+    err;
     always_ff @(posedge clk, negedge nReset) begin
         if (!nReset) begin
             err   <= 0;
