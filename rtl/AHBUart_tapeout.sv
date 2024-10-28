@@ -30,9 +30,9 @@ module AHBUart_tapeout_wrapper #(
 ) (
     input clk, // 1
     input nReset, // 1
-    input [3:0] control, // 4
-    input [7:0] tx_data, // input to the fifo, and then the transceiver..which is then sent out again by tx
-    output [7:0] rx_data, // received from rx, output from the reciever, to the fifo..which is then sent out by the data line
+    input logic [3:0] control, // 4
+    input logic [7:0] tx_data, // input to the fifo, and then the transceiver..which is then sent out again by tx
+    output logic [7:0] rx_data, // received from rx, output from the reciever, to the fifo..which is then sent out by the data line
     //Note: tx_data and rx_data will be merged into a single bidirectional line on the tapeout
     
     input  rx, // 1
