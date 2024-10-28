@@ -73,7 +73,11 @@ module AHBUart_tapeout_wrapper #(
             ren_wen_nidle <= IDLE;
         end else begin
             if (ren_wen == IDLE) begin
-                ren_wen_nidle <= prev_ren_wen;
+                if(prev_ren_wen == IDLE) begin
+                    ren_wen_nidle <= ren_wen;
+                end else begin
+                    ren_wen_nidle <= IDLE;
+                end
             end else begin
                 ren_wen_nidle <= IDLE;
             end
