@@ -272,7 +272,6 @@ module AHBUart_tapeout_wrapper #(
     end
 
     //logic to make sure err persists
-    err;
     always_ff @(posedge clk, negedge nReset) begin
         if (!nReset) begin
             err   <= 0;
