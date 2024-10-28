@@ -28,7 +28,7 @@ module uart_tb #();
 	logic [7:0] tx_data, rx_data;
 
 	logic [1:0] rate_control, ren_wen;
-	assign control = {ren_wen, rate_control} 
+	assign control = {ren_wen, rate_control}; 
 	
 		
 	AHBUart_tapeout_wrapper DUT (
