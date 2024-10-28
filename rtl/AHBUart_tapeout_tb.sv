@@ -10,10 +10,10 @@
 
 //configurations for ren_wen and derivatives
 typedef enum logic [1:0] {
-	IDLE = 0;
-	to_TX = 1;
-	from_RX = 2;
-	BUFFER_CLEAR = 3;
+	IDLE = 0,
+	to_TX = 1,
+	from_RX = 2,
+	BUFFER_CLEAR = 3
 } data_state_t;
 
 //check internal assertions using waveform dumps...
@@ -25,7 +25,7 @@ module uart_tb #();
 	logic clk, nRst;
 	logic rx, tx, cts, rts, err;
 	logic [3:0] control;
-	logic [7:0] tx_data, rx_data
+	logic [7:0] tx_data, rx_data;
 	
 		
 	AHBUart_tapeout_wrapper DUT (
@@ -52,7 +52,7 @@ module uart_tb #();
 		nRst = 1;
 		#10;
 
-		cts = 1'b1
+		cts = 1'b1;
 		
 		nRst = 0;
 		#10;
@@ -60,7 +60,7 @@ module uart_tb #();
 
 	task send_rx_data;
 		input logic [7:0] data_to_send;
-		input integer baud_rate
+		input integer baud_rate;
     begin
 		//add stuff here :)
     end
@@ -72,7 +72,8 @@ module uart_tb #();
 		//add stuff here :)
     end
     endtask 
-        
+
+	
 	initial begin
 		//initialize input signals
 		//$dumpfile("uart_wv.vcd");
