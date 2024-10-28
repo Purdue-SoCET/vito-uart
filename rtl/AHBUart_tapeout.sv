@@ -230,16 +230,13 @@ module AHBUart_tapeout_wrapper #(
             if (fifoTx_underrun) begin
                 txData <= fifoTx_rdata; //m - weird logic, ask about this later
                 txValid <= 1'b0;
-                fifoRx_REN <= 1'b1; //m - not sure REN should be on when buffer is overrun
             end else begin
                 txData <= fifoTx_rdata; //should i account for buffer capacity, maybe not? // should be fine, both are 8 bits...
                 txValid <= 1'b1; // the ts signal is valid
-                fifoTx_REN <= 1'b1;
             end
         end else begin
             txData <= 8'b0;
             txValid <= 1'b0;
-            fifoTx_REN <= 1'b0;
         end
     end
 
