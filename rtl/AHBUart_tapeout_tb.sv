@@ -119,6 +119,7 @@ module uart_tb #();
 		$display("Test #1 done, checked reset");
 		
 		//Test 1: writing to Tx_buffer
+		test_num++;
 		tx_buffer_write(8'h1);
 		#10;
 		tx_buffer_write(8'h2);
