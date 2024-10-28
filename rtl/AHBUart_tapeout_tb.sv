@@ -77,7 +77,7 @@ module uart_tb #();
 	end
 	endtask
 
-	task rx_buffer_read
+	task rx_buffer_read;
 	begin
 		$display("Buffer read: %x", rx_data);
 		ren_wen = from_RX;
@@ -86,7 +86,7 @@ module uart_tb #();
 	end
 	endtask
 
-	task tx_buffer_write
+	task tx_buffer_write;
 		input logic [7:0] data_to_write
 	begin
 		ren_wen = to_TX;
