@@ -62,20 +62,40 @@ module uart_tb #();
 		#10;
 	endtask
 
-	task send_rx_data;
+	task rx_external_read;
 		input logic [7:0] data_to_send;
 		input integer baud_rate;
-    begin
+	begin
 		//add stuff here :)
-    end
-    endtask 
+	end
+	endtask
 
-	task read_tx_data;
+	task tx_external_write;
 		input integer baud_rate;
-    begin
+	begin
 		//add stuff here :)
-    end
-    endtask 
+	end
+	endtask
+
+	task rx_buffer_read
+	begin
+		$display("Buffer read: %x", rx_data);
+		ren_wen = from_RX;
+		#10;
+		ren_wen = IDLE;
+	end
+	endtask
+
+	task tx_buffer_write
+		input logic [7:0] data_to_write
+	begin
+		ren_wen = to_TX;
+		tx_data = data_to_write
+		#10;
+		ren_wen = IDLE;
+		tx_data = 8'b0;
+	end
+	endtask
 
 	
 	initial begin
@@ -88,7 +108,7 @@ module uart_tb #();
 	
 		reset_all;
 		
-		//Reset test
+		//Test 0: Reset test
 		test_num = 0;
 		
 		nRst = 1;
@@ -98,8 +118,24 @@ module uart_tb #();
 		#10; // wait 10 before reset is high
 		$display("Test #1 done, checked reset");
 		
-		//Configuration test
-		test_num++;
+		//Test 1: writing to Tx_buffer
+		tx_buffer_write(8'h1);
+		#10;
+		tx_buffer_write(8'h2);
+		#10;
+		tx_buffer_write(8'h3);
+		#10;
+		tx_buffer_write(8'h4);
+		#10;
+		tx_buffer_write(8'h5);
+		#10;
+		tx_buffer_write(8'h6);
+		#10
+		tx_buffer_write(8'h7);
+		#10;
+		tx_buffer_write(8'h8);
+		#10;
+		
 		
 		
 		$display("Test completed!");
