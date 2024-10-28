@@ -87,7 +87,7 @@ module uart_tb #();
 	endtask
 
 	task tx_buffer_write;
-		input logic [7:0] data_to_write
+		input logic [7:0] data_to_write;
 	begin
 		ren_wen = to_TX;
 		tx_data = data_to_write
