@@ -46,7 +46,7 @@ module uart_tb #();
 	task reset_all;
 		rx = 1'b1;
 		cts = 1'b0;
-		control = IDLE;
+		control = IDLE + 2'b0;
 		tx_data = 8'b0;
 		
 		nRst = 1;
