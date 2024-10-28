@@ -1,8 +1,7 @@
 /* manually inserting the socetFIFO errors while this gets sorted out...*/
 module socetlib_fifo #(
-    parameter type T = logic [7:0], // total FIFO entries
-    parameter DEPTH = 8,
-    parameter ADDR_BITS = $clog2(DEPTH)
+    parameter type T = logic [7:0], // type of a FIFO entry
+    parameter int DEPTH = 8 // # of FIFO entries
 )(
     input CLK,
     input nRST,
@@ -12,26 +11,25 @@ module socetlib_fifo #(
     input T wdata,
     output logic full,
     output logic empty,
-    output logic underrun,
+    output logic underrun, 
     output logic overrun,
-    output logic [ADDR_BITS-1:0] count,
+    output logic [$clog2(DEPTH)-1:0] count,
     output T rdata
 );
 
     // Parameter checking
     //
     // Width can be any number of bits > 1, but depth must be a power-of-2 to accomodate addressing scheme
-    // Address bits should not be changed by the user.
-    /*generate
-        if(DEPTH == 0 || (DEPTH != 0 && (DEPTH - 1) != 0)) begin
+    // TODO: 
+    generate
+        if(DEPTH == 0 || (DEPTH & (DEPTH - 1)) != 0) begin
             $error("%m: DEPTH must be a power of 2 >= 1!");
         end
+    endgenerate
+    
+    localparam int ADDR_BITS = $clog2(DEPTH);
 
-        if(ADDR_BITS != $clog2(DEPTH)) begin
-            $error("%m: ADDR_BITS is automatically calculated, please do not override!");
-        end
-    endgenerate*/ //Note: the error statements is broken somehow, commented this just try to see if everything else works
-
+    
     logic full_internal, full_next, empty_internal, empty_next;
     logic overrun_next, underrun_next;
     logic [ADDR_BITS-1:0] write_ptr, write_ptr_next, read_ptr, read_ptr_next;
@@ -104,6 +102,7 @@ module socetlib_fifo #(
 
 
 endmodule
+
 
 //temporarily adding files here until i figure out what going on
 module BaudRateGen #(
