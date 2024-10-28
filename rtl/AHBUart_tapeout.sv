@@ -244,31 +244,58 @@ module AHBUart_tapeout_wrapper #(
     end
 
     // "bus signal" mechanics
-    always_ff @(posedge clk, negedge nReset) begin
+    //making this always_comb just to see what happens :) 
+    always_comb begin
         // "bus" to tx_buffer
         if (!nReset) begin
-            fifoTx_wdata <= 8'b0;
-            fifoTx_WEN <= 1'b0;
+            fifoTx_wdata = 8'b0;
+            fifoTx_WEN = 1'b0;
         end else if(ren_wen_nidle == to_TX) begin
-            fifoTx_wdata <= tx_data; // assume we r sending it through the first byte at a time right now
-            fifoTx_WEN <= 1'b1;
+            fifoTx_wdata = tx_data; // assume we r sending it through the first byte at a time right now
+            fifoTx_WEN = 1'b1;
         end else begin
-            fifoTx_wdata <= 8'b0; // else writing nothing into the TX from the bus
-            fifoTx_WEN <= 1'b0; // write signal is disabled
+            fifoTx_wdata = 8'b0; // else writing nothing into the TX from the bus
+            fifoTx_WEN = 1'b0; // write signal is disabled
         end
         
         // Rx buffer to "bus"
         if(!nReset) begin
-            rx_data <= 8'b0;
-            fifoRx_REN <= 1'b0;
+            rx_data = 8'b0;
+            fifoRx_REN = 1'b0;
         end else if(ren_wen_nidle == from_RX) begin // checking if theres only 0's in the rx_data line...
-            rx_data <= fifoRx_rdata;
-            fifoRx_REN <= 1'b1;
+            rx_data = fifoRx_rdata;
+            fifoRx_REN = 1'b1;
         end else begin
-            rx_data <= 8'b0;
-            fifoRx_REN <= 1'b0;
+            rx_data = 8'b0;
+            fifoRx_REN = 1'b0;
         end
     end
+    
+    // always_ff @(posedge clk, negedge nReset) begin
+    //     // "bus" to tx_buffer
+    //     if (!nReset) begin
+    //         fifoTx_wdata <= 8'b0;
+    //         fifoTx_WEN <= 1'b0;
+    //     end else if(ren_wen_nidle == to_TX) begin
+    //         fifoTx_wdata <= tx_data; // assume we r sending it through the first byte at a time right now
+    //         fifoTx_WEN <= 1'b1;
+    //     end else begin
+    //         fifoTx_wdata <= 8'b0; // else writing nothing into the TX from the bus
+    //         fifoTx_WEN <= 1'b0; // write signal is disabled
+    //     end
+        
+    //     // Rx buffer to "bus"
+    //     if(!nReset) begin
+    //         rx_data <= 8'b0;
+    //         fifoRx_REN <= 1'b0;
+    //     end else if(ren_wen_nidle == from_RX) begin // checking if theres only 0's in the rx_data line...
+    //         rx_data <= fifoRx_rdata;
+    //         fifoRx_REN <= 1'b1;
+    //     end else begin
+    //         rx_data <= 8'b0;
+    //         fifoRx_REN <= 1'b0;
+    //     end
+    // end
 
     //logic to make sure err persists
     always_ff @(posedge clk, negedge nReset) begin
