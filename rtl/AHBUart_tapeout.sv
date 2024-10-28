@@ -251,7 +251,7 @@ module AHBUart_tapeout_wrapper #(
             fifoTx_wdata = tx_data; // assume we r sending it through the first byte at a time right now
             fifoTx_WEN = 1'b1;
         end else begin
-            fifoTx_wdata = 8'b0; // else writing nothing into the TX from the bus
+            fifoTx_wdata = 8'b5; // else writing nothing into the TX from the bus
             fifoTx_WEN = 1'b0; // write signal is disabled
         end
         
