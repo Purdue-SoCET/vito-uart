@@ -90,7 +90,7 @@ module uart_tb #();
 		input logic [7:0] data_to_write;
 	begin
 		ren_wen = to_TX;
-		tx_data = data_to_write
+		tx_data = data_to_write;
 		#10;
 		ren_wen = IDLE;
 		tx_data = 8'b0;
