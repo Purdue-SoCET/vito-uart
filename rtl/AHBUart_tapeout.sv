@@ -258,7 +258,7 @@ module AHBUart_tapeout_wrapper #(
         end
         
         // Rx buffer to "bus"
-        if(!nReset) being
+        if(!nReset) begin
             rx_data <= 8'b0;
             fifoRx_REN <= 1'b0;
         end else if(ren_wen_nidle == from_RX) begin // checking if theres only 0's in the rx_data line...
