@@ -57,10 +57,10 @@ module AHBUart_tapeout_wrapper #(
     
     //configurations for ren_wen and derivatives
     typedef enum logic [1:0] {
-        IDLE = 0;
-        to_TX = 1;
-        from_RX = 2;
-        BUFFER_CLEAR = 3;
+        IDLE = 0,
+        to_TX = 1,
+        from_RX = 2,
+        BUFFER_CLEAR = 3
     } data_state_t;
 
     //basically there should be a clock cycle between each data request (double check this works properly on waveform)
@@ -80,7 +80,7 @@ module AHBUart_tapeout_wrapper #(
     end
 
   always_comb begin
-        case(rate_control) begin
+        case(rate_control)
             2'b01: new_rate = 9600;
             2'b10: new_rate = 50000;
             2'b11: new_rate = 115200;
