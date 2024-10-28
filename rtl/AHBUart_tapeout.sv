@@ -25,7 +25,7 @@
 //uart implementation
 
 module AHBUart_tapeout_wrapper #(
-    logic [15:0] DefaultRate = 5207  // Chosen by fair dice roll
+    logic [19:0] DefaultRate = 5207  // Chosen by fair dice roll
     //Michael - i don't like this number :(
 ) (
     input clk, // 1
@@ -49,7 +49,7 @@ module AHBUart_tapeout_wrapper #(
 );
 
     logic [1:0] rate_control, ren_wen;
-    logic [15:0] rate, new_rate;
+    logic [19:0] rate, new_rate;
     logic [1:0]  ren_wen_nidle, prev_ren_wen; // act as the direction
     assign ren_wen = control[3:2];
     assign rate_control = control[1:0];
@@ -252,7 +252,7 @@ module AHBUart_tapeout_wrapper #(
             rx_data <= 8'b0;
             fifoRx_REN <= 1'b0;
         end else begin
-            if((ren_wen_nidle == to_TX) && |tx_data ) begin
+            if(ren_wen_nidle == to_TX) begin
             fifoTx_wdata <= tx_data; // assume we r sending it through the first byte at a time right now
             fifoTx_WEN <= 1'b1;
         end
@@ -261,7 +261,7 @@ module AHBUart_tapeout_wrapper #(
             fifoTx_WEN <= 1'b0; // write signal is disabled
         end
         // Rx buffer to bus
-            if((ren_wen_nidle == from_RX) && ~|rx_data) begin // checking if theres only 0's in the rx_data line...
+            if(ren_wen_nidle == from_RX) begin // checking if theres only 0's in the rx_data line...
             rx_data <= fifoRx_rdata;
             fifoRx_REN <= 1'b1;
         end else begin
@@ -275,11 +275,14 @@ module AHBUart_tapeout_wrapper #(
     always_ff @(posedge clk, negedge nReset) begin
         if (!nReset) begin
             err   <= 0;
-        end else if (ren_wen_nidle) begin
-            err   <= rxErr || ((ren_wen_nidle != from_RX) && err); // checks for a mismatch between errors 
         end else begin
-            err   <= rxErr || err; // if there is an exisiting error it persists, 
+            err <= rxErr || err; //maybe add on overrun underrun errors
         end
+        // end else if (ren_wen_nidle) begin
+        //     err   <= rxErr || ((ren_wen_nidle != from_RX) && err); // checks for a mismatch between errors 
+        // end else begin
+        //     err   <= rxErr || err; // if there is an exisiting error it persists, 
+        // end
     end   
 
 endmodule
