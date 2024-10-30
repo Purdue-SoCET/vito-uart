@@ -31,7 +31,7 @@ module uart_tb #();
 	assign control = {ren_wen, rate_control}; 
 	
 		
-	AHBUart_tapeout_wrapper DUT (
+	AHBUart_tapeout_fpga_wrapper DUT (
 		.clk(clk),
 		.nReset(nRst),
 		.rx(rx),

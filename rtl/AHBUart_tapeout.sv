@@ -24,7 +24,7 @@
 
 //uart implementation
 
-module AHBUart_tapeout_wrapper #(
+module AHBUart_tapeout #(
     logic [19:0] DefaultRate = 5207  // Chosen by fair dice roll
     //Michael - i don't like this number :(
 ) (

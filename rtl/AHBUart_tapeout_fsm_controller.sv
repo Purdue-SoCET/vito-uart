@@ -1,4 +1,4 @@
-module fsm_controller (
+module AHBUart_tapeout_fsm_controller (
 	input logic clk, nReset, bus_ren, bus_wen, bus_error,
 	output [31:0] bus_wdata
 );

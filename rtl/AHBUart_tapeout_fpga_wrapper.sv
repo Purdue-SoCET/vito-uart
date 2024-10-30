@@ -26,7 +26,7 @@ assign sync_signal = buffer_2;
 
 endmodule
 
-module AHBUart_fpga_wrapper (
+module AHBUart_tapeout_fpga_wrapper (
 	// Multiple Clock Sourecs
 	input CLOCK_50,
 	input CLOCK2_50,
