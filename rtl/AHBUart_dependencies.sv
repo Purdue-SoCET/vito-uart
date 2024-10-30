@@ -47,7 +47,7 @@ module socetlib_fifo #(
         end else begin
             // fifo <= fifo_next;
             for(int i = 0; i < DEPTH; i ++)
-                fifo[i] <= fifo_next;
+                fifo[i] <= fifo_next[i];
             write_ptr <= write_ptr_next;
             read_ptr <= read_ptr_next;
             full_internal <= full_next;
