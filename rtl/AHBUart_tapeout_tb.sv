@@ -25,29 +25,15 @@ module uart_tb #();
 	logic clk, nRst;
 	logic rx, tx, cts, rts, err;
 	logic [3:0] control;
-	logic [7:0] tx_data, rx_data;
+	logic [7:0] tx_data, rx_data; 
 
 	logic [1:0] rate_control, ren_wen;
-	assign control = {ren_wen, rate_control}; 
-	
-		
-	AHBUart_tapeout_fpga_wrapper DUT (
-		.clk(clk),
-		.nReset(nRst),
-		.rx(rx),
-		.tx(tx),
-		.cts(cts),
-		.rts(rts),
-		.err(err),
-		.control(control),
-		.tx_data(tx_data),
-		.rx_data(rx_data)
-	);
+	assign control = {ren_wen, rate_control};
 			
 	always #5 clk = ~clk; // toggle the value of the clock every 5 nanoseconds..
 
 	task reset_all;
-		rx = 1'b1;
+		rx = 1'b1; 
 		cts = 1'b0;
 		ren_wen = IDLE;
 		rate_control = 2'b0;
