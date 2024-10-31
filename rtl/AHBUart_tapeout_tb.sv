@@ -138,13 +138,21 @@ module uart_tb #();
 		cts = 1'b0;
 		#10;
 		tx_buffer_write(8'h1); // send in combinations of 8 bit values..
+		#10; //m - note to self: is it bad that i need this delay to write data, there's already a cycle long delay in tx_buffer_write
 		tx_buffer_write(8'h2); 
+		#10;
 		tx_buffer_write(8'h3);
+		#10;
 		tx_buffer_write(8'h4);
+		#10;
 		tx_buffer_write(8'h5);
+		#10;
 		tx_buffer_write(8'h6);
+		#10;
 		tx_buffer_write(8'h7);
+		#10;
 		tx_buffer_write(8'h8);
+		#10;
 		
 		$display("Test 1 complete!");
 		
