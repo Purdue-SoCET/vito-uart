@@ -103,9 +103,10 @@ module uart_tb #();
 		tx_data = data_to_write;
 		$display("Buffer transceiver data bus: %x,", tx_data);
 		$display("Buffer tx data out: %x,", tx);
-		#10;
+		#11;
 		ren_wen = IDLE;
 		tx_data = 8'b0;
+		#9;
 	end
 	endtask
 
