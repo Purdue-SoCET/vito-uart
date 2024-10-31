@@ -192,8 +192,9 @@ module AHBUart_tapeout #(
     assign fifoTx_clear = buffer_clear;
 
     assign rts = fifoRx_full;
-    
-   always_ff @(posedge clk, negedge nReset) begin
+
+	//logic for UartRx to fifoRx
+	always_ff @(posedge clk, negedge nReset) begin
         if (!nReset) begin
             fifoRx_wdata <= 8'b0;
             fifoRx_WEN <= 1'b0;
@@ -212,6 +213,7 @@ module AHBUart_tapeout #(
         end
     end
 
+	//logic for fifoTx to UartTx
     always_ff @(posedge clk, negedge nReset) begin
         if (!nReset) begin
             txData <= 8'b0;
@@ -222,18 +224,20 @@ module AHBUart_tapeout #(
             if (fifoTx_underrun) begin
                 txData <= fifoTx_rdata; //m - weird logic, ask about this later
                 txValid <= 1'b1;
+				fifoTx_REN <= 1'b0;
             end else begin
                 txData <= fifoTx_rdata;
                 txValid <= 1'b1;
-		fifoTx_REN <= 1'b1;
+				fifoTx_REN <= 1'b1;
             end
         end else begin
             txData <= 8'b0;
             txValid <= 1'b0;
-	    fifoTx_REN <= 1'b0;
+	    	fifoTx_REN <= 1'b0;
         end
     end
 
+	
     always_comb begin
         fifoTx_wdata = 8'b0;
         fifoTx_WEN = 1'b0;
@@ -257,7 +261,6 @@ module AHBUart_tapeout #(
         end
     end
     
-    // always_ff @(posedge clk, negedge nReset) begin
     // "bus signal" mechanics
     // //making this always_comb just to see what happens :) 
     // always_comb begin
