@@ -134,6 +134,8 @@ module uart_tb #();
 		test_num++;
 		reset_all;
 		$display("Testing: %x", 8'h1);
+		cts=1'b0;
+		#10;
 		tx_buffer_write(8'h1); // send in combinations of 8 bit values..
 		#10;
 		tx_buffer_write(8'h2); 
