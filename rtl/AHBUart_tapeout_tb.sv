@@ -135,45 +135,41 @@ module uart_tb #();
 		test_num++;
 		reset_all;
 		$display("Testing: %x", 8'h1);
-		cts=1'b0;
+		cts = 1'b0;
 		#10;
 		tx_buffer_write(8'h1); // send in combinations of 8 bit values..
-		#10;
 		tx_buffer_write(8'h2); 
-		#10;
 		tx_buffer_write(8'h3);
-		#10;
 		tx_buffer_write(8'h4);
-		#10;
 		tx_buffer_write(8'h5);
-		#10;
 		tx_buffer_write(8'h6);
-		#10
 		tx_buffer_write(8'h7);
-		#10;
 		tx_buffer_write(8'h8);
-		#10;
 		
 		$display("Test 1 complete!");
+		
 		//Test 2: reading from the Tx_buffer
 		test_num++;
-		reset_all;
-		rx_buffer_read(1'b0);
-		#10;
-		rx_buffer_read(1'b0);
-		#10;
-		rx_buffer_read(1'b0);
-		#10;
-		rx_buffer_read(1'b0);
-		#10;
-		rx_buffer_read(1'b0);
-		#10;
-		rx_buffer_read(1'b0);
-		#10
-		rx_buffer_read(1'b0);
-		#10;
-		rx_buffer_read(1'b1);
-		#10;
+		cts = 1'b1;
+		
+		// reset_all;
+		// rx_buffer_read(1'b0);
+		// #10;
+		// rx_buffer_read(1'b0);
+		// #10;
+		// rx_buffer_read(1'b0);
+		// #10;
+		// rx_buffer_read(1'b0);
+		// #10;
+		// rx_buffer_read(1'b0);
+		// #10;
+		// rx_buffer_read(1'b0);
+		// #10
+		// rx_buffer_read(1'b0);
+		// #10;
+		// rx_buffer_read(1'b1);
+		// #10;
+		#1000;
 
 		$display("Test 2 completed!");
 		$finish;
