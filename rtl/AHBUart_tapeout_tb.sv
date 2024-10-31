@@ -43,8 +43,8 @@ module uart_tb #();
 	);
 
 	task reset_all;
-		rx = 1'b0;
-		tx = 1'b0; 
+		rx = 1'b1;
+		// tx = 1'b0; 
 		cts = 1'b0;
 		ren_wen = IDLE;
 		rate_control = 2'b0;
