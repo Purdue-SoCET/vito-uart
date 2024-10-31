@@ -237,8 +237,10 @@ module AHBUart_tapeout #(
         end
     end
 
-	
+
+	//buffer "bus" logic
     always_comb begin
+		// "bus" to tx_buffer
         fifoTx_wdata = 8'b0;
         fifoTx_WEN = 1'b0;
         if(ren_wen_nidle == to_TX) begin
