@@ -42,6 +42,8 @@ module AHBUart_tapeout #(
     output rts,
     output err 
 
+    //note to self: should we add pins for buffer count?
+
 );
 
     logic [1:0] rate_control, ren_wen;
