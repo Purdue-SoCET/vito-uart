@@ -94,7 +94,8 @@ module AHBUart_tapeout #(
         end
     end
             
-	always_ff  @(posedge clk, negedge nReset) begin //consider making comb
+	//always_ff  @(posedge clk, negedge nReset) begin //trying as a comb for now
+	always_comb begin
         if (!nReset) begin
             buffer_clear <= 1'b0;
         end else begin
@@ -196,7 +197,8 @@ module AHBUart_tapeout #(
     assign rts = fifoRx_full;
 
 	//logic for UartRx to fifoRx
-	always_ff @(posedge clk, negedge nReset) begin //consider making this comb
+	// always_ff @(posedge clk, negedge nReset) begin //testing this as a comb for now
+	always_comb begin
         if (!nReset) begin
             fifoRx_wdata <= 8'b0;
             fifoRx_WEN <= 1'b0;
@@ -215,7 +217,8 @@ module AHBUart_tapeout #(
     end
 
 	//logic for fifoTx to UartTx
-	always_ff @(posedge clk, negedge nReset) begin //consider making this comb
+	// always_ff @(posedge clk, negedge nReset) begin //testing as always comb for now
+	always_comb begin
         if (!nReset) begin
             txData <= 8'b0;
             txValid <= 1'b0;
