@@ -4,9 +4,6 @@
         Date Modified: 10/13/2024
 */
 
-//`ifndef __BUS_PROTOCOL_IF__
-//`define __BUS_PROTOCOL_IF__
-
 
 //configurations for ren_wen and derivatives
 typedef enum logic [1:0] {
@@ -29,7 +26,20 @@ module uart_tb #();
 
 	logic [1:0] rate_control, ren_wen;
 	assign control = {ren_wen, rate_control};
-			
+		
+	AHBUart_tapeout DUT (
+		.clk(clk),
+		.nReset(nRst),
+		.control(control),
+		.tx_data(tx_data),
+		.rx_data(rx_data),
+		.rx(rx),
+		.tx(tx),
+		.cts(cts),
+		.rts(rts),
+		.err(err)
+	);	
+
 	always #5 clk = ~clk; // toggle the value of the clock every 5 nanoseconds..
 
 	task reset_all;
@@ -52,21 +62,34 @@ module uart_tb #();
 		input logic [7:0] data_to_send;
 		input integer baud_rate;
 	begin
-		//add stuff here :)
+		rx = 1'b1;
+		ren_wen = from_RX; // data from the receiver 
+		// check the data being received by the module...
+		rate_control = 2'b0;
+		cts = 1'b1; // cts enable
 	end
+
 	endtask
 
 	task tx_external_write;
 		input integer baud_rate;
 	begin
-		//add stuff here :)
+		tx_data = 8'h1; // 1 bit..
+		ren_wen = to_TX;
+		rate_control = 2'b0;
+		
 	end
 	endtask
 
 	task rx_buffer_read;
+		input logic data_to_receive;
 	begin
-		$display("Buffer read: %x", rx_data);
+		$display("Buffer rx data in: %x,", rx);
+		$display("Buffer receiver data bus: %x,", rx_data);
+		nRst = 1'b1;
+		rx = data_to_receive;
 		ren_wen = from_RX;
+		rate_control = 2'b0;
 		#10;
 		ren_wen = IDLE;
 	end
@@ -75,8 +98,12 @@ module uart_tb #();
 	task tx_buffer_write;
 		input logic [7:0] data_to_write;
 	begin
+		$display("Buffer transceiver data bus: %x,", tx_data);
+		$display("Buffer tx data out: %x,", tx);
+		nRst = 1'b1;
 		ren_wen = to_TX;
 		tx_data = data_to_write;
+		rate_control = 2'b0;
 		#10;
 		ren_wen = IDLE;
 		tx_data = 8'b0;
@@ -107,9 +134,9 @@ module uart_tb #();
 		//Test 1: writing to Tx_buffer
 		test_num++;
 		reset_all;
-		tx_buffer_write(8'h1);
+		tx_buffer_write(8'h1); // send in combinations of 8 bit values..
 		#10;
-		tx_buffer_write(8'h2);
+		tx_buffer_write(8'h2); 
 		#10;
 		tx_buffer_write(8'h3);
 		#10;
@@ -124,9 +151,28 @@ module uart_tb #();
 		tx_buffer_write(8'h8);
 		#10;
 		
-		
-		
-		$display("Test completed!");
+		$display("Test 1 complete!");
+		//Test 2: reading from the Tx_buffer
+		test_num++;
+		reset_all;
+		rx_buffer_read(1'b0);
+		#10;
+		rx_buffer_read(1'b0);
+		#10;
+		rx_buffer_read(1'b0);
+		#10;
+		rx_buffer_read(1'b0);
+		#10;
+		rx_buffer_read(1'b0);
+		#10;
+		rx_buffer_read(1'b0);
+		#10
+		rx_buffer_read(1'b0);
+		#10;
+		rx_buffer_read(1'b1);
+		#10;
+
+		$display("Test 2 completed!");
 		$finish;
 	end
 endmodule

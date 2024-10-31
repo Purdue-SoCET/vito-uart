@@ -17,7 +17,7 @@
 *
 *   Created by:   Vito Gamberini
 *   Email:        vito@gamberini.email
-*   Modified by:  Michael Li, Yash Singh 
+*   Modified by:  Michael Li, Yash Singh (sing1018@purdue.edu) 
 *   Date Created: 9/21/2024
 *   Description:  Modification of AHB wrapper for Tape out Nov 10 testing.
 */
@@ -26,19 +26,19 @@
 
 module AHBUart_tapeout #(
     logic [19:0] DefaultRate = 5207  // Chosen by fair dice roll
-    //Michael - i don't like this number :(
+    //Michael - i don't like this number :( 
+    //Yash - my bad ..?
 ) (
-    input clk, // 1
-    input nReset, // 1
-    input logic [3:0] control, // 4
-    input logic [7:0] tx_data, // input to the fifo, and then the transceiver..which is then sent out again by tx
-    output logic [7:0] rx_data, // received from rx, output from the reciever, to the fifo..which is then sent out by the data line
-    //Note: tx_data and rx_data will be merged into a single bidirectional line on the tapeout
+    input clk, 
+    input nReset, 
+    input logic [3:0] control, 
+    input logic [7:0] tx_data,
+    output logic [7:0] rx_data,
     
-    input  rx, // 1
+    input  rx, 
     output tx,
 
-    input cts, // 1
+    input cts, 
     output rts,
     output err 
 
@@ -65,8 +65,6 @@ module AHBUart_tapeout #(
         BUFFER_CLEAR = 3
     } data_state_t;
 
-    //basically there should be a clock cycle between each data request (double check this works properly on waveform)
-    //  rest of the hardware is based on ren_wen_nidle
     always_ff@(posedge clk, negedge nReset) begin
         if (!nReset) begin
             prev_ren_wen <= IDLE;
@@ -95,11 +93,6 @@ module AHBUart_tapeout #(
             rate <= DefaultRate;
         end else begin
             rate <= new_rate;
-            // if(|rate_control) begin //this won't allow you to set rate to DefaultRate
-            //   rate <= new_rate;
-            // end else begin
-            //   rate <= DefaultRate;
-            // end
         end
     end
             
@@ -107,7 +100,7 @@ module AHBUart_tapeout #(
         if (!nReset) begin
             buffer_clear <= 1'b0;
         end else begin
-            if(ren_wen_nidle == BUFFER_CLEAR) begin // if the read and write direction pin is enabled simultaneously
+            if(ren_wen_nidle == BUFFER_CLEAR) begin 
                 buffer_clear <= 1'b1;
             end else begin
                 buffer_clear <= 1'b0; // else the buffer is not clear 
@@ -125,18 +118,11 @@ module AHBUart_tapeout #(
     always_ff @(posedge clk, negedge nReset) begin
         if (!nReset) begin
             syncReset <= 1;
-        // end else if (ren_wen_nidle != 2'b0) begin // check if ren_wen is beyond idle..
-        //     //this case logic is kinda goofy, we shouldn't reset when when the read or write signal goes on
-        //     case (ren_wen_nidle)
-        //         to_TX, from_RX: syncReset <= 1; // if in read or write enable...
-        //     endcase
         end else begin
             syncReset <= 0;
         end
     end
 
-    // Params set "clock rate" to 2**16, and "min baud rate" to 1
-    // This is equivalent to "please give me 20-bit counters"
     BaudRateGen #(2 ** 20, 1) bg (
         .phase(1'b0),
         .*
@@ -212,7 +198,6 @@ module AHBUart_tapeout #(
     // UART - buffer signal mechanics
     assign rts = fifoRx_full;
     always_ff @(posedge clk, negedge nReset) begin
-        //UART Rx to buffer Rx
         if (!nReset) begin
             fifoRx_wdata <= 8'b0;
             fifoRx_WEN <= 1'b0;
@@ -221,15 +206,12 @@ module AHBUart_tapeout #(
             if (fifoRx_overrun) begin
                 fifoRx_wdata <= fifoRx_wdata;
                 fifoRx_WEN <= 1'b0;
-                // do we want to keep or flush out the old data in the fifo register if its full and the rx wants to send in more data?
-                //    michael - probably not, the user should reset the buffer if you overflow, but just in case we can ask cole
             end else begin
-                // alt, check with fifo clear
-                fifoRx_wdata <= rxData; //do i need to account for overflow, probably not?
+                fifoRx_wdata <= rxData; 
                 fifoRx_WEN <= 1'b1;
             end
         end else begin
-            fifoRx_wdata <= 8'b0; // clear out the data in the fifo and disable writing into it
+            fifoRx_wdata <= 8'b0; 
             fifoRx_WEN <= 1'b0;
         end
     end
@@ -241,8 +223,7 @@ module AHBUart_tapeout #(
             txValid <= 1'b0;
             fifoTx_REN <= 1'b0;
         end
-        else if(cts && !txBusy && txDone) begin //is txDone or txBusy for this spot?? A: either signal should be fine, they are the converse of each other and I don't think its meaningful when
-                                                                      //both are high, M: makes sense
+        else if(cts && !txBusy && txDone) begin
             if (fifoTx_underrun) begin
                 txData <= fifoTx_rdata; //m - weird logic, ask about this later
                 txValid <= 1'b0;
@@ -256,10 +237,7 @@ module AHBUart_tapeout #(
         end
     end
 
-    // "bus signal" mechanics
-    //making this always_comb just to see what happens :) 
     always_comb begin
-        // "bus" to tx_buffer
         fifoTx_wdata = 8'b0;
         fifoTx_WEN = 1'b0;
         if(ren_wen_nidle == to_TX) begin
@@ -315,11 +293,6 @@ module AHBUart_tapeout #(
         end else begin
             err <= rxErr || err; //maybe add on overrun underrun errors
         end
-        // end else if (ren_wen_nidle) begin
-        //     err   <= rxErr || ((ren_wen_nidle != from_RX) && err); // checks for a mismatch between errors 
-        // end else begin
-        //     err   <= rxErr || err; // if there is an exisiting error it persists, 
-        // end
-    end   
+     end 
 
 endmodule
