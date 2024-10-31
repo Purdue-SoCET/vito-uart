@@ -27,19 +27,6 @@ module uart_tb #();
 	logic [1:0] rate_control, ren_wen;
 	assign control = {ren_wen, rate_control};
 		
-	AHBUart_tapeout DUT (
-		.clk(clk),
-		.nReset(nRst),
-		.control(control),
-		.tx_data(tx_data),
-		.rx_data(rx_data),
-		.rx(rx),
-		.tx(tx),
-		.cts(cts),
-		.rts(rts),
-		.err(err)
-	);	
-
 	always #5 clk = ~clk; // toggle the value of the clock every 5 nanoseconds..
 
 	AHBUart_tapeout DUT (
@@ -56,17 +43,16 @@ module uart_tb #();
 	);
 
 	task reset_all;
-		rx = 1'b1; 
+		rx = 1'b0;
+		tx = 1'b0; 
 		cts = 1'b0;
 		ren_wen = IDLE;
 		rate_control = 2'b0;
 		tx_data = 8'b0;
-		
 		nRst = 1'b0;
 		#10;
 
 		cts = 1'b1;
-		
 		nRst = 1'b1;
 		#10;
 	endtask
@@ -97,12 +83,12 @@ module uart_tb #();
 	task rx_buffer_read;
 		input logic data_to_receive;
 	begin
-		$display("Buffer rx data in: %x,", rx);
-		$display("Buffer receiver data bus: %x,", rx_data);
-		nRst = 1'b1;
+		nRst = 1;
 		rx = data_to_receive;
 		ren_wen = from_RX;
 		rate_control = 2'b0;
+	        $display("Buffer rx data in: %x,", rx);
+		$display("Buffer receiver data bus: %x,", rx_data);
 		#10;
 		ren_wen = IDLE;
 	end
@@ -111,12 +97,12 @@ module uart_tb #();
 	task tx_buffer_write;
 		input logic [7:0] data_to_write;
 	begin
-		$display("Buffer transceiver data bus: %x,", tx_data);
-		$display("Buffer tx data out: %x,", tx);
 		nRst = 1'b1;
 		ren_wen = to_TX;
-		tx_data = data_to_write;
 		rate_control = 2'b0;
+		tx_data = data_to_write;
+		$display("Buffer transceiver data bus: %x,", tx_data);
+		$display("Buffer tx data out: %x,", tx);
 		#10;
 		ren_wen = IDLE;
 		tx_data = 8'b0;
@@ -132,7 +118,7 @@ module uart_tb #();
 	
 		clk = 1;
 	
-		reset_all;
+		reset_all; //this does nothing...
 		
 		//Test 0: Reset test
 		test_num = 0;
@@ -147,6 +133,7 @@ module uart_tb #();
 		//Test 1: writing to Tx_buffer
 		test_num++;
 		reset_all;
+		$display("Testing: %x", 8'h1);
 		tx_buffer_write(8'h1); // send in combinations of 8 bit values..
 		#10;
 		tx_buffer_write(8'h2); 
