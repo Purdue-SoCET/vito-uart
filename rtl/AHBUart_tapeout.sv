@@ -97,12 +97,12 @@ module AHBUart_tapeout #(
 	//always_ff  @(posedge clk, negedge nReset) begin //trying as a comb for now
 	always_comb begin
         if (!nReset) begin
-            buffer_clear <= 1'b0;
+            buffer_clear = 1'b0;
         end else begin
             if(ren_wen_nidle == BUFFER_CLEAR) begin 
-                buffer_clear <= 1'b1;
+                buffer_clear = 1'b1;
             end else begin
-                buffer_clear <= 1'b0; // else the buffer is not clear 
+                buffer_clear = 1'b0; // else the buffer is not clear 
             end
         end
     end
@@ -200,19 +200,19 @@ module AHBUart_tapeout #(
 	// always_ff @(posedge clk, negedge nReset) begin //testing this as a comb for now
 	always_comb begin
         if (!nReset) begin
-            fifoRx_wdata <= 8'b0;
-            fifoRx_WEN <= 1'b0;
+            fifoRx_wdata = 8'b0;
+            fifoRx_WEN = 1'b0;
         end else if(rxDone && !rxErr) begin
 			if (fifoRx_overrun) begin //m - probably better to just check if fifoRx is full/empty
-                fifoRx_wdata <= fifoRx_wdata;
-                fifoRx_WEN <= 1'b0;
+                fifoRx_wdata = fifoRx_wdata;
+                fifoRx_WEN = 1'b0;
             end else begin
-                fifoRx_wdata <= rxData; 
-                fifoRx_WEN <= 1'b1;
+                fifoRx_wdata = rxData; 
+                fifoRx_WEN = 1'b1;
             end
         end else begin
-            fifoRx_wdata <= 8'b0; 
-            fifoRx_WEN <= 1'b0;
+            fifoRx_wdata = 8'b0; 
+            fifoRx_WEN = 1'b0;
         end
     end
 
@@ -220,27 +220,23 @@ module AHBUart_tapeout #(
 	// always_ff @(posedge clk, negedge nReset) begin //testing as always comb for now
 	always_comb begin
         if (!nReset) begin
-            txData <= 8'b0;
-            txValid <= 1'b0;
-            fifoTx_REN <= 1'b0;
+            txData = 8'b0;
+            txValid = 1'b0;
+            fifoTx_REN = 1'b0;
         end else if(cts && !txBusy) begin
             if (fifoTx_underrun) begin
-				txData <= fifoTx_rdata; //m - weird logic, ask about this later (once underrun is detected, it persists permanently, so we can't use this buffer anymore)
-                txValid <= 1'b1;
-				fifoTx_REN <= 1'b0;
-			// if (fifoTx_empty) begin
-			// 	txData <= 8'b0;
-			// 	txValid <= 1'b0;
-			// 	fifoTx_REN <= 1'b0;
-            end else begin
-                txData <= fifoTx_rdata;
-                txValid <= 1'b1;
-				fifoTx_REN <= 1'b1;
+				txData = fifoTx_rdata; //m - weird logic, ask about this later (once underrun is detected, it persists permanently, so we can't use this buffer anymore)
+                txValid = 1'b1;
+				fifoTx_REN = 1'b0;
+			end else begin
+                txData = fifoTx_rdata;
+                txValid = 1'b1;
+				fifoTx_REN = 1'b1;
             end
         end else begin
-            txData <= 8'b0;
-            txValid <= 1'b0;
-	    	fifoTx_REN <= 1'b0;
+            txData = 8'b0;
+            txValid = 1'b0;
+	    	fifoTx_REN = 1'b0;
         end
     end
 
