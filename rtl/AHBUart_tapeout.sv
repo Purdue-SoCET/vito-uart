@@ -222,14 +222,14 @@ module AHBUart_tapeout #(
             fifoTx_REN <= 1'b0;
         end
         else if(cts && !txBusy) begin
-    //         if (fifoTx_underrun) begin
-    //             txData <= fifoTx_rdata; //m - weird logic, ask about this later
-    //             txValid <= 1'b1;
-				// fifoTx_REN <= 1'b0;
-			if (fifoTx_empty) begin
-				txData <= 8'b0;
-				txValid <= 1'b0;
+            if (fifoTx_underrun) begin
+                txData <= fifoTx_rdata; //m - weird logic, ask about this later
+                txValid <= 1'b1;
 				fifoTx_REN <= 1'b0;
+			// if (fifoTx_empty) begin
+			// 	txData <= 8'b0;
+			// 	txValid <= 1'b0;
+			// 	fifoTx_REN <= 1'b0;
             end else begin
                 txData <= fifoTx_rdata;
                 txValid <= 1'b1;
