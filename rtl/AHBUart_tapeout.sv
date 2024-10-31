@@ -196,7 +196,7 @@ module AHBUart_tapeout #(
     assign rts = fifoRx_full;
 
 	//logic for UartRx to fifoRx
-	always_ff @(posedge clk, negedge nReset) begin
+	always_ff @(posedge clk, negedge nReset) begin //consider making this comb
         if (!nReset) begin
             fifoRx_wdata <= 8'b0;
             fifoRx_WEN <= 1'b0;
@@ -216,7 +216,7 @@ module AHBUart_tapeout #(
     end
 
 	//logic for fifoTx to UartTx
-    always_ff @(posedge clk, negedge nReset) begin
+	always_ff @(posedge clk, negedge nReset) begin //consider making this comb
         if (!nReset) begin
             txData <= 8'b0;
             txValid <= 1'b0;
