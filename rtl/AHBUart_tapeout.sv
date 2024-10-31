@@ -94,7 +94,7 @@ module AHBUart_tapeout #(
         end
     end
             
-    always_ff  @(posedge clk, negedge nReset) begin
+	always_ff  @(posedge clk, negedge nReset) begin //consider making comb
         if (!nReset) begin
             buffer_clear <= 1'b0;
         end else begin
@@ -200,9 +200,8 @@ module AHBUart_tapeout #(
         if (!nReset) begin
             fifoRx_wdata <= 8'b0;
             fifoRx_WEN <= 1'b0;
-        end
-        else if(rxDone && !rxErr) begin
-            if (fifoRx_overrun) begin
+        end else if(rxDone && !rxErr) begin
+			if (fifoRx_overrun) begin //m - probably better to just check if fifoRx is full/empty
                 fifoRx_wdata <= fifoRx_wdata;
                 fifoRx_WEN <= 1'b0;
             end else begin
@@ -223,9 +222,13 @@ module AHBUart_tapeout #(
             fifoTx_REN <= 1'b0;
         end
         else if(cts && !txBusy) begin
-            if (fifoTx_underrun) begin
-                txData <= fifoTx_rdata; //m - weird logic, ask about this later
-                txValid <= 1'b1;
+    //         if (fifoTx_underrun) begin
+    //             txData <= fifoTx_rdata; //m - weird logic, ask about this later
+    //             txValid <= 1'b1;
+				// fifoTx_REN <= 1'b0;
+			if (fifoTx_empty) begin
+				txData <= 8'b0;
+				txValid <= 1'b0;
 				fifoTx_REN <= 1'b0;
             end else begin
                 txData <= fifoTx_rdata;
