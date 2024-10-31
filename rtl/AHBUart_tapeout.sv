@@ -203,8 +203,8 @@ module AHBUart_tapeout #(
             fifoRx_wdata = 8'b0;
             fifoRx_WEN = 1'b0;
         end else if(rxDone && !rxErr) begin
-			if (fifoRx_overrun) begin //m - probably better to just check if fifoRx is full/empty
-                fifoRx_wdata = fifoRx_wdata;
+			if (fifoRx_overrun) begin //m - probably better to just check if fifoRx is full/empty maybe
+                fifoRx_wdata = 8'b0;
                 fifoRx_WEN = 1'b0;
             end else begin
                 fifoRx_wdata = rxData; 
