@@ -42,6 +42,19 @@ module uart_tb #();
 
 	always #5 clk = ~clk; // toggle the value of the clock every 5 nanoseconds..
 
+	AHBUart_tapeout DUT (
+		.clk(clk),
+		.nReset(nRst),
+		.rx(rx),
+		.tx(tx),
+		.cts(cts),
+		.rts(rts),
+		.err(err),
+		.control(control),
+		.tx_data(tx_data),
+		.rx_data(rx_data)
+	);
+
 	task reset_all;
 		rx = 1'b1; 
 		cts = 1'b0;
