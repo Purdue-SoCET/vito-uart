@@ -42,10 +42,6 @@ module AHBUart_tapeout #(
     output rts,
     output err 
 
-    // PIN COUNT:
-    // rx_data, tx_data 8/8 bidirectional (bidirectional lines are handled in the tapeout wrapper file)
-    // clk-1, nReset-1, control-4, rx-1, cts-4, 8/8 in 
-    // tx, rts, err, 3/8 out
 );
 
     logic [1:0] rate_control, ren_wen;
@@ -151,7 +147,7 @@ module AHBUart_tapeout #(
     logic fifoRx_WEN, fifoRx_REN, fifoRx_clear;
     logic [7:0] fifoRx_wdata;
     logic fifoRx_full, fifoRx_empty, fifoRx_underrun, fifoRx_overrun;
-            logic [$clog2(8)-1:0] fifoRx_count; //current buffer capacity is 8, Note to self: might reduce if chip too big
+            logic [$clog2(8):0] fifoRx_count; //current buffer capacity is 8, Note to self: might reduce if chip too big
     logic [7:0] fifoRx_rdata;
 
     socetlib_fifo fifoRx (
@@ -173,7 +169,7 @@ module AHBUart_tapeout #(
     logic fifoTx_WEN, fifoTx_REN, fifoTx_clear;
     logic [7:0] fifoTx_wdata;
     logic fifoTx_full, fifoTx_empty, fifoTx_underrun, fifoTx_overrun;
-    logic [$clog2(8)-1:0] fifoTx_count; //current buffer capacity is 8
+    logic [$clog2(8):0] fifoTx_count; //current buffer capacity is 8
     logic [7:0] fifoTx_rdata;
 
     socetlib_fifo fifoTx (
@@ -195,9 +191,9 @@ module AHBUart_tapeout #(
     assign fifoRx_clear = buffer_clear;
     assign fifoTx_clear = buffer_clear;
 
-    // UART - buffer signal mechanics
     assign rts = fifoRx_full;
-    always_ff @(posedge clk, negedge nReset) begin
+    
+   always_ff @(posedge clk, negedge nReset) begin
         if (!nReset) begin
             fifoRx_wdata <= 8'b0;
             fifoRx_WEN <= 1'b0;
@@ -217,23 +213,24 @@ module AHBUart_tapeout #(
     end
 
     always_ff @(posedge clk, negedge nReset) begin
-        //buffer Tx to UART Tx
         if (!nReset) begin
             txData <= 8'b0;
             txValid <= 1'b0;
             fifoTx_REN <= 1'b0;
         end
-        else if(cts && !txBusy && txDone) begin
+        else if(cts && !txBusy) begin
             if (fifoTx_underrun) begin
                 txData <= fifoTx_rdata; //m - weird logic, ask about this later
-                txValid <= 1'b0;
+                txValid <= 1'b1;
             end else begin
-                txData <= fifoTx_rdata; //should i account for buffer capacity, maybe not? // should be fine, both are 8 bits...
-                txValid <= 1'b1; // the ts signal is valid
+                txData <= fifoTx_rdata;
+                txValid <= 1'b1;
+		fifoTx_REN <= 1'b1;
             end
         end else begin
             txData <= 8'b0;
             txValid <= 1'b0;
+	    fifoTx_REN <= 1'b0;
         end
     end
 
@@ -287,32 +284,6 @@ module AHBUart_tapeout #(
     //     end
     // end
     
-    always_ff @(posedge clk, negedge nReset) begin
-        // "bus" to tx_buffer
-        if (!nReset) begin
-            fifoTx_wdata <= 8'b0;
-            fifoTx_WEN <= 1'b0;
-        end else if(ren_wen_nidle == to_TX) begin
-            fifoTx_wdata <= tx_data; // assume we r sending it through the first byte at a time right now
-            fifoTx_WEN <= 1'b1;
-        end else begin
-            fifoTx_wdata <= 8'b0; // else writing nothing into the TX from the bus
-            fifoTx_WEN <= 1'b0; // write signal is disabled
-        end
-        
-        // Rx buffer to "bus"
-        if(!nReset) begin
-            rx_data <= 8'b0;
-            fifoRx_REN <= 1'b0;
-        end else if(ren_wen_nidle == from_RX) begin // checking if theres only 0's in the rx_data line...
-            rx_data <= fifoRx_rdata;
-            fifoRx_REN <= 1'b1;
-        end else begin
-            rx_data <= 8'b0;
-            fifoRx_REN <= 1'b0;
-        end
-    end
-
     //logic to make sure err persists
     always_ff @(posedge clk, negedge nReset) begin
         if (!nReset) begin
