@@ -177,7 +177,7 @@ module uart_tb #();
 		// #10;
 		// rx_buffer_read(1'b1);
 		// #10;
-		#1000000;
+		#10000000;
 
 		$display("Test 2 completed!");
 		$finish;
