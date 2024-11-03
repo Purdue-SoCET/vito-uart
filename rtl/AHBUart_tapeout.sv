@@ -227,7 +227,7 @@ module AHBUart_tapeout #(
 			if(fifoTx_empty || !cts) begin
 				txData = 8'b0;
 				txValid = 1'b0;
-				fifoTx_REN = 1'b0
+				fifoTx_REN = 1'b0;
 			end else begin
 				//logic for Tx is weird, basically should hold data to UartTx until it finishes sending data (txDone), then we can high the fifoTx_REN
 				if(!txDone) begin
