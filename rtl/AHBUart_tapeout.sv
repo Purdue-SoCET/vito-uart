@@ -226,7 +226,7 @@ module AHBUart_tapeout #(
         end else if(cts && !txBusy) begin
 			if (fifoTx_underrun) begin //m - weird logic, ask about this later (once underrun is detected, it persists permanently, so we can't use this buffer anymore)
 				txData = fifoTx_rdata;
-                txValid = 1'b1;
+                txValid = 1'b0;
 				fifoTx_REN = 1'b0;
 			end else if(fifoTx_empty) begin
 				txData = 8'b0;
