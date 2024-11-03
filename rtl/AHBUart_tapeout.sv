@@ -217,7 +217,14 @@ module AHBUart_tapeout #(
     end
 
 	//logic for fifoTx to UartTx
-	// always_ff @(posedge clk, negedge nReset) begin //testing as always comb for now
+	logic prev_txClk
+	always_ff @(posedge clk, negedge nReset) begin
+		if(!nReset) begin
+			prev_txClk <= 1'b0;
+		end else begin
+			prev_txClk <= txClk;
+		end
+	end
 	always_comb begin
 		if(!nReset) begin
 			txData = 8'b0;
@@ -229,15 +236,16 @@ module AHBUart_tapeout #(
 				txValid = 1'b0;
 				fifoTx_REN = 1'b0;
 			end else begin
-				
-				if(txBusy) begin
+				if(prev_txClk) begin
+					if(!txBusy) begin
+						txData = fifoTx_rdata;
+						txValid = 1'b1;
+						fifoTx_REN = 1'b1;
+					end
+				end else begin
 					txData = 8'b0;
 					txValid = 1'b0;
 					fifoTx_REN = 1'b0;
-				end else begin
-					txData = fifoTx_rdata;
-					txValid = txDone? 1'b1 : 1'b0;
-					fifoTx_REN = txDone? 1'b1 : 1'b0;
 				end
 			end
 		end
