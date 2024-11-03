@@ -83,11 +83,11 @@ module socetlib_fifo #(
             end
 
             if (count == DEPTH) begin
-                count_next = count - REN + (REN && WEN);
+                count_next = count - (REN ? 1 : 0) + ((REN && WEN)? 1 : 0);
             end else if (count == 0) begin
-                count_next = count + WEN - (REN && WEN);
+                count_next = count + (WEN ? 1 : 0) - ((REN && WEN)? 1 : 0);
             end else begin
-                count_next = count + WEN - REN;
+                count_next = count + (WEN ? 1 : 0) - (REN ? 1 : 0);
             end
         end
     end
