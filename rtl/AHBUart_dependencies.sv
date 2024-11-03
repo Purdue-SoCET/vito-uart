@@ -1,3 +1,5 @@
+//m - Note to self: changed UartTxEn
+
 
 module socetlib_fifo #(
     parameter type T = logic [7:0], // type of a FIFO entry
