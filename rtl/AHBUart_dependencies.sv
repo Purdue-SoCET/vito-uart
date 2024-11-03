@@ -1,4 +1,4 @@
-//m - Note to self: changed UartTxEn
+
 
 
 module socetlib_fifo #(
@@ -346,8 +346,7 @@ module UartTxEn (
   logic [3:0] writeCount;
 
   always_comb begin
-    // done = en & (nextState == STOP);
-	  done = nextState == STOP; //m - changed this to try and matches it up better with signals elsewhere
+    done = en & (nextState == STOP);
     busy = nextState != IDLE;
   end
 
