@@ -346,8 +346,8 @@ module UartTxEn (
   logic [3:0] writeCount;
 
   always_comb begin
-    // done = en & (nextState == STOP);
-	  done = nextState == STOP && curState != STOP;
+    done = en & (nextState == STOP);
+	  // done = nextState == STOP && curState != STOP;
     busy = nextState != IDLE;
   end
 
