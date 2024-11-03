@@ -219,29 +219,52 @@ module AHBUart_tapeout #(
 	//logic for fifoTx to UartTx
 	// always_ff @(posedge clk, negedge nReset) begin //testing as always comb for now
 	always_comb begin
-        if (!nReset) begin
-            txData = 8'b0;
-            txValid = 1'b0;
-            fifoTx_REN = 1'b0;
-        end else if(cts && !txBusy) begin
-			if (fifoTx_underrun) begin //m - weird logic, ask about this later (once underrun is detected, it persists permanently, so we can't use this buffer anymore)
-				txData = fifoTx_rdata;
-                txValid = 1'b0;
-				fifoTx_REN = 1'b0;
-			end else if(fifoTx_empty) begin
+		if(!nReset) begin
+			txData = 8'b0;
+			txValid = 1'b0;
+			fifoTx_REN = 1'b0;
+		end else begin
+			if(fifoTx_empty || !cts) begin
 				txData = 8'b0;
 				txValid = 1'b0;
-				fifoTx_REN = 1'b0;
+				fifoTx_REN = 1'b0
 			end else begin
-                txData = fifoTx_rdata;
-                txValid = 1'b1;
-				fifoTx_REN = 1'b1;
-            end
-        end else begin
-            txData = 8'b0;
-            txValid = 1'b0;
-	    	fifoTx_REN = 1'b0;
-        end
+				//logic for Tx is weird, basically should hold data to UartTx until it finishes sending data (txDone), then we can high the fifoTx_REN
+				if(!txDone) begin
+					txData = fifoTx_rdata;
+					txValid = 1'b1;
+					fifoTx_REN = 1'b0;
+				end else begin
+					txData = 8'b0;
+					txValid = 1'b0;
+					fifoTx_REN = 1'b1;
+				end
+			end
+		end
+		
+   //      if (!nReset) begin
+   //          txData = 8'b0;
+   //          txValid = 1'b0;
+   //          fifoTx_REN = 1'b0;
+   //      end else if(cts && !txBusy) begin
+			// if (fifoTx_underrun) begin //m - weird logic, ask about this later (once underrun is detected, it persists permanently, so we can't use this buffer anymore)
+			// 	txData = fifoTx_rdata;
+   //              txValid = 1'b0;
+			// 	fifoTx_REN = 1'b0;
+			// end else if(fifoTx_empty) begin
+			// 	txData = 8'b0;
+			// 	txValid = 1'b0;
+			// 	fifoTx_REN = 1'b0;
+			// end else begin
+   //              txData = fifoTx_rdata;
+   //              txValid = 1'b1;
+			// 	fifoTx_REN = 1'b1;
+   //          end
+   //      end else begin
+   //          txData = 8'b0;
+   //          txValid = 1'b0;
+	  //   	fifoTx_REN = 1'b0;
+   //      end
     end
 
 
