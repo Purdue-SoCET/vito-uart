@@ -217,7 +217,7 @@ module AHBUart_tapeout #(
     end
 
 	//logic for fifoTx to UartTx
-	logic prev_txClk
+	logic prev_txClk;
 	always_ff @(posedge clk, negedge nReset) begin
 		if(!nReset) begin
 			prev_txClk <= 1'b0;
