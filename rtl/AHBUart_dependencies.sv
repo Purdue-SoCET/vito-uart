@@ -344,7 +344,8 @@ module UartTxEn (
   logic [3:0] writeCount;
 
   always_comb begin
-    done = en & (nextState == STOP);
+    // done = en & (nextState == STOP);
+	  done = nextState == 0; //m - changed this to try and matches it up better with signals elsewhere
     busy = nextState != IDLE;
   end
 
