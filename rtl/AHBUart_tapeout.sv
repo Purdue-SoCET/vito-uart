@@ -233,11 +233,11 @@ module AHBUart_tapeout #(
 				if(txBusy) begin
 					txData = 8'b0;
 					txValid = 1'b0;
-					fifoTx_REN = 1'b1;
+					fifoTx_REN = 1'b0;
 				end else begin
 					txData = fifoTx_rdata;
-					txValid = 1'b1;
-					fifoTx_REN = 1'b0;
+					txValid = txDone? 1'b1 : 1'b0;
+					fifoTx_REN = txDone? 1'b1 : 1'b0;
 				end
 			end
 		end
