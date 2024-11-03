@@ -1,6 +1,3 @@
-//m - Note: I changed UartTxEn
-
-
 module socetlib_fifo #(
     parameter type T = logic [7:0], // type of a FIFO entry
     parameter DEPTH = 8 // # of FIFO entries
@@ -346,8 +343,7 @@ module UartTxEn (
   logic [3:0] writeCount;
 
   always_comb begin
-    // done = en & (nextState == STOP);
-	  done = writeCount == 0;
+    done = en & (nextState == STOP);
     busy = nextState != IDLE;
   end
 
