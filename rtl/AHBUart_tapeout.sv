@@ -241,6 +241,10 @@ module AHBUart_tapeout #(
 						txData = fifoTx_rdata;
 						txValid = 1'b1;
 						fifoTx_REN = 1'b1;
+					end else begin
+						txData = 8'b0;
+						txValid = 1'b0;
+						fifoTx_REN = 1'b0;
 					end
 				end else begin
 					txData = 8'b0;
