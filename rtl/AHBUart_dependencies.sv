@@ -82,13 +82,14 @@ module socetlib_fifo #(
                 overrun_next = 1'b1;
             end
 
-            if (count == DEPTH) begin
-                count_next = count - (REN? 1 : 0) + (REN && WEN ? 1 : 0);
-            end else if (count == 0) begin
-                count_next = count + (REN ? 1 : 0) - (REN && WEN ? 1: 0);
-            end else begin
-                count_next = count + (WEN ? 1 : 0) - (REN ? 1 : 0);
-            end
+            // if (count == DEPTH) begin
+            //     count_next = count - (REN? 1 : 0) + (REN && WEN ? 1 : 0);
+            // end else if (count == 0) begin
+            //     count_next = count + (REN ? 1 : 0) - (REN && WEN ? 1: 0);
+            // end else begin
+            //     count_next = count + (WEN ? 1 : 0) - (REN ? 1 : 0);
+            // end
+            count_next = write_ptr_next - read_ptr_next;
         end
     end
 
