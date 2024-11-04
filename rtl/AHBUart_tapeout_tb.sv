@@ -68,7 +68,7 @@ module uart_tb #();
 		// rate_control = 2'b0;
 		// cts = 1'b1; // cts enable
 
-		long pause = 10^12 / baud_rate; //Double check this calculation
+		longint pause = 10^12 / baud_rate; //Double check this calculation
 		rx = 1'b1;
 		@(posedge clk);
 		rx = 1'b0;
