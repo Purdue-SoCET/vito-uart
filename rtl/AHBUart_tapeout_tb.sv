@@ -69,7 +69,8 @@ module uart_tb #();
 		// cts = 1'b1; // cts enable
 
 		// longint pause = 10**12 / baud_rate; //Double check this calculation
-		integer pause = 104166666; //pause for 5207 baudrate
+		// integer pause = 104166666; //pause for 5207 baudrate
+		integer pause = 1000; //test baud rate, not realistic
 		$display("pause: %d", pause);
 		rx = 1'b1;
 		@(posedge clk);
