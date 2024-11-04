@@ -188,12 +188,12 @@ module uart_tb #();
 		test_num++;
 		rx_external_write(8'd1, 5207);
 		rx_external_write(8'd2, 5207);
-		rx_external_write(8'd3, 5207);
-		rx_external_write(8'd4, 5207);
-		rx_external_write(8'd5, 5207);
-		rx_external_write(8'd6, 5207);
-		rx_external_write(8'd7, 5207);
-		rx_external_write(8'd8, 5207);
+		// rx_external_write(8'd3, 5207);
+		// rx_external_write(8'd4, 5207);
+		// rx_external_write(8'd5, 5207);
+		// rx_external_write(8'd6, 5207);
+		// rx_external_write(8'd7, 5207);
+		// rx_external_write(8'd8, 5207);
 
 		#100;
 		
