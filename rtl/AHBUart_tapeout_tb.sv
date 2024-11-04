@@ -68,21 +68,20 @@ module uart_tb #();
 		// rate_control = 2'b0;
 		// cts = 1'b1; // cts enable
 
-		// longint pause = 10**12 / baud_rate; //Double check this calculation
-		// integer pause = 104166666; //pause for 5207 baudrate
-		integer pause = 1000; //test baud rate, not realistic
+		// longint pause = 10**9 / baud_rate; //Double check this calculation
+		integer pause = 192049; //pause for 5207 baudrate i think
 		$display("pause: %d", pause);
 		rx = 1'b1;
 		@(posedge clk);
 		rx = 1'b0;
-		#(104166666);
-		for(int i = 7; i >= 0; i--) begin
+		#(pause);
+		for(int i = 0; i < 8; i++) begin
 			$display("tick: %d", i);
 			rx = data_to_send[i];
-			#(104166666);
+			#(pause);
 		end
 		rx = 1'b1;
-		#(104166666);
+		#(pause);
 		@(posedge clk); //wait for clock edge to realign testbench with clock
 		
 	end
