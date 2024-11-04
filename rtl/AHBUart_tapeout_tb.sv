@@ -75,14 +75,14 @@ module uart_tb #();
 		rx = 1'b1;
 		@(posedge clk);
 		rx = 1'b0;
-		#(pause);
+		#(104166666);
 		for(int i = 7; i >= 0; i--) begin
 			$display("tick: %d", i);
 			rx = data_to_send[i];
-			#(pause);
+			#(104166666);
 		end
 		rx = 1'b1;
-		#(pause);
+		#(104166666);
 		@(posedge clk); //wait for clock edge to realign testbench with clock
 		
 	end
