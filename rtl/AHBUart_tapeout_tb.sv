@@ -60,7 +60,7 @@ module uart_tb #();
 	//use this to write data to UartRx
 	task rx_external_write;
 		input logic [7:0] data_to_send;
-		input int baud_rate;
+		input unsigned int baud_rate;
 	begin
 		// rx = 1'b1;
 		// ren_wen = from_RX; // data from the receiver 
@@ -69,17 +69,18 @@ module uart_tb #();
 		// cts = 1'b1; // cts enable
 
 		// longint pause = 10**12 / baud_rate; //Double check this calculation
-		int pause = 104166666; //pause for 5207 baudrate
+		unsigned int pause = 104166666; //pause for 5207 baudrate
 		rx = 1'b1;
 		@(posedge clk);
 		rx = 1'b0;
-		#pause;
+		#(pause);
 		for(int i = 7; i >= 0; i++) begin
+			$display("tick: %d", i);
 			rx = data_to_send[i];
-			#pause;
+			#(pause);
 		end
 		rx = 1'b1;
-		#pause;
+		#(pause);
 		@(posedge clk); //wait for clock edge to realign testbench with clock
 		
 	end
