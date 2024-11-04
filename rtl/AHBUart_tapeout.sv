@@ -96,15 +96,15 @@ module AHBUart_tapeout #(
             
 	//always_ff  @(posedge clk, negedge nReset) begin //trying as a comb for now
 	always_comb begin
-        if (!nReset) begin
-            buffer_clear = 1'b0;
-        end else begin
+		// if (!nReset) begin //removing nRest b/c not syntheziable
+            // buffer_clear = 1'b0;
+        // end else begin
             if(ren_wen_nidle == BUFFER_CLEAR) begin 
                 buffer_clear = 1'b1;
             end else begin
                 buffer_clear = 1'b0; // else the buffer is not clear 
             end
-        end
+        // end
     end
 
     // UART signal
@@ -199,10 +199,11 @@ module AHBUart_tapeout #(
 	//logic for UartRx to fifoRx
 	// always_ff @(posedge clk, negedge nReset) begin //testing this as a comb for now
 	always_comb begin
-        if (!nReset) begin
-            fifoRx_wdata = 8'b0;
-            fifoRx_WEN = 1'b0;
-        end else if(rxDone && !rxErr) begin
+		// if (!nReset) begin //getting rid of nReset b/c not synthesizabel
+            // fifoRx_wdata = 8'b0;
+            // fifoRx_WEN = 1'b0;
+        // end else
+		if(rxDone && !rxErr) begin
 			if (fifoRx_overrun) begin //m - probably better to just check if fifoRx is full/empty maybe
                 fifoRx_wdata = 8'b0;
                 fifoRx_WEN = 1'b0;
@@ -226,11 +227,11 @@ module AHBUart_tapeout #(
 		end
 	end
 	always_comb begin
-		if(!nReset) begin
-			txData = 8'b0;
-			txValid = 1'b0;
-			fifoTx_REN = 1'b0;
-		end else begin
+		// if(!nReset) begin //getting rid of nRest b/c not synthesizable
+			// txData = 8'b0;
+			// txValid = 1'b0;
+			// fifoTx_REN = 1'b0;
+		// end else begin
 			if(fifoTx_empty || !cts) begin
 				txData = 8'b0;
 				txValid = 1'b0;
@@ -252,7 +253,7 @@ module AHBUart_tapeout #(
 					fifoTx_REN = 1'b0;
 				end
 			end
-		end
+		// end
 		
    //      if (!nReset) begin
    //          txData = 8'b0;
