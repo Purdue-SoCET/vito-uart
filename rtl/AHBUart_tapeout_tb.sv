@@ -75,7 +75,7 @@ module uart_tb #();
 		@(posedge clk);
 		rx = 1'b0;
 		#(pause);
-		for(int i = 7; i >= 0; i++) begin
+		for(int i = 7; i >= 0; i--) begin
 			$display("tick: %d", i);
 			rx = data_to_send[i];
 			#(pause);
