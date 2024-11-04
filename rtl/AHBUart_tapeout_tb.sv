@@ -69,8 +69,9 @@ module uart_tb #();
 		// cts = 1'b1; // cts enable
 
 		// longint pause = 10**9 / baud_rate; //Double check this calculation
-		integer pause = 192049; //pause for 5207 baudrate i think
-		$display("pause: %d", pause);
+		integer pause = 5207; //pause for 5207 baudrate i think
+
+		//wait the baud rate represents the time in picoseconds between each bit???
 		rx = 1'b1;
 		@(posedge clk);
 		rx = 1'b0;
@@ -187,12 +188,12 @@ module uart_tb #();
 		test_num++;
 		rx_external_write(8'd1, 5207);
 		rx_external_write(8'd2, 5207);
-		// rx_external_write(8'd3, 5207);
-		// rx_external_write(8'd4, 5207);
-		// rx_external_write(8'd5, 5207);
-		// rx_external_write(8'd6, 5207);
-		// rx_external_write(8'd7, 5207);
-		// rx_external_write(8'd8, 5207);
+		rx_external_write(8'd3, 5207);
+		rx_external_write(8'd4, 5207);
+		rx_external_write(8'd5, 5207);
+		rx_external_write(8'd6, 5207);
+		rx_external_write(8'd7, 5207);
+		rx_external_write(8'd8, 5207);
 
 		#100;
 		
