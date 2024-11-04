@@ -60,7 +60,7 @@ module uart_tb #();
 	//use this to write data to UartRx
 	task rx_external_write;
 		input logic [7:0] data_to_send;
-		input integer baud_rate;
+		input longint baud_rate;
 	begin
 		// rx = 1'b1;
 		// ren_wen = from_RX; // data from the receiver 
@@ -182,14 +182,14 @@ module uart_tb #();
 
 		//Test 3: sending data to UartRx
 		test_num++;
-		rx_external_write(8'd1);
-		rx_external_write(8'd2);
-		rx_external_write(8'd3);
-		rx_external_write(8'd4);
-		rx_external_write(8'd5);
-		rx_external_write(8'd6);
-		rx_external_write(8'd7);
-		rx_external_write(8'd8);
+		rx_external_write(8'd1, 5207);
+		rx_external_write(8'd2, 5207);
+		rx_external_write(8'd3, 5207);
+		rx_external_write(8'd4, 5207);
+		rx_external_write(8'd5, 5207);
+		rx_external_write(8'd6, 5207);
+		rx_external_write(8'd7, 5207);
+		rx_external_write(8'd8, 5207);
 
 		#100;
 		
