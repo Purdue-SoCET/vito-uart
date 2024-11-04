@@ -69,9 +69,9 @@ module uart_tb #();
 		// cts = 1'b1; // cts enable
 
 		// longint pause = 10**9 / baud_rate; //Double check this calculation
-		integer pause = 5207; //pause for 5207 baudrate i think
+		integer pause = 5207 * 10; //pause for 5207 baudrate i think
 
-		//wait the baud rate represents the time in picoseconds between each bit???
+		//wait the baud rate represents the time in 10 picoseconds between each bit???
 		rx = 1'b1;
 		@(posedge clk);
 		rx = 1'b0;
