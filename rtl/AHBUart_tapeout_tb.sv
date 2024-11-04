@@ -57,20 +57,36 @@ module uart_tb #();
 		#10;
 	endtask
 
-	task rx_external_read;
+	//use this to write data to UartRx
+	task rx_external_write;
 		input logic [7:0] data_to_send;
 		input integer baud_rate;
 	begin
+		// rx = 1'b1;
+		// ren_wen = from_RX; // data from the receiver 
+		// // check the data being received by the module...
+		// rate_control = 2'b0;
+		// cts = 1'b1; // cts enable
+
+		long pause = 10^12 / baud_rate; //Double check this calculation
 		rx = 1'b1;
-		ren_wen = from_RX; // data from the receiver 
-		// check the data being received by the module...
-		rate_control = 2'b0;
-		cts = 1'b1; // cts enable
+		@(posedge clk);
+		rx = 1'b0;
+		#pause;
+		for(int i = 7; i >= 0; i++) begin
+			rx = data_to_send[i];
+			#pause;
+		end
+		rx = 1'b1;
+		#pause;
+		@(posedge clk); //wait for clock edge to realign testbench with clock
+		
 	end
 
 	endtask
 
-	task tx_external_write;
+	//use this to read what information UartTx is sending
+	task tx_external_read;
 		input integer baud_rate;
 	begin
 		tx_data = 8'h1; // 1 bit..
@@ -159,6 +175,23 @@ module uart_tb #();
 		//Test 2: reading from the Tx_buffer
 		test_num++;
 		cts = 1'b1;
+
+		#5000000; //this is 5 microseconds i think
+
+		$display("Test 2 completed!");
+
+		//Test 3: sending data to UartRx
+		test_num++;
+		rx_external_write(8'b1);
+		rx_external_write(8'b2);
+		rx_external_write(8'b3);
+		rx_external_write(8'b4);
+		rx_external_write(8'b5);
+		rx_external_write(8'b6);
+		rx_external_write(8'b7);
+		rx_external_write(8'b8);
+
+		#100;
 		
 		// reset_all;
 		// rx_buffer_read(1'b0);
@@ -176,10 +209,8 @@ module uart_tb #();
 		// rx_buffer_read(1'b0);
 		// #10;
 		// rx_buffer_read(1'b1);
-		// #10;
-		#10000000;
+		// #10'
 
-		$display("Test 2 completed!");
 		$finish;
 	end
 endmodule
