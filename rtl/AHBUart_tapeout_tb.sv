@@ -182,14 +182,14 @@ module uart_tb #();
 
 		//Test 3: sending data to UartRx
 		test_num++;
-		rx_external_write(8'b1);
-		rx_external_write(8'b2);
-		rx_external_write(8'b3);
-		rx_external_write(8'b4);
-		rx_external_write(8'b5);
-		rx_external_write(8'b6);
-		rx_external_write(8'b7);
-		rx_external_write(8'b8);
+		rx_external_write(8'd1);
+		rx_external_write(8'd2);
+		rx_external_write(8'd3);
+		rx_external_write(8'd4);
+		rx_external_write(8'd5);
+		rx_external_write(8'd6);
+		rx_external_write(8'd7);
+		rx_external_write(8'd8);
 
 		#100;
 		
