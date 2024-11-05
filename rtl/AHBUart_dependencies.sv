@@ -96,6 +96,7 @@ module socetlib_fifo #(
     assign rdata = fifo[read_ptr];
 endmodule
 
+
 //temporarily adding files here until i figure out what going on
 module BaudRateGen #(
     int MaxClockRate = 100 * 10 ** 6,
@@ -144,17 +145,25 @@ module BaudRateGen #(
     txClk     = (rate > 1) ? (txCount == 0) ^ phase : phase;
   end
 
-  always @(posedge clk, negedge nReset) begin
-    if (!nReset || syncReset || (txCount == 0)) begin
-      rxCount <= rxRate - offset - 1;
+  // TODO: Michael, please define the reset values
+  // For now, we reset to 0
+  always_ff @(posedge clk, negedge nReset) begin
+    if (!nReset) begin
+      // rxCount <= rxRate - offset - 1;
+      rxCount <= 0;
     end else if (rxCount == 0) begin
       rxCount <= rxRate - 1;
     end else if (!inWait) begin
       rxCount <= rxCount - 1;
     end
+  end
 
-    if (!nReset || syncReset || (txCount == 0)) begin
-      txCount <= rate - 1;
+  // TODO: Michael, please define the reset values
+  // For now, we reset to 0
+  always_ff @(posedge clk, negedge nReset) begin
+    if (!nReset) begin
+      // txCount <= rate - 1;
+      txCount <= 0;
     end else begin
       txCount <= txCount - 1;
     end
@@ -194,7 +203,14 @@ module UartRxEn #(
   logic rise, fall, cmp;
 
   always_ff @(posedge clk, negedge nReset) begin
-    cmp <= !nReset ? 1 : en ? in : cmp;
+    if (!nReset) begin
+      cmp <= 1;
+    end
+    else if (en) begin
+      cmp <= in;
+    end
+    // It was like this before (not synthesizable for some reason):
+    // cmp <= !nReset ? 1 : en ? in : cmp;
   end
 
   always_comb begin
@@ -248,6 +264,7 @@ module UartRxEn #(
     if (!nReset) begin
       readCount <= 8;
       data <= 0;
+      readBuf <= 0;
     end else begin
 
       if (readCount == 0) begin

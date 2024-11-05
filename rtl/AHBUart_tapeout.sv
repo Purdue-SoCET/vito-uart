@@ -17,7 +17,7 @@
 *
 *   Created by:   Vito Gamberini
 *   Email:        vito@gamberini.email
-*   Modified by:  Michael Li, Yash Singh (sing1018@purdue.edu) 
+*   Modified by:  Michael Li (li4601@purdue.edu), Yash Singh (sing1018@purdue.edu) 
 *   Date Created: 9/21/2024
 *   Description:  Modification of AHB wrapper for Tape out Nov 10 testing.
 */
@@ -283,7 +283,7 @@ module AHBUart_tapeout #(
 
 	//buffer "bus" logic
     always_comb begin
-		// "bus" to tx_buffer
+        // "bus" to tx_buffer
         fifoTx_wdata = 8'b0;
         fifoTx_WEN = 1'b0;
         if(ren_wen_nidle == to_TX) begin
