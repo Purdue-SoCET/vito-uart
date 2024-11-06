@@ -149,6 +149,9 @@ module uart_tb #();
 		ren_wen = from_RX;
 		#5;
 		$display("Rx buffer read: %x", rx_data);
+		if(rx_data != expected_data) begin
+			$display("Error: Invalid Rx buffer read. Expected %x, read %x.", expected_data, rx_data);
+		end
 		#5;
 		ren_wen = IDLE;
 		
