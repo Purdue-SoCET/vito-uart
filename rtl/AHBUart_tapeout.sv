@@ -38,11 +38,16 @@ module AHBUart_tapeout #(
 
     input cts, 
     output rts,
-    output err 
+    output err,
+
+	output tx_buffer_full
+	output rx_buffer_empty
 
     //note to self: should we add pins for buffer count?
 
 );
+	assign tx_buffer_full = fifoTx_full;
+	assign rx_buffer_empty = rx_buffer_empty;
 
     logic [1:0] rate_control, ren_wen;
     logic [19:0] rate, new_rate;
@@ -197,12 +202,12 @@ module AHBUart_tapeout #(
     assign rts = fifoRx_full;
 
 	//logic for UartRx to fifoRx // FLAG
-	// always_ff @(posedge clk, negedge nReset) begin //testing this as a comb for now
-	always_comb begin
-		// if (!nReset) begin //getting rid of nReset b/c not synthesizabel
-            // fifoRx_wdata = 8'b0;
-            // fifoRx_WEN = 1'b0;
-        // end else
+	always_ff @(posedge clk, negedge nReset) begin
+	// always_comb begin
+		if (!nReset) begin
+            fifoRx_wdata = 8'b0;
+            fifoRx_WEN = 1'b0;
+        end else
 		if(rxDone && !rxErr) begin
 			if (fifoRx_overrun) begin //m - probably better to just check if fifoRx is full/empty maybe
                 fifoRx_wdata = 8'b0;
@@ -219,61 +224,40 @@ module AHBUart_tapeout #(
 
 	//logic for fifoTx to UartTx // FLAG
 	//YASH: you might be able to move the combinational logic into the always_ff one; check the immediate prev_txClk 
-	logic prev_txClk;
+	// logic prev_txClk;
+	// always_ff @(posedge clk, negedge nReset) begin
+	// 	if(!nReset) begin
+	// 		prev_txClk <= 1'b0;
+	// 	end else begin
+	// 		prev_txClk <= txClk;
+	// 	end
+	// end
 	always_ff @(posedge clk, negedge nReset) begin
 		if(!nReset) begin
-			prev_txClk <= 1'b0;
+			txData = 8'b0;
+			txValid = 1'b0;
+			fifoTx_REN = 1'b0;
+		else if(fifoTx_empty || !cts) begin
+			txData = 8'b0;
+			txValid = 1'b0;
+			fifoTx_REN = 1'b0;
 		end else begin
-			prev_txClk <= txClk;
-		end
-	end
-	always_comb begin
-			if(fifoTx_empty || !cts) begin
-				txData = 8'b0;
-				txValid = 1'b0;
-				fifoTx_REN = 1'b0;
-			end else begin
-				if(prev_txClk) begin
-					if(!txBusy) begin
-						txData = fifoTx_rdata;
-						txValid = 1'b1;
-						fifoTx_REN = 1'b1;
-					end else begin
-						txData = 8'b0;
-						txValid = 1'b0;
-						fifoTx_REN = 1'b0;
-					end
+			if(txClk) begin
+				if(!txBusy) begin
+					txData = fifoTx_rdata;
+					txValid = 1'b1;
+					fifoTx_REN = 1'b1;
 				end else begin
 					txData = 8'b0;
 					txValid = 1'b0;
 					fifoTx_REN = 1'b0;
 				end
+			end else begin
+				txData = 8'b0;
+				txValid = 1'b0;
+				fifoTx_REN = 1'b0;
 			end
-		// end
-		
-   //      if (!nReset) begin
-   //          txData = 8'b0;
-   //          txValid = 1'b0;
-   //          fifoTx_REN = 1'b0;
-   //      end else if(cts && !txBusy) begin
-			// if (fifoTx_underrun) begin //m - weird logic, ask about this later (once underrun is detected, it persists permanently, so we can't use this buffer anymore)
-			// 	txData = fifoTx_rdata;
-   //              txValid = 1'b0;
-			// 	fifoTx_REN = 1'b0;
-			// end else if(fifoTx_empty) begin
-			// 	txData = 8'b0;
-			// 	txValid = 1'b0;
-			// 	fifoTx_REN = 1'b0;
-			// end else begin
-   //              txData = fifoTx_rdata;
-   //              txValid = 1'b1;
-			// 	fifoTx_REN = 1'b1;
-   //          end
-   //      end else begin
-   //          txData = 8'b0;
-   //          txValid = 1'b0;
-	  //   	fifoTx_REN = 1'b0;
-   //      end
+		end
     end
 
 
