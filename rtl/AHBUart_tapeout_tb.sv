@@ -63,15 +63,15 @@ module uart_tb #();
 		input logic [7:0] data_to_send;
 		input integer baud_rate;
 	begin
-		integer pause;
+		integer pause = 5207 * 10;
 		if (baud_rate == 19200) begin
-			integer pause = 2604 * 10;
+			pause = 2604 * 10;
 		end else if (baud_rate == 38400) begin
-			integer pause = 1302 * 10;
+			pause = 1302 * 10;
 		end else if (baud_rate == 115200) begin
-			integer pause = 434 * 10;
+			pause = 434 * 10;
 		end else begin //baud_rate == 9600
-			integer pause = 5207 * 10;
+			pause = 5207 * 10;
 		end
 
 		//wait the baud rate represents the time in 10 picoseconds between each bit???
