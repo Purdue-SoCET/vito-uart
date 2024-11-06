@@ -2,6 +2,24 @@
         UART tapeout SV TESTBENCH
         Name: Yash Singh, Michael Li
         Date Modified: 10/13/2024
+
+ 	Checklist of tests
+  	0. reset test - done
+  	1. writing to tx buffer - done
+   		- double check buffer empty/full signals are correct
+   	2. reading from tx buffer to uartTx - done
+		- double check baud rate in tb to make sure it correct (should be valid i think)
+  		- test cts to see if it stops uartTx
+	3. sending data to uartRx - done
+ 		- double check buffer empty/full signals are correct
+ 	4. reading from rx buffer - done
+  		- double check buffer empty/full signals are correct
+  	5. test buffer clear - please verify works
+   	6. stress test buffers - not done
+		- add more than buffer can fill
+  		- ask for more than buffer has
+   	6. try different baud rates - not done
+	7. double check nidle - not done
 */
 
 
@@ -83,7 +101,7 @@ module uart_tb #();
 		rx = 1'b0;
 		#(pause);
 		for(int i = 0; i < 8; i++) begin
-			$display("tick: %d", i);
+			// $display("tick: %d", i);
 			rx = data_to_send[i];
 			#(pause);
 		end
@@ -282,6 +300,37 @@ module uart_tb #();
 
 		
 		$display("Test 4 completed!");
+
+		//Test 5: buffer clearing
+		test_num++;
+		reset_all;
+
+		rx_external_write(8'd10, 9600);
+		rx_external_write(8'd11, 9600);
+		rx_external_write(8'd12, 9600);
+		rx_external_write(8'd13, 9600);
+		rx_external_write(8'd14, 9600);
+
+		tx_buffer_write(8'd10);
+		#10;
+		tx_buffer_write(8'd11);
+		#10;
+		tx_buffer_write(8'd12);
+		#10;
+		tx_buffer_write(8'd13);
+		#10;
+		tx_buffer_write(8'd14);
+		#10;
+
+		ren_wen = BUFFER_CLEAR;
+		#10;
+		ren_wen = IDLE;
+		#10;
+
+		$display("Test 5 completed!");
+		
+
+		#100;
 		
 
 		$finish;
