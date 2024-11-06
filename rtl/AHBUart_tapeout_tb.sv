@@ -264,8 +264,6 @@ module uart_tb #();
 		#10;
 		rx_buffer_read(8'h3);
 		#10;
-		rx_buffer_read(8'h3);
-		#10;
 		rx_buffer_read(8'h4);
 		#10;
 		rx_buffer_read(8'h5);
