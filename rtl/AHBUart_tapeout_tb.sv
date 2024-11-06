@@ -259,23 +259,23 @@ module uart_tb #();
 		test_num++;
 
 		rx_buffer_read(8'h1);
-		
+		#10;
 		rx_buffer_read(8'h2);
-		
+		#10;
 		rx_buffer_read(8'h3);
-		
+		#10;
 		rx_buffer_read(8'h3);
-		
+		#10;
 		rx_buffer_read(8'h4);
-		
+		#10;
 		rx_buffer_read(8'h5);
-		
+		#10;
 		rx_buffer_read(8'h6);
-		
+		#10;
 		rx_buffer_read(8'h7);
-		
+		#10;
 		rx_buffer_read(8'h8);
-		
+		#10;
 
 		#100;
 
