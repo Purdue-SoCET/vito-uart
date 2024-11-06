@@ -62,14 +62,16 @@ module uart_tb #();
 		input logic [7:0] data_to_send;
 		input integer baud_rate;
 	begin
-		// rx = 1'b1;
-		// ren_wen = from_RX; // data from the receiver 
-		// // check the data being received by the module...
-		// rate_control = 2'b0;
-		// cts = 1'b1; // cts enable
-
-		// longint pause = 10**9 / baud_rate; //Double check this calculation
-		integer pause = 5207 * 10; //pause for 5207 baudrate i think
+		integer pause;
+		if (baud_rate == 19200) begin
+			integer pause = 2604 * 10;
+		end else if (baud_rate == 38400) begin
+			integer pause = 1302 * 10;
+		end else if (baud_rate == 115200) begin
+			integer pause = 434 * 10;
+		end else begin //baud_rate == 9600
+			integer pause = 5207 * 10;
+		end
 
 		//wait the baud rate represents the time in 10 picoseconds between each bit???
 		rx = 1'b1;
@@ -91,26 +93,65 @@ module uart_tb #();
 
 	//use this to read what information UartTx is sending
 	task tx_external_read;
+		input logic [7:0] expected_data;
 		input integer baud_rate;
 	begin
-		tx_data = 8'h1; // 1 bit..
-		ren_wen = to_TX;
-		rate_control = 2'b0;
+		integer pause;
+		if (baud_rate == 19200) begin
+			integer pause = 2604 * 10;
+		end else if (baud_rate == 38400) begin
+			integer pause = 1302 * 10;
+		end else if (baud_rate == 115200) begin
+			integer pause = 434 * 10;
+		end else begin //baud_rate == 9600
+			integer pause = 5207 * 10;
+		end
+
+		//wait for tx to start
+		@(negedge tx);
+		//delay by half a pause to sample middle of bits
+		#(pause/2);
+
+		//check start bit
+		if(tx != 0) begin
+			$display("Error: Invalid stop bit for tx data: %x", expected_data);
+		end
+
+		//check data bits
+		for(int i = 7; i >= 0; i--) begin
+			#(pause);
+			if(tx != expected_data[i]) begin
+				$display("Error: Invalid bit (%d) for tx data: %x. Read %b, expected %b.", i, expected_data, tx, expected_data[i]);
+			end
+		end
+
+		//Note to self: should i check stop bit??
+
+		//realign back to clock signal
+		#(pause/2);
+		@(posedge clk);
 		
 	end
 	endtask
 
 	task rx_buffer_read;
-		input logic data_to_receive;
+		input logic expected_data;
 	begin
-		nRst = 1;
-		rx = data_to_receive;
 		ren_wen = from_RX;
-		rate_control = 2'b0;
-	        $display("Buffer rx data in: %x,", rx);
-		$display("Buffer receiver data bus: %x,", rx_data);
-		#10;
+		#5;
+		$display("Rx buffer read: %x", rx_data);
+		#5;
 		ren_wen = IDLE;
+		
+		
+		// nRst = 1;
+		// rx = data_to_receive;
+		// ren_wen = from_RX;
+		// rate_control = 2'b0;
+	 //        $display("Buffer rx data in: %x,", rx);
+		// $display("Buffer receiver data bus: %x,", rx_data);
+		// #10;
+		// ren_wen = IDLE;
 	end
 	endtask
 
@@ -119,10 +160,10 @@ module uart_tb #();
 	begin
 		nRst = 1'b1;
 		ren_wen = to_TX;
-		rate_control = 2'b0;
+		// rate_control = 2'b0;
 		tx_data = data_to_write;
 		$display("Buffer transceiver data bus: %x,", tx_data);
-		$display("Buffer tx data out: %x,", tx);
+		// $display("Buffer tx data out: %x,", tx);
 		#11;
 		ren_wen = IDLE;
 		tx_data = 8'b0;
@@ -180,40 +221,53 @@ module uart_tb #();
 		test_num++;
 		cts = 1'b1;
 
-		#5000000; //this is 5 microseconds i think
+		tx_external_read(8'h1, 9600);
+		tx_external_read(8'h2, 9600);
+		tx_external_read(8'h3, 9600);
+		tx_external_read(8'h4, 9600);
+		tx_external_read(8'h5, 9600);
+		tx_external_read(8'h6, 9600);
+		tx_external_read(8'h7, 9600);
+		tx_external_read(8'h8, 9600);
+
+		#100000;
+
+		// #5000000; //this is 5 microseconds i think
 
 		$display("Test 2 completed!");
 
 		//Test 3: sending data to UartRx
 		test_num++;
-		rx_external_write(8'd1, 5207);
-		rx_external_write(8'd2, 5207);
-		rx_external_write(8'd3, 5207);
-		rx_external_write(8'd4, 5207);
-		rx_external_write(8'd5, 5207);
-		rx_external_write(8'd6, 5207);
-		rx_external_write(8'd7, 5207);
-		rx_external_write(8'd8, 5207);
+		rx_external_write(8'd1, 9600);
+		rx_external_write(8'd2, 9600);
+		rx_external_write(8'd3, 9600);
+		rx_external_write(8'd4, 9600);
+		rx_external_write(8'd5, 9600);
+		rx_external_write(8'd6, 9600);
+		rx_external_write(8'd7, 9600);
+		rx_external_write(8'd8, 9600);
 
 		#100;
+
+		$display("Test 3 completed!");
+
+
+		//Test 4: reading from Rx buffer
+		test_num++;
+
+		rx_buffer_read(8'h1);
+		rx_buffer_read(8'h2);
+		rx_buffer_read(8'h3);
+		rx_buffer_read(8'h3);
+		rx_buffer_read(8'h4);
+		rx_buffer_read(8'h5);
+		rx_buffer_read(8'h6);
+		rx_buffer_read(8'h7);
+		rx_buffer_read(8'h8);
+
 		
-		// reset_all;
-		// rx_buffer_read(1'b0);
-		// #10;
-		// rx_buffer_read(1'b0);
-		// #10;
-		// rx_buffer_read(1'b0);
-		// #10;
-		// rx_buffer_read(1'b0);
-		// #10;
-		// rx_buffer_read(1'b0);
-		// #10;
-		// rx_buffer_read(1'b0);
-		// #10
-		// rx_buffer_read(1'b0);
-		// #10;
-		// rx_buffer_read(1'b1);
-		// #10'
+		$display("Test 4 completed!");
+		
 
 		$finish;
 	end
