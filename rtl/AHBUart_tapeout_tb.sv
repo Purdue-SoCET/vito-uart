@@ -119,11 +119,11 @@ module uart_tb #();
 		end
 
 		//check data bits
-		integer i;
-		for(i = 7; i >= 0; i--) begin
+		integer count;
+		for(count = 7; count >= 0; count--) begin
 			#(pause);
-			if(tx != expected_data[i]) begin
-				$display("Error: Invalid bit (%d) for tx data: %x. Read %b, expected %b.", i, expected_data, tx, expected_data[i]);
+			if(tx != expected_data[count]) begin
+				$display("Error: Invalid bit (%d) for tx data: %x. Read %b, expected %b.", count, expected_data, tx, expected_data[count]);
 			end
 		end
 
