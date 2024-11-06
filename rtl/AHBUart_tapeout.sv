@@ -47,7 +47,7 @@ module AHBUart_tapeout #(
 
 );
 	assign tx_buffer_full = fifoTx_full;
-	assign rx_buffer_empty = rx_buffer_empty;
+	assign rx_buffer_empty = fifoRx_empty;
 
     logic [1:0] rate_control, ren_wen;
     logic [19:0] rate, new_rate;
