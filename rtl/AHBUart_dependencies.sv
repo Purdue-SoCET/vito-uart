@@ -150,7 +150,7 @@ module BaudRateGen #(
   always_ff @(posedge clk, negedge nReset) begin
     if (!nReset) begin
       // rxCount <= rxRate - offset - 1;
-      rxCount <= 1;
+      rxCount <= 0;
     end else if (rxCount == 0) begin
       rxCount <= rxRate - 1;
     end else if (!inWait) begin
@@ -163,7 +163,7 @@ module BaudRateGen #(
   always_ff @(posedge clk, negedge nReset) begin
     if (!nReset) begin
       // txCount <= rate - 1;
-      txCount <= 1;
+      txCount <= 0;
     end else begin
       txCount <= txCount - 1;
     end
