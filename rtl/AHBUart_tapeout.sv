@@ -40,7 +40,7 @@ module AHBUart_tapeout #(
     output rts,
     output err,
 
-	output tx_buffer_full
+	output tx_buffer_full,
 	output rx_buffer_empty
 
     //note to self: should we add pins for buffer count?
