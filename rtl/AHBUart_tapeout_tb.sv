@@ -119,7 +119,7 @@ module uart_tb #();
 		end
 
 		//check data bits
-		integer count = 0;
+		logc [3:0] count = 0;
 		for(integer i = 7; i >= 0; i--) begin
 			#(pause);
 			if(tx != expected_data[i]) begin
