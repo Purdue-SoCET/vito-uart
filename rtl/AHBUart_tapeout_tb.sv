@@ -155,16 +155,6 @@ module uart_tb #();
 		end
 		#5;
 		ren_wen = IDLE;
-		
-		
-		// nRst = 1;
-		// rx = data_to_receive;
-		// ren_wen = from_RX;
-		// rate_control = 2'b0;
-	 //        $display("Buffer rx data in: %x,", rx);
-		// $display("Buffer receiver data bus: %x,", rx_data);
-		// #10;
-		// ren_wen = IDLE;
 	end
 	endtask
 
@@ -269,14 +259,25 @@ module uart_tb #();
 		test_num++;
 
 		rx_buffer_read(8'h1);
+		#10;
 		rx_buffer_read(8'h2);
+		#10;
 		rx_buffer_read(8'h3);
+		#10;
 		rx_buffer_read(8'h3);
+		#10;
 		rx_buffer_read(8'h4);
+		#10;
 		rx_buffer_read(8'h5);
+		#10;
 		rx_buffer_read(8'h6);
+		#10;
 		rx_buffer_read(8'h7);
+		#10;
 		rx_buffer_read(8'h8);
+		#10;
+
+		#100;
 
 		
 		$display("Test 4 completed!");
