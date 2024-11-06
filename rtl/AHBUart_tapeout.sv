@@ -196,7 +196,7 @@ module AHBUart_tapeout #(
 
     assign rts = fifoRx_full;
 
-	//logic for UartRx to fifoRx
+	//logic for UartRx to fifoRx // FLAG
 	// always_ff @(posedge clk, negedge nReset) begin //testing this as a comb for now
 	always_comb begin
 		// if (!nReset) begin //getting rid of nReset b/c not synthesizabel
