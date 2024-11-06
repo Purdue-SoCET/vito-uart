@@ -114,7 +114,7 @@ module uart_tb #();
 
 		//check start bit
 		if(tx != 0) begin
-			$display("Error: Invalid stop bit for tx data: %x", expected_data);
+			$display("Error: Invalid start bit for tx data: %x", expected_data);
 		end
 
 		//check data bits
@@ -125,7 +125,12 @@ module uart_tb #();
 			end
 		end
 
-		//Note to self: should i check stop bit??
+		//check stop bit
+		#(pause);
+		if(tx != 1) begin
+			$display("Error: Invalid stop bit for tx data: %x", expected_data);
+		end
+			
 
 		//realign back to clock signal
 		#(pause/2);
