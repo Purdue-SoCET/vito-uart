@@ -109,6 +109,7 @@ module uart_tb #();
 
 		//wait for tx to start
 		@(negedge tx);
+		
 		//delay by half a pause to sample middle of bits
 		#(pause/2);
 
@@ -118,7 +119,8 @@ module uart_tb #();
 		end
 
 		//check data bits
-		for(int i = 7; i >= 0; i--) begin
+		integer i;
+		for(i = 7; i >= 0; i--) begin
 			#(pause);
 			if(tx != expected_data[i]) begin
 				$display("Error: Invalid bit (%d) for tx data: %x. Read %b, expected %b.", i, expected_data, tx, expected_data[i]);
