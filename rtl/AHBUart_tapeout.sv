@@ -237,7 +237,7 @@ module AHBUart_tapeout #(
 			txData = 8'b0;
 			txValid = 1'b0;
 			fifoTx_REN = 1'b0;
-		else if(fifoTx_empty || !cts) begin
+			end else if(fifoTx_empty || !cts) begin
 			txData = 8'b0;
 			txValid = 1'b0;
 			fifoTx_REN = 1'b0;
