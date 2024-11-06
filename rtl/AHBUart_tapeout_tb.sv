@@ -18,6 +18,7 @@ typedef enum logic [1:0] {
 module uart_tb #();
 
 	integer test_num;
+	integer dummy_variable; //for testing
 	
 	logic clk, nRst;
 	logic rx, tx, cts, rts, err;
@@ -119,13 +120,13 @@ module uart_tb #();
 		end
 
 		//check data bits
-		int count = 0;
+		dummy_variable = 0;
 		for(integer i = 7; i >= 0; i--) begin
 			#(pause);
 			if(tx != expected_data[i]) begin
 				$display("Error: Invalid bit (%d) for tx data: %x. Read %b, expected %b.", i, expected_data, tx, expected_data[i]);
 			end
-			count++;
+			dummy_variable++;
 		end
 
 		//check stop bit
