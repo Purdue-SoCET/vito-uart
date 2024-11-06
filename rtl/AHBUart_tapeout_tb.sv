@@ -26,6 +26,7 @@ module uart_tb #();
 	logic [7:0] tx_data, rx_data; 
 
 	logic [1:0] rate_control, ren_wen;
+	logic tx_buffer_full, rx_buffer_empty;
 	assign control = {ren_wen, rate_control};
 		
 	always #5 clk = ~clk; // toggle the value of the clock every 5 nanoseconds..
@@ -40,7 +41,9 @@ module uart_tb #();
 		.err(err),
 		.control(control),
 		.tx_data(tx_data),
-		.rx_data(rx_data)
+		.rx_data(rx_data),
+		.tx_buffer_full(tx_buffer_full),
+		.rx_buffer_empty(rx_buffer_empty)
 	);
 
 	task reset_all;
