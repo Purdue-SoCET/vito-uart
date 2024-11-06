@@ -217,7 +217,8 @@ module AHBUart_tapeout #(
         end
     end
 
-	//logic for fifoTx to UartTx
+	//logic for fifoTx to UartTx // FLAG
+	//YASH: you might be able to move the combinational logic into the always_ff one; check the immediate prev_txClk 
 	logic prev_txClk;
 	always_ff @(posedge clk, negedge nReset) begin
 		if(!nReset) begin
@@ -227,11 +228,6 @@ module AHBUart_tapeout #(
 		end
 	end
 	always_comb begin
-		// if(!nReset) begin //getting rid of nRest b/c not synthesizable
-			// txData = 8'b0;
-			// txValid = 1'b0;
-			// fifoTx_REN = 1'b0;
-		// end else begin
 			if(fifoTx_empty || !cts) begin
 				txData = 8'b0;
 				txValid = 1'b0;
@@ -281,7 +277,8 @@ module AHBUart_tapeout #(
     end
 
 
-	//buffer "bus" logic
+	//buffer "bus" logic 
+	// FLAG; just whatever you had below this
     always_comb begin
         // "bus" to tx_buffer
         fifoTx_wdata = 8'b0;
