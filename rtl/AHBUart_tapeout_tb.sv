@@ -98,13 +98,13 @@ module uart_tb #();
 	begin
 		integer pause;
 		if (baud_rate == 19200) begin
-			integer pause = 2604 * 10;
+			pause = 2604 * 10;
 		end else if (baud_rate == 38400) begin
-			integer pause = 1302 * 10;
+			pause = 1302 * 10;
 		end else if (baud_rate == 115200) begin
-			integer pause = 434 * 10;
+			pause = 434 * 10;
 		end else begin //baud_rate == 9600
-			integer pause = 5207 * 10;
+			pause = 5207 * 10;
 		end
 
 		//wait for tx to start
@@ -119,13 +119,13 @@ module uart_tb #();
 		end
 
 		//check data bits
-		logic [3:0] count = 0;
+		//logic [3:0] count = 0;
 		for(integer i = 7; i >= 0; i--) begin
 			#(pause);
 			if(tx != expected_data[i]) begin
 				$display("Error: Invalid bit (%d) for tx data: %x. Read %b, expected %b.", i, expected_data, tx, expected_data[i]);
 			end
-			count++;
+			//count++;
 		end
 
 		//check stop bit
