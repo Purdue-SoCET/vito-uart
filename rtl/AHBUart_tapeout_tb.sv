@@ -135,7 +135,7 @@ module uart_tb #();
 	endtask
 
 	task rx_buffer_read;
-		input logic expected_data;
+		input logic [7:0] expected_data;
 	begin
 		ren_wen = from_RX;
 		#5;
