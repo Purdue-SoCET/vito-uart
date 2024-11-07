@@ -100,12 +100,13 @@ module uart_tb #();
 		@(posedge clk);
 		rx = 1'b0;
 		#(pause);
+		$display("Data sent into rx:", data_to_send);
 		for(int i = 0; i < 8; i++) begin
 			// $display("tick: %d", i);
 			rx = data_to_send[i];
 			#(pause);
 		end
-		rx = 1'b1;
+		rx = 1'b1; // why 
 		#(pause);
 		@(posedge clk); //wait for clock edge to realign testbench with clock
 		
@@ -142,8 +143,10 @@ module uart_tb #();
 
 		//check data bits
 		dummy_variable = 0;
+		$display("Expected; %x", expected_data);
 		for(integer i = 0; i < 8; i++) begin
 			#(pause);
+			$display("Current bit is %x: %x", i, tx);
 			if(tx != expected_data[i]) begin
 				$display("Error: Invalid bit (%d) for tx data: %x. Read %b, expected %b.", i, expected_data, tx, expected_data[i]);
 			end
@@ -187,7 +190,7 @@ module uart_tb #();
 		// rate_control = 2'b0;
 		tx_data = data_to_write;
 		$display("Buffer transceiver data bus: %x,", tx_data);
-		// $display("Buffer tx data out: %x,", tx);
+		$display("Buffer tx data out: %x,", tx);
 		#11;
 		ren_wen = IDLE;
 		tx_data = 8'b0;
@@ -219,7 +222,6 @@ module uart_tb #();
 		//Test 1: writing to Tx_buffer
 		test_num++;
 		reset_all;
-		$display("Testing: %x", 8'h1);
 		cts = 1'b0;
 		#10;
 		tx_buffer_write(8'h1); // send in combinations of 8 bit values..
@@ -236,10 +238,10 @@ module uart_tb #();
 		#10;
 		tx_buffer_write(8'h7);
 		#10;
-		tx_buffer_write(8'h8);
-		#10;
-		
-		$display("Test 1 complete!");
+		$display("Testing for all ones");
+		tx_buffer_write(8'hFF);
+		#10
+		$display("Test 1, writing to tx fifo buffer, complete!");
 		
 		//Test 2: reading from the Tx_buffer
 		test_num++;
@@ -252,13 +254,13 @@ module uart_tb #();
 		tx_external_read(8'h5, 9600);
 		tx_external_read(8'h6, 9600);
 		tx_external_read(8'h7, 9600);
-		tx_external_read(8'h8, 9600);
+		tx_external_read(8'hFF, 9600);
 
 		#100000;
 
 		// #5000000; //this is 5 microseconds i think
 
-		$display("Test 2 completed!");
+		$display("Test 2, reading from the tx uart, completed!");
 
 		//Test 3: sending data to UartRx
 		test_num++;
@@ -269,11 +271,11 @@ module uart_tb #();
 		rx_external_write(8'd5, 9600);
 		rx_external_write(8'd6, 9600);
 		rx_external_write(8'd7, 9600);
-		rx_external_write(8'd8, 9600);
+		rx_external_write(8'hFF, 9600);
 
 		#100;
 
-		$display("Test 3 completed!");
+		$display("Test 3, writing to the rx uart, completed!");
 
 
 		//Test 4: reading from Rx buffer
@@ -293,13 +295,13 @@ module uart_tb #();
 		#10;
 		rx_buffer_read(8'h7);
 		#10;
-		rx_buffer_read(8'h8);
+		rx_buffer_read(8'hFF);
 		#10;
 
 		#100;
 
 		
-		$display("Test 4 completed!");
+		$display("Test 4, reading from the rx buffer, completed!");
 
 		//Test 5: buffer clearing
 		test_num++;
@@ -327,9 +329,8 @@ module uart_tb #();
 		ren_wen = IDLE;
 		#10;
 
-		$display("Test 5 completed!");
+		$display("Test 5, clearing the buffers, completed!");
 		
-
 		#100;
 		
 
