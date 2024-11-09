@@ -332,6 +332,81 @@ module uart_tb #();
 		$display("Test 5, clearing the buffers, completed!");
 		
 		#100;
+
+		//Test 6: Checking 19200 baud rate
+		test_num++;
+		reset_all;
+		rate_control = 2'b1; //19200 baud rate
+
+		tx_buffer_write(8'd1);
+		#10;
+		tx_buffer_write(8'd2);
+		#10;
+		tx_buffer_write(8'd4);
+		#10;
+		tx_buffer_write(8'd8);
+		#10;
+		tx_buffer_write(8'd16);
+		#10;
+		tx_buffer_write(8'd32);
+		#10;
+		tx_buffer_write(8'd64);
+		#10;
+		tx_buffer_write(8'd128);
+		#10;
+
+		cts = 1'b1;
+		tx_external_read(8'd1, 19200);
+		tx_external_read(8'd2, 19200);
+		tx_external_read(8'd4, 19200);
+		tx_external_read(8'd8, 19200);
+		cts = 1'b0;
+		#5000;
+		cts = 1'b1;
+		tx_external_read(8'd16, 19200);
+		tx_external_read(8'd32, 19200);
+		tx_external_read(8'd64, 19200);
+		tx_external_read(8'd128, 19200);
+		cts = 1'b0;
+		#100;
+
+		rx_external_write(8'd1, 19200);
+		rx_external_write(8'd2, 19200);
+		rx_external_write(8'd4, 19200);
+		rx_external_write(8'd8, 19200);
+		#5000;
+		rx_external_write(8'd16, 19200);
+		rx_external_write(8'd32, 19200);
+		rx_external_write(8'd64, 19200);
+		rx_external_write(8'd128, 19200);
+		#100;
+
+		rx_buffer_read(8'd1);
+		#10;
+		rx_buffer_read(8'd2);
+		#10;
+		rx_buffer_read(8'd4);
+		#10;
+		rx_buffer_read(8'd8);
+		#10;
+		rx_buffer_read(8'd16);
+		#10;
+		rx_buffer_read(8'd32);
+		#10;
+		rx_buffer_read(8'd64);
+		#10;
+		rx_buffer_read(8'd128);
+		#10;
+
+
+		$display("Test 6, checking 19200 baud rate, completed!");
+		
+		#100;
+		
+
+		
+		
+		
 		
 
 		$finish;
