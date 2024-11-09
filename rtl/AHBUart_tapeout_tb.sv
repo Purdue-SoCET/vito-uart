@@ -409,7 +409,7 @@ module uart_tb #();
 		//Test 7: Checking 38400 baud rate
 		test_num++;
 		reset_all;
-		rate_control = 2'b2; //38400 baud rate
+		rate_control = 2'd2; //38400 baud rate
 
 		tx_buffer_write(8'd1);
 		#10;
@@ -480,7 +480,7 @@ module uart_tb #();
 		//Test 7: Checking 38400 baud rate
 		test_num++;
 		reset_all;
-		rate_control = 2'b3; //38400 baud rate
+		rate_control = 2'd3; //38400 baud rate
 
 		tx_buffer_write(8'd1);
 		#10;
