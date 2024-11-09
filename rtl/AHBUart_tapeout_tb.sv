@@ -333,6 +333,8 @@ module uart_tb #();
 		
 		#100;
 
+		
+
 		//Test 6: Checking 19200 baud rate
 		test_num++;
 		reset_all;
@@ -361,7 +363,7 @@ module uart_tb #();
 		tx_external_read(8'd4, 19200);
 		tx_external_read(8'd8, 19200);
 		cts = 1'b0;
-		#5000;
+		#500000;
 		cts = 1'b1;
 		tx_external_read(8'd16, 19200);
 		tx_external_read(8'd32, 19200);
@@ -374,7 +376,7 @@ module uart_tb #();
 		rx_external_write(8'd2, 19200);
 		rx_external_write(8'd4, 19200);
 		rx_external_write(8'd8, 19200);
-		#5000;
+		#500000;
 		rx_external_write(8'd16, 19200);
 		rx_external_write(8'd32, 19200);
 		rx_external_write(8'd64, 19200);
@@ -404,7 +406,146 @@ module uart_tb #();
 		#100;
 		
 
+		//Test 7: Checking 38400 baud rate
+		test_num++;
+		reset_all;
+		rate_control = 2'b2; //38400 baud rate
+
+		tx_buffer_write(8'd1);
+		#10;
+		tx_buffer_write(8'd2);
+		#10;
+		tx_buffer_write(8'd4);
+		#10;
+		tx_buffer_write(8'd8);
+		#10;
+		tx_buffer_write(8'd16);
+		#10;
+		tx_buffer_write(8'd32);
+		#10;
+		tx_buffer_write(8'd64);
+		#10;
+		tx_buffer_write(8'd128);
+		#10;
+
+		cts = 1'b1;
+		tx_external_read(8'd1, 38400);
+		tx_external_read(8'd2, 38400);
+		tx_external_read(8'd4, 38400);
+		tx_external_read(8'd8, 38400);
+		cts = 1'b0;
+		#500000;
+		cts = 1'b1;
+		tx_external_read(8'd16, 38400);
+		tx_external_read(8'd32, 38400);
+		tx_external_read(8'd64, 38400);
+		tx_external_read(8'd128, 38400);
+		cts = 1'b0;
+		#100;
+
+		rx_external_write(8'd1, 38400);
+		rx_external_write(8'd2, 38400);
+		rx_external_write(8'd4, 38400);
+		rx_external_write(8'd8, 38400);
+		#500000;
+		rx_external_write(8'd16, 38400);
+		rx_external_write(8'd32, 38400);
+		rx_external_write(8'd64, 38400);
+		rx_external_write(8'd128, 38400);
+		#100;
+
+		rx_buffer_read(8'd1);
+		#10;
+		rx_buffer_read(8'd2);
+		#10;
+		rx_buffer_read(8'd4);
+		#10;
+		rx_buffer_read(8'd8);
+		#10;
+		rx_buffer_read(8'd16);
+		#10;
+		rx_buffer_read(8'd32);
+		#10;
+		rx_buffer_read(8'd64);
+		#10;
+		rx_buffer_read(8'd128);
+		#10;
+
+
+		$display("Test 7, checking 38400 baud rate, completed!");
 		
+		#100;
+
+
+		//Test 7: Checking 38400 baud rate
+		test_num++;
+		reset_all;
+		rate_control = 2'b3; //38400 baud rate
+
+		tx_buffer_write(8'd1);
+		#10;
+		tx_buffer_write(8'd2);
+		#10;
+		tx_buffer_write(8'd4);
+		#10;
+		tx_buffer_write(8'd8);
+		#10;
+		tx_buffer_write(8'd16);
+		#10;
+		tx_buffer_write(8'd32);
+		#10;
+		tx_buffer_write(8'd64);
+		#10;
+		tx_buffer_write(8'd128);
+		#10;
+
+		cts = 1'b1;
+		tx_external_read(8'd1, 38400);
+		tx_external_read(8'd2, 38400);
+		tx_external_read(8'd4, 38400);
+		tx_external_read(8'd8, 38400);
+		cts = 1'b0;
+		#500000;
+		cts = 1'b1;
+		tx_external_read(8'd16, 38400);
+		tx_external_read(8'd32, 38400);
+		tx_external_read(8'd64, 38400);
+		tx_external_read(8'd128, 38400);
+		cts = 1'b0;
+		#100;
+
+		rx_external_write(8'd1, 38400);
+		rx_external_write(8'd2, 38400);
+		rx_external_write(8'd4, 38400);
+		rx_external_write(8'd8, 38400);
+		#5000;
+		rx_external_write(8'd16, 38400);
+		rx_external_write(8'd32, 38400);
+		rx_external_write(8'd64, 38400);
+		rx_external_write(8'd128, 38400);
+		#100;
+
+		rx_buffer_read(8'd1);
+		#10;
+		rx_buffer_read(8'd2);
+		#10;
+		rx_buffer_read(8'd4);
+		#10;
+		rx_buffer_read(8'd8);
+		#10;
+		rx_buffer_read(8'd16);
+		#10;
+		rx_buffer_read(8'd32);
+		#10;
+		rx_buffer_read(8'd64);
+		#10;
+		rx_buffer_read(8'd128);
+		#10;
+
+
+		$display("Test 7, checking 38400 baud rate, completed!");
+		
+		#100;
 		
 		
 		
