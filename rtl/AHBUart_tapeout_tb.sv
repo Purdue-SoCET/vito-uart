@@ -173,7 +173,7 @@ module uart_tb #();
 		ren_wen = from_RX;
 		#5;
 		if(rx_data == expected_data) begin
-			$display("Rx buffer read: %x", rx_data);
+			$display("Rx buffer read: %x", rx_data); //cant figure out how to put this in decimal
 		end else begin
 			$display("Error: Invalid Rx buffer read. Expected %x, read %x.", expected_data, rx_data);
 		end
