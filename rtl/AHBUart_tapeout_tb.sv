@@ -212,6 +212,7 @@ module uart_tb #();
 		reset_all; //this does nothing...
 		
 		//Test 0: Reset test
+		$display("Starting test #0: reset test");
 		test_num = 0;
 		
 		nRst = 0;
