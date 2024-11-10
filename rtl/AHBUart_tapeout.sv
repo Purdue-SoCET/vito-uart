@@ -22,7 +22,7 @@
 *   Description:  Modification of AHB wrapper for Tape out Nov 10 testing.
 */
 
-//uart implementation
+//uart implementation :)
 
 module AHBUart_tapeout #(
 	logic [19:0] DefaultRate = 5207  // value for 9600 baudrate
