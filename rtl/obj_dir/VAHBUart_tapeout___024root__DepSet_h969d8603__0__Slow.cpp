@@ -14,6 +14,9 @@ VL_ATTR_COLD void VAHBUart_tapeout___024root___eval_static(VAHBUart_tapeout___02
     auto &vlSelfRef = std::ref(*vlSelf).get();
     // Body
     VAHBUart_tapeout___024root___eval_static__TOP(vlSelf);
+    vlSelfRef.__Vm_traceActivity[8U] = 1U;
+    vlSelfRef.__Vm_traceActivity[7U] = 1U;
+    vlSelfRef.__Vm_traceActivity[6U] = 1U;
     vlSelfRef.__Vm_traceActivity[5U] = 1U;
     vlSelfRef.__Vm_traceActivity[4U] = 1U;
     vlSelfRef.__Vm_traceActivity[3U] = 1U;
@@ -97,6 +100,9 @@ VL_ATTR_COLD void VAHBUart_tapeout___024root___eval_stl(VAHBUart_tapeout___024ro
     // Body
     if ((1ULL & vlSelfRef.__VstlTriggered.word(0U))) {
         VAHBUart_tapeout___024root___stl_sequent__TOP__0(vlSelf);
+        vlSelfRef.__Vm_traceActivity[8U] = 1U;
+        vlSelfRef.__Vm_traceActivity[7U] = 1U;
+        vlSelfRef.__Vm_traceActivity[6U] = 1U;
         vlSelfRef.__Vm_traceActivity[5U] = 1U;
         vlSelfRef.__Vm_traceActivity[4U] = 1U;
         vlSelfRef.__Vm_traceActivity[3U] = 1U;
@@ -334,7 +340,7 @@ VL_ATTR_COLD void VAHBUart_tapeout___024root___stl_sequent__TOP__0(VAHBUart_tape
                 = (((~ (0xffULL << (0x3fU & VL_SHIFTL_III(6,32,32, (IData)(vlSelfRef.uart_tb__DOT__DUT__DOT__fifoTx__DOT__write_ptr), 3U)))) 
                     & vlSelfRef.uart_tb__DOT__DUT__DOT__fifoTx__DOT__fifo_next) 
                    | ((QData)((IData)(((1U == (IData)(vlSelfRef.uart_tb__DOT__DUT__DOT__ren_wen_nidle))
-                                        ? (IData)(vlSelfRef.uart_tb__DOT__DUT__DOT__synced_output__DOT__buffer_2)
+                                        ? (IData)(vlSelfRef.uart_tb__DOT__DUT__DOT__synced_tx_data__DOT__buffer_2)
                                         : 0U))) << 
                       (0x3fU & VL_SHIFTL_III(6,32,32, (IData)(vlSelfRef.uart_tb__DOT__DUT__DOT__fifoTx__DOT__write_ptr), 3U))));
         }
@@ -413,13 +419,13 @@ VL_ATTR_COLD void VAHBUart_tapeout___024root___dump_triggers__act(VAHBUart_tapeo
         VL_DBG_MSGF("         'act' region trigger index 0 is active: @(posedge uart_tb.clk or negedge uart_tb.nRst)\n");
     }
     if ((2ULL & vlSelfRef.__VactTriggered.word(0U))) {
-        VL_DBG_MSGF("         'act' region trigger index 1 is active: @([true] __VdlySched.awaitingCurrentTime())\n");
+        VL_DBG_MSGF("         'act' region trigger index 1 is active: @(posedge uart_tb.clk)\n");
     }
     if ((4ULL & vlSelfRef.__VactTriggered.word(0U))) {
-        VL_DBG_MSGF("         'act' region trigger index 2 is active: @(negedge uart_tb.tx)\n");
+        VL_DBG_MSGF("         'act' region trigger index 2 is active: @([true] __VdlySched.awaitingCurrentTime())\n");
     }
     if ((8ULL & vlSelfRef.__VactTriggered.word(0U))) {
-        VL_DBG_MSGF("         'act' region trigger index 3 is active: @(posedge uart_tb.clk)\n");
+        VL_DBG_MSGF("         'act' region trigger index 3 is active: @(negedge uart_tb.tx)\n");
     }
 }
 #endif  // VL_DEBUG
@@ -438,13 +444,13 @@ VL_ATTR_COLD void VAHBUart_tapeout___024root___dump_triggers__nba(VAHBUart_tapeo
         VL_DBG_MSGF("         'nba' region trigger index 0 is active: @(posedge uart_tb.clk or negedge uart_tb.nRst)\n");
     }
     if ((2ULL & vlSelfRef.__VnbaTriggered.word(0U))) {
-        VL_DBG_MSGF("         'nba' region trigger index 1 is active: @([true] __VdlySched.awaitingCurrentTime())\n");
+        VL_DBG_MSGF("         'nba' region trigger index 1 is active: @(posedge uart_tb.clk)\n");
     }
     if ((4ULL & vlSelfRef.__VnbaTriggered.word(0U))) {
-        VL_DBG_MSGF("         'nba' region trigger index 2 is active: @(negedge uart_tb.tx)\n");
+        VL_DBG_MSGF("         'nba' region trigger index 2 is active: @([true] __VdlySched.awaitingCurrentTime())\n");
     }
     if ((8ULL & vlSelfRef.__VnbaTriggered.word(0U))) {
-        VL_DBG_MSGF("         'nba' region trigger index 3 is active: @(posedge uart_tb.clk)\n");
+        VL_DBG_MSGF("         'nba' region trigger index 3 is active: @(negedge uart_tb.tx)\n");
     }
 }
 #endif  // VL_DEBUG
@@ -489,8 +495,10 @@ VL_ATTR_COLD void VAHBUart_tapeout___024root___ctor_var_reset(VAHBUart_tapeout__
     vlSelf->uart_tb__DOT__DUT__DOT__fifoTx_underrun = VL_RAND_RESET_I(1);
     vlSelf->uart_tb__DOT__DUT__DOT__fifoTx_overrun = VL_RAND_RESET_I(1);
     vlSelf->uart_tb__DOT__DUT__DOT__fifoTx_count = VL_RAND_RESET_I(4);
-    vlSelf->uart_tb__DOT__DUT__DOT__synced_output__DOT__buffer_1 = VL_RAND_RESET_I(8);
-    vlSelf->uart_tb__DOT__DUT__DOT__synced_output__DOT__buffer_2 = VL_RAND_RESET_I(8);
+    vlSelf->uart_tb__DOT__DUT__DOT__sync_control_data__DOT__buffer_1 = VL_RAND_RESET_I(4);
+    vlSelf->uart_tb__DOT__DUT__DOT__sync_control_data__DOT__buffer_2 = VL_RAND_RESET_I(4);
+    vlSelf->uart_tb__DOT__DUT__DOT__synced_tx_data__DOT__buffer_1 = VL_RAND_RESET_I(8);
+    vlSelf->uart_tb__DOT__DUT__DOT__synced_tx_data__DOT__buffer_2 = VL_RAND_RESET_I(8);
     vlSelf->uart_tb__DOT__DUT__DOT__bg__DOT__totalWait = VL_RAND_RESET_I(20);
     vlSelf->uart_tb__DOT__DUT__DOT__bg__DOT__postWait = VL_RAND_RESET_I(20);
     vlSelf->uart_tb__DOT__DUT__DOT__bg__DOT__preWait = VL_RAND_RESET_I(20);
@@ -535,10 +543,11 @@ VL_ATTR_COLD void VAHBUart_tapeout___024root___ctor_var_reset(VAHBUart_tapeout__
     vlSelf->uart_tb__DOT__DUT__DOT__fifoTx__DOT__count_next = VL_RAND_RESET_I(4);
     vlSelf->uart_tb__DOT__DUT__DOT__fifoTx__DOT__fifo = VL_RAND_RESET_Q(64);
     vlSelf->uart_tb__DOT__DUT__DOT__fifoTx__DOT__fifo_next = VL_RAND_RESET_Q(64);
+    vlSelf->__Vdly__uart_tb__DOT__DUT__DOT__sync_control_data__DOT__buffer_2 = VL_RAND_RESET_I(4);
     vlSelf->__Vtrigprevexpr___TOP__uart_tb__DOT__clk__0 = VL_RAND_RESET_I(1);
     vlSelf->__Vtrigprevexpr___TOP__uart_tb__DOT__nRst__0 = VL_RAND_RESET_I(1);
     vlSelf->__Vtrigprevexpr___TOP__uart_tb__DOT__tx__0 = VL_RAND_RESET_I(1);
-    for (int __Vi0 = 0; __Vi0 < 6; ++__Vi0) {
+    for (int __Vi0 = 0; __Vi0 < 9; ++__Vi0) {
         vlSelf->__Vm_traceActivity[__Vi0] = 0;
     }
 }

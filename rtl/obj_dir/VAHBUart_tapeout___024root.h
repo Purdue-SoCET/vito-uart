@@ -46,8 +46,10 @@ class alignas(VL_CACHE_LINE_BYTES) VAHBUart_tapeout___024root final : public Ver
         CData/*0:0*/ uart_tb__DOT__DUT__DOT__fifoTx_underrun;
         CData/*0:0*/ uart_tb__DOT__DUT__DOT__fifoTx_overrun;
         CData/*3:0*/ uart_tb__DOT__DUT__DOT__fifoTx_count;
-        CData/*7:0*/ uart_tb__DOT__DUT__DOT__synced_output__DOT__buffer_1;
-        CData/*7:0*/ uart_tb__DOT__DUT__DOT__synced_output__DOT__buffer_2;
+        CData/*3:0*/ uart_tb__DOT__DUT__DOT__sync_control_data__DOT__buffer_1;
+        CData/*3:0*/ uart_tb__DOT__DUT__DOT__sync_control_data__DOT__buffer_2;
+        CData/*7:0*/ uart_tb__DOT__DUT__DOT__synced_tx_data__DOT__buffer_1;
+        CData/*7:0*/ uart_tb__DOT__DUT__DOT__synced_tx_data__DOT__buffer_2;
         CData/*0:0*/ uart_tb__DOT__DUT__DOT__bg__DOT__inWait;
         CData/*2:0*/ uart_tb__DOT__DUT__DOT__uartRx__DOT__curState;
         CData/*2:0*/ uart_tb__DOT__DUT__DOT__uartRx__DOT__nextState;
@@ -79,14 +81,15 @@ class alignas(VL_CACHE_LINE_BYTES) VAHBUart_tapeout___024root final : public Ver
         CData/*0:0*/ uart_tb__DOT__DUT__DOT__fifoTx__DOT__overrun_next;
         CData/*0:0*/ uart_tb__DOT__DUT__DOT__fifoTx__DOT__underrun_next;
         CData/*2:0*/ uart_tb__DOT__DUT__DOT__fifoTx__DOT__write_ptr;
-        CData/*2:0*/ uart_tb__DOT__DUT__DOT__fifoTx__DOT__write_ptr_next;
-        CData/*2:0*/ uart_tb__DOT__DUT__DOT__fifoTx__DOT__read_ptr;
     };
     struct {
+        CData/*2:0*/ uart_tb__DOT__DUT__DOT__fifoTx__DOT__write_ptr_next;
+        CData/*2:0*/ uart_tb__DOT__DUT__DOT__fifoTx__DOT__read_ptr;
         CData/*2:0*/ uart_tb__DOT__DUT__DOT__fifoTx__DOT__read_ptr_next;
         CData/*3:0*/ uart_tb__DOT__DUT__DOT__fifoTx__DOT__count_next;
         QData/*63:0*/ uart_tb__DOT__DUT__DOT__fifoTx__DOT__fifo;
         QData/*63:0*/ uart_tb__DOT__DUT__DOT__fifoTx__DOT__fifo_next;
+        CData/*3:0*/ __Vdly__uart_tb__DOT__DUT__DOT__sync_control_data__DOT__buffer_2;
         CData/*0:0*/ __VstlFirstIteration;
         CData/*0:0*/ __Vtrigprevexpr___TOP__uart_tb__DOT__clk__0;
         CData/*0:0*/ __Vtrigprevexpr___TOP__uart_tb__DOT__nRst__0;
@@ -105,7 +108,7 @@ class alignas(VL_CACHE_LINE_BYTES) VAHBUart_tapeout___024root final : public Ver
         IData/*19:0*/ uart_tb__DOT__DUT__DOT__bg__DOT__preWait;
         IData/*19:0*/ uart_tb__DOT__DUT__DOT__bg__DOT__txCount;
         IData/*31:0*/ __VactIterCount;
-        VlUnpacked<CData/*0:0*/, 6> __Vm_traceActivity;
+        VlUnpacked<CData/*0:0*/, 9> __Vm_traceActivity;
     };
     VlDelayScheduler __VdlySched;
     VlTriggerScheduler __VtrigSched_hbd4f0004__0;

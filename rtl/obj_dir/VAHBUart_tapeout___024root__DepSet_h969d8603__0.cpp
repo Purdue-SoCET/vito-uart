@@ -128,7 +128,7 @@ VlCoroutine VAHBUart_tapeout___024root___eval_initial__TOP__Vtiming__0__1(VAHBUa
     // Body
     co_await vlSelfRef.__VdlySched.delay(0xaULL, nullptr, 
                                          "AHBUart_tapeout_tb.sv", 
-                                         498);
+                                         496);
     vlSelfRef.__Vm_traceActivity[2U] = 1U;
     __Vtask_uart_tb__DOT__tx_buffer_write__119__data_to_write = 0x80U;
     vlSelfRef.uart_tb__DOT__nRst = 1U;
@@ -149,7 +149,7 @@ VlCoroutine VAHBUart_tapeout___024root___eval_initial__TOP__Vtiming__0__1(VAHBUa
     vlSelfRef.__Vm_traceActivity[2U] = 1U;
     co_await vlSelfRef.__VdlySched.delay(0xaULL, nullptr, 
                                          "AHBUart_tapeout_tb.sv", 
-                                         500);
+                                         498);
     vlSelfRef.__Vm_traceActivity[2U] = 1U;
     vlSelfRef.uart_tb__DOT__cts = 1U;
     __Vtask_uart_tb__DOT__tx_external_read__120__baud_rate = 0x1c200U;
@@ -863,7 +863,7 @@ VlCoroutine VAHBUart_tapeout___024root___eval_initial__TOP__Vtiming__0__1(VAHBUa
     vlSelfRef.uart_tb__DOT__cts = 0U;
     co_await vlSelfRef.__VdlySched.delay(0x7a120ULL, 
                                          nullptr, "AHBUart_tapeout_tb.sv", 
-                                         508);
+                                         506);
     vlSelfRef.__Vm_traceActivity[2U] = 1U;
     vlSelfRef.uart_tb__DOT__cts = 1U;
     __Vtask_uart_tb__DOT__tx_external_read__124__baud_rate = 0x1c200U;
@@ -1577,7 +1577,7 @@ VlCoroutine VAHBUart_tapeout___024root___eval_initial__TOP__Vtiming__0__1(VAHBUa
     vlSelfRef.uart_tb__DOT__cts = 0U;
     co_await vlSelfRef.__VdlySched.delay(0x64ULL, nullptr, 
                                          "AHBUart_tapeout_tb.sv", 
-                                         515);
+                                         513);
     vlSelfRef.__Vm_traceActivity[2U] = 1U;
     __Vtask_uart_tb__DOT__rx_external_write__128__baud_rate = 0x1c200U;
     __Vtask_uart_tb__DOT__rx_external_write__128__data_to_send = 1U;
@@ -1893,7 +1893,7 @@ VlCoroutine VAHBUart_tapeout___024root___eval_initial__TOP__Vtiming__0__1(VAHBUa
     vlSelfRef.__Vm_traceActivity[2U] = 1U;
     co_await vlSelfRef.__VdlySched.delay(0x1388ULL, 
                                          nullptr, "AHBUart_tapeout_tb.sv", 
-                                         521);
+                                         519);
     vlSelfRef.__Vm_traceActivity[2U] = 1U;
     __Vtask_uart_tb__DOT__rx_external_write__132__baud_rate = 0x1c200U;
     __Vtask_uart_tb__DOT__rx_external_write__132__data_to_send = 0x10U;
@@ -2209,7 +2209,7 @@ VlCoroutine VAHBUart_tapeout___024root___eval_initial__TOP__Vtiming__0__1(VAHBUa
     vlSelfRef.__Vm_traceActivity[2U] = 1U;
     co_await vlSelfRef.__VdlySched.delay(0x64ULL, nullptr, 
                                          "AHBUart_tapeout_tb.sv", 
-                                         526);
+                                         524);
     vlSelfRef.__Vm_traceActivity[2U] = 1U;
     __Vtask_uart_tb__DOT__rx_buffer_read__136__expected_data = 1U;
     vlSelfRef.uart_tb__DOT__ren_wen = 2U;
@@ -2231,7 +2231,7 @@ VlCoroutine VAHBUart_tapeout___024root___eval_initial__TOP__Vtiming__0__1(VAHBUa
     vlSelfRef.uart_tb__DOT__ren_wen = 0U;
     co_await vlSelfRef.__VdlySched.delay(0xaULL, nullptr, 
                                          "AHBUart_tapeout_tb.sv", 
-                                         529);
+                                         527);
     vlSelfRef.__Vm_traceActivity[2U] = 1U;
     __Vtask_uart_tb__DOT__rx_buffer_read__137__expected_data = 2U;
     vlSelfRef.uart_tb__DOT__ren_wen = 2U;
@@ -2253,7 +2253,7 @@ VlCoroutine VAHBUart_tapeout___024root___eval_initial__TOP__Vtiming__0__1(VAHBUa
     vlSelfRef.uart_tb__DOT__ren_wen = 0U;
     co_await vlSelfRef.__VdlySched.delay(0xaULL, nullptr, 
                                          "AHBUart_tapeout_tb.sv", 
-                                         531);
+                                         529);
     vlSelfRef.__Vm_traceActivity[2U] = 1U;
     __Vtask_uart_tb__DOT__rx_buffer_read__138__expected_data = 4U;
     vlSelfRef.uart_tb__DOT__ren_wen = 2U;
@@ -2275,7 +2275,7 @@ VlCoroutine VAHBUart_tapeout___024root___eval_initial__TOP__Vtiming__0__1(VAHBUa
     vlSelfRef.uart_tb__DOT__ren_wen = 0U;
     co_await vlSelfRef.__VdlySched.delay(0xaULL, nullptr, 
                                          "AHBUart_tapeout_tb.sv", 
-                                         533);
+                                         531);
     vlSelfRef.__Vm_traceActivity[2U] = 1U;
     __Vtask_uart_tb__DOT__rx_buffer_read__139__expected_data = 8U;
     vlSelfRef.uart_tb__DOT__ren_wen = 2U;
@@ -2297,7 +2297,7 @@ VlCoroutine VAHBUart_tapeout___024root___eval_initial__TOP__Vtiming__0__1(VAHBUa
     vlSelfRef.uart_tb__DOT__ren_wen = 0U;
     co_await vlSelfRef.__VdlySched.delay(0xaULL, nullptr, 
                                          "AHBUart_tapeout_tb.sv", 
-                                         535);
+                                         533);
     vlSelfRef.__Vm_traceActivity[2U] = 1U;
     __Vtask_uart_tb__DOT__rx_buffer_read__140__expected_data = 0x10U;
     vlSelfRef.uart_tb__DOT__ren_wen = 2U;
@@ -2319,7 +2319,7 @@ VlCoroutine VAHBUart_tapeout___024root___eval_initial__TOP__Vtiming__0__1(VAHBUa
     vlSelfRef.uart_tb__DOT__ren_wen = 0U;
     co_await vlSelfRef.__VdlySched.delay(0xaULL, nullptr, 
                                          "AHBUart_tapeout_tb.sv", 
-                                         537);
+                                         535);
     vlSelfRef.__Vm_traceActivity[2U] = 1U;
     __Vtask_uart_tb__DOT__rx_buffer_read__141__expected_data = 0x20U;
     vlSelfRef.uart_tb__DOT__ren_wen = 2U;
@@ -2341,7 +2341,7 @@ VlCoroutine VAHBUart_tapeout___024root___eval_initial__TOP__Vtiming__0__1(VAHBUa
     vlSelfRef.uart_tb__DOT__ren_wen = 0U;
     co_await vlSelfRef.__VdlySched.delay(0xaULL, nullptr, 
                                          "AHBUart_tapeout_tb.sv", 
-                                         539);
+                                         537);
     vlSelfRef.__Vm_traceActivity[2U] = 1U;
     __Vtask_uart_tb__DOT__rx_buffer_read__142__expected_data = 0x40U;
     vlSelfRef.uart_tb__DOT__ren_wen = 2U;
@@ -2363,7 +2363,7 @@ VlCoroutine VAHBUart_tapeout___024root___eval_initial__TOP__Vtiming__0__1(VAHBUa
     vlSelfRef.uart_tb__DOT__ren_wen = 0U;
     co_await vlSelfRef.__VdlySched.delay(0xaULL, nullptr, 
                                          "AHBUart_tapeout_tb.sv", 
-                                         541);
+                                         539);
     vlSelfRef.__Vm_traceActivity[2U] = 1U;
     __Vtask_uart_tb__DOT__rx_buffer_read__143__expected_data = 0x80U;
     vlSelfRef.uart_tb__DOT__ren_wen = 2U;
@@ -2385,14 +2385,14 @@ VlCoroutine VAHBUart_tapeout___024root___eval_initial__TOP__Vtiming__0__1(VAHBUa
     vlSelfRef.uart_tb__DOT__ren_wen = 0U;
     co_await vlSelfRef.__VdlySched.delay(0xaULL, nullptr, 
                                          "AHBUart_tapeout_tb.sv", 
-                                         543);
+                                         541);
     vlSelfRef.__Vm_traceActivity[2U] = 1U;
     VL_WRITEF_NX("Test 8, checking 115200 baud rate, completed!\n",0);
     co_await vlSelfRef.__VdlySched.delay(0x64ULL, nullptr, 
                                          "AHBUart_tapeout_tb.sv", 
-                                         548);
+                                         546);
     vlSelfRef.__Vm_traceActivity[2U] = 1U;
-    VL_FINISH_MT("AHBUart_tapeout_tb.sv", 553, "");
+    VL_FINISH_MT("AHBUart_tapeout_tb.sv", 551, "");
     vlSelfRef.__Vm_traceActivity[2U] = 1U;
 }
 
@@ -2482,6 +2482,9 @@ VL_INLINE_OPT void VAHBUart_tapeout___024root___act_comb__TOP__0(VAHBUart_tapeou
 }
 
 void VAHBUart_tapeout___024root___nba_sequent__TOP__0(VAHBUart_tapeout___024root* vlSelf);
+void VAHBUart_tapeout___024root___nba_sequent__TOP__1(VAHBUart_tapeout___024root* vlSelf);
+void VAHBUart_tapeout___024root___nba_sequent__TOP__2(VAHBUart_tapeout___024root* vlSelf);
+void VAHBUart_tapeout___024root___nba_comb__TOP__1(VAHBUart_tapeout___024root* vlSelf);
 
 void VAHBUart_tapeout___024root___eval_nba(VAHBUart_tapeout___024root* vlSelf) {
     (void)vlSelf;  // Prevent unused variable warning
@@ -2489,22 +2492,53 @@ void VAHBUart_tapeout___024root___eval_nba(VAHBUart_tapeout___024root* vlSelf) {
     VL_DEBUG_IF(VL_DBG_MSGF("+    VAHBUart_tapeout___024root___eval_nba\n"); );
     auto &vlSelfRef = std::ref(*vlSelf).get();
     // Body
-    if ((1ULL & vlSelfRef.__VnbaTriggered.word(0U))) {
+    if ((2ULL & vlSelfRef.__VnbaTriggered.word(0U))) {
         VAHBUart_tapeout___024root___nba_sequent__TOP__0(vlSelf);
         vlSelfRef.__Vm_traceActivity[4U] = 1U;
     }
-    if ((0xfULL & vlSelfRef.__VnbaTriggered.word(0U))) {
-        VAHBUart_tapeout___024root___act_comb__TOP__0(vlSelf);
+    if ((1ULL & vlSelfRef.__VnbaTriggered.word(0U))) {
+        VAHBUart_tapeout___024root___nba_sequent__TOP__1(vlSelf);
         vlSelfRef.__Vm_traceActivity[5U] = 1U;
     }
+    if ((0xfULL & vlSelfRef.__VnbaTriggered.word(0U))) {
+        VAHBUart_tapeout___024root___act_comb__TOP__0(vlSelf);
+        vlSelfRef.__Vm_traceActivity[6U] = 1U;
+    }
+    if ((2ULL & vlSelfRef.__VnbaTriggered.word(0U))) {
+        VAHBUart_tapeout___024root___nba_sequent__TOP__2(vlSelf);
+        vlSelfRef.__Vm_traceActivity[7U] = 1U;
+    }
+    if ((3ULL & vlSelfRef.__VnbaTriggered.word(0U))) {
+        VAHBUart_tapeout___024root___nba_comb__TOP__1(vlSelf);
+        vlSelfRef.__Vm_traceActivity[8U] = 1U;
+    }
 }
-
-extern const VlUnpacked<CData/*1:0*/, 128> VAHBUart_tapeout__ConstPool__TABLE_h5f91972e_0;
 
 VL_INLINE_OPT void VAHBUart_tapeout___024root___nba_sequent__TOP__0(VAHBUart_tapeout___024root* vlSelf) {
     (void)vlSelf;  // Prevent unused variable warning
     VAHBUart_tapeout__Syms* const __restrict vlSymsp VL_ATTR_UNUSED = vlSelf->vlSymsp;
     VL_DEBUG_IF(VL_DBG_MSGF("+    VAHBUart_tapeout___024root___nba_sequent__TOP__0\n"); );
+    auto &vlSelfRef = std::ref(*vlSelf).get();
+    // Body
+    vlSelfRef.__Vdly__uart_tb__DOT__DUT__DOT__sync_control_data__DOT__buffer_2 
+        = vlSelfRef.uart_tb__DOT__DUT__DOT__sync_control_data__DOT__buffer_2;
+    vlSelfRef.__Vdly__uart_tb__DOT__DUT__DOT__sync_control_data__DOT__buffer_2 
+        = vlSelfRef.uart_tb__DOT__DUT__DOT__sync_control_data__DOT__buffer_2;
+    vlSelfRef.uart_tb__DOT__DUT__DOT__synced_tx_data__DOT__buffer_2 
+        = vlSelfRef.uart_tb__DOT__DUT__DOT__synced_tx_data__DOT__buffer_2;
+    vlSelfRef.uart_tb__DOT__DUT__DOT__synced_tx_data__DOT__buffer_1 
+        = vlSelfRef.uart_tb__DOT__tx_data;
+    vlSelfRef.uart_tb__DOT__DUT__DOT__sync_control_data__DOT__buffer_1 
+        = (((IData)(vlSelfRef.uart_tb__DOT__ren_wen) 
+            << 2U) | (IData)(vlSelfRef.uart_tb__DOT__rate_control));
+}
+
+extern const VlUnpacked<CData/*1:0*/, 128> VAHBUart_tapeout__ConstPool__TABLE_h5f91972e_0;
+
+VL_INLINE_OPT void VAHBUart_tapeout___024root___nba_sequent__TOP__1(VAHBUart_tapeout___024root* vlSelf) {
+    (void)vlSelf;  // Prevent unused variable warning
+    VAHBUart_tapeout__Syms* const __restrict vlSymsp VL_ATTR_UNUSED = vlSelf->vlSymsp;
+    VL_DEBUG_IF(VL_DBG_MSGF("+    VAHBUart_tapeout___024root___nba_sequent__TOP__1\n"); );
     auto &vlSelfRef = std::ref(*vlSelf).get();
     // Init
     CData/*6:0*/ __Vtableidx2;
@@ -2581,8 +2615,6 @@ VL_INLINE_OPT void VAHBUart_tapeout___024root___nba_sequent__TOP__0(VAHBUart_tap
                                                     (0x3fU 
                                                      & VL_SHIFTL_III(6,6,32, (IData)(vlSelfRef.uart_tb__DOT__DUT__DOT__fifoTx__DOT__read_ptr), 3U))))))
                        : 0U));
-        vlSelfRef.uart_tb__DOT__DUT__DOT__synced_output__DOT__buffer_2 
-            = vlSelfRef.uart_tb__DOT__DUT__DOT__synced_output__DOT__buffer_2;
         if (((3U == (IData)(vlSelfRef.uart_tb__DOT__DUT__DOT__uartTx__DOT__nextState)) 
              | (0U == (IData)(vlSelfRef.uart_tb__DOT__DUT__DOT__uartTx__DOT__nextState)))) {
             if (vlSelfRef.uart_tb__DOT__DUT__DOT__fifoTx_REN) {
@@ -2702,8 +2734,6 @@ VL_INLINE_OPT void VAHBUart_tapeout___024root___nba_sequent__TOP__0(VAHBUart_tap
                             ? (vlSelfRef.uart_tb__DOT__DUT__DOT__rate 
                                - (IData)(1U)) : (vlSelfRef.uart_tb__DOT__DUT__DOT__bg__DOT__txCount 
                                                  - (IData)(1U))));
-        vlSelfRef.uart_tb__DOT__DUT__DOT__synced_output__DOT__buffer_1 
-            = vlSelfRef.uart_tb__DOT__tx_data;
         vlSelfRef.uart_tb__DOT__DUT__DOT__fifoRx__DOT__read_ptr 
             = vlSelfRef.uart_tb__DOT__DUT__DOT__fifoRx__DOT__read_ptr_next;
         vlSelfRef.uart_tb__DOT__DUT__DOT__fifoRx__DOT__fifo 
@@ -2715,10 +2745,10 @@ VL_INLINE_OPT void VAHBUart_tapeout___024root___nba_sequent__TOP__0(VAHBUart_tap
         vlSelfRef.uart_tb__DOT__DUT__DOT__fifoRx_count 
             = vlSelfRef.uart_tb__DOT__DUT__DOT__fifoRx__DOT__count_next;
         vlSelfRef.uart_tb__DOT__DUT__DOT__ren_wen_nidle 
-            = (((0U != (IData)(vlSelfRef.uart_tb__DOT__ren_wen)) 
-                & (0U == (IData)(vlSelfRef.uart_tb__DOT__DUT__DOT__prev_ren_wen)))
-                ? (IData)(vlSelfRef.uart_tb__DOT__ren_wen)
-                : 0U);
+            = (((0U != (3U & ((IData)(vlSelfRef.uart_tb__DOT__DUT__DOT__sync_control_data__DOT__buffer_2) 
+                              >> 2U))) & (0U == (IData)(vlSelfRef.uart_tb__DOT__DUT__DOT__prev_ren_wen)))
+                ? (3U & ((IData)(vlSelfRef.uart_tb__DOT__DUT__DOT__sync_control_data__DOT__buffer_2) 
+                         >> 2U)) : 0U);
         vlSelfRef.uart_tb__DOT__DUT__DOT__fifoTx__DOT__read_ptr 
             = vlSelfRef.uart_tb__DOT__DUT__DOT__fifoTx__DOT__read_ptr_next;
         vlSelfRef.uart_tb__DOT__DUT__DOT__fifoTx__DOT__fifo 
@@ -2726,23 +2756,29 @@ VL_INLINE_OPT void VAHBUart_tapeout___024root___nba_sequent__TOP__0(VAHBUart_tap
         vlSelfRef.uart_tb__DOT__DUT__DOT__fifoTx_count 
             = vlSelfRef.uart_tb__DOT__DUT__DOT__fifoTx__DOT__count_next;
         vlSelfRef.uart_tb__DOT__DUT__DOT__rate = ((1U 
-                                                   == (IData)(vlSelfRef.uart_tb__DOT__rate_control))
+                                                   == 
+                                                   (3U 
+                                                    & (IData)(vlSelfRef.uart_tb__DOT__DUT__DOT__sync_control_data__DOT__buffer_2)))
                                                    ? 0xa2cU
                                                    : 
                                                   ((2U 
-                                                    == (IData)(vlSelfRef.uart_tb__DOT__rate_control))
+                                                    == 
+                                                    (3U 
+                                                     & (IData)(vlSelfRef.uart_tb__DOT__DUT__DOT__sync_control_data__DOT__buffer_2)))
                                                     ? 0x516U
                                                     : 
                                                    ((3U 
-                                                     == (IData)(vlSelfRef.uart_tb__DOT__rate_control))
+                                                     == 
+                                                     (3U 
+                                                      & (IData)(vlSelfRef.uart_tb__DOT__DUT__DOT__sync_control_data__DOT__buffer_2)))
                                                      ? 0x1b2U
                                                      : 0x1457U)));
         vlSelfRef.uart_tb__DOT__DUT__DOT__prev_ren_wen 
-            = vlSelfRef.uart_tb__DOT__ren_wen;
+            = (3U & ((IData)(vlSelfRef.uart_tb__DOT__DUT__DOT__sync_control_data__DOT__buffer_2) 
+                     >> 2U));
     } else {
         vlSelfRef.uart_tb__DOT__DUT__DOT__fifoRx_wdata = 0U;
         vlSelfRef.uart_tb__DOT__DUT__DOT__txData = 0U;
-        vlSelfRef.uart_tb__DOT__DUT__DOT__synced_output__DOT__buffer_2 = 0U;
         __Vdly__uart_tb__DOT__DUT__DOT__uartTx__DOT__writeBuf = 0U;
         vlSelfRef.uart_tb__DOT__DUT__DOT__uartTx__DOT__curState = 0U;
         __Vdly__uart_tb__DOT__DUT__DOT__uartTx__DOT__writeCount = 8U;
@@ -2756,7 +2792,6 @@ VL_INLINE_OPT void VAHBUart_tapeout___024root___nba_sequent__TOP__0(VAHBUart_tap
         __Vdly__uart_tb__DOT__DUT__DOT__uartRx__DOT__edgeCmp = 0U;
         __Vdly__uart_tb__DOT__DUT__DOT__uartRx__DOT__curState = 0U;
         vlSelfRef.uart_tb__DOT__DUT__DOT__bg__DOT__txCount = 0U;
-        vlSelfRef.uart_tb__DOT__DUT__DOT__synced_output__DOT__buffer_1 = 0U;
         vlSelfRef.uart_tb__DOT__DUT__DOT__fifoRx__DOT__read_ptr = 0U;
         vlSelfRef.uart_tb__DOT__DUT__DOT__fifoRx__DOT__fifo = 0ULL;
         vlSelfRef.uart_tb__DOT__DUT__DOT__fifoTx__DOT__write_ptr = 0U;
@@ -2833,6 +2868,18 @@ VL_INLINE_OPT void VAHBUart_tapeout___024root___nba_sequent__TOP__0(VAHBUart_tap
         = vlSelfRef.uart_tb__DOT__DUT__DOT__fifoRx_underrun;
     vlSelfRef.uart_tb__DOT__DUT__DOT__fifoRx__DOT__fifo_next 
         = vlSelfRef.uart_tb__DOT__DUT__DOT__fifoRx__DOT__fifo;
+    if ((3U != (IData)(vlSelfRef.uart_tb__DOT__DUT__DOT__ren_wen_nidle))) {
+        if ((((IData)(vlSelfRef.uart_tb__DOT__DUT__DOT__fifoRx_WEN) 
+              & (8U != (IData)(vlSelfRef.uart_tb__DOT__DUT__DOT__fifoRx_count))) 
+             & (~ ((0U == (IData)(vlSelfRef.uart_tb__DOT__DUT__DOT__fifoRx_count)) 
+                   & (IData)(vlSelfRef.uart_tb__DOT__DUT__DOT__fifoRx_REN))))) {
+            vlSelfRef.uart_tb__DOT__DUT__DOT__fifoRx__DOT__fifo_next 
+                = (((~ (0xffULL << (0x3fU & VL_SHIFTL_III(6,32,32, (IData)(vlSelfRef.uart_tb__DOT__DUT__DOT__fifoRx__DOT__write_ptr), 3U)))) 
+                    & vlSelfRef.uart_tb__DOT__DUT__DOT__fifoRx__DOT__fifo_next) 
+                   | ((QData)((IData)(vlSelfRef.uart_tb__DOT__DUT__DOT__fifoRx_wdata)) 
+                      << (0x3fU & VL_SHIFTL_III(6,32,32, (IData)(vlSelfRef.uart_tb__DOT__DUT__DOT__fifoRx__DOT__write_ptr), 3U))));
+        }
+    }
     vlSelfRef.uart_tb__DOT__DUT__DOT__fifoTx__DOT__write_ptr_next 
         = vlSelfRef.uart_tb__DOT__DUT__DOT__fifoTx__DOT__write_ptr;
     vlSelfRef.uart_tb__DOT__DUT__DOT__fifoTx__DOT__read_ptr_next 
@@ -2960,32 +3007,6 @@ VL_INLINE_OPT void VAHBUart_tapeout___024root___nba_sequent__TOP__0(VAHBUart_tap
             }
         }
     }
-    vlSelfRef.uart_tb__DOT__DUT__DOT__fifoTx__DOT__fifo_next 
-        = vlSelfRef.uart_tb__DOT__DUT__DOT__fifoTx__DOT__fifo;
-    if ((3U != (IData)(vlSelfRef.uart_tb__DOT__DUT__DOT__ren_wen_nidle))) {
-        if ((((IData)(vlSelfRef.uart_tb__DOT__DUT__DOT__fifoRx_WEN) 
-              & (8U != (IData)(vlSelfRef.uart_tb__DOT__DUT__DOT__fifoRx_count))) 
-             & (~ ((0U == (IData)(vlSelfRef.uart_tb__DOT__DUT__DOT__fifoRx_count)) 
-                   & (IData)(vlSelfRef.uart_tb__DOT__DUT__DOT__fifoRx_REN))))) {
-            vlSelfRef.uart_tb__DOT__DUT__DOT__fifoRx__DOT__fifo_next 
-                = (((~ (0xffULL << (0x3fU & VL_SHIFTL_III(6,32,32, (IData)(vlSelfRef.uart_tb__DOT__DUT__DOT__fifoRx__DOT__write_ptr), 3U)))) 
-                    & vlSelfRef.uart_tb__DOT__DUT__DOT__fifoRx__DOT__fifo_next) 
-                   | ((QData)((IData)(vlSelfRef.uart_tb__DOT__DUT__DOT__fifoRx_wdata)) 
-                      << (0x3fU & VL_SHIFTL_III(6,32,32, (IData)(vlSelfRef.uart_tb__DOT__DUT__DOT__fifoRx__DOT__write_ptr), 3U))));
-        }
-        if ((((IData)(vlSelfRef.uart_tb__DOT__DUT__DOT__fifoTx_WEN) 
-              & (8U != (IData)(vlSelfRef.uart_tb__DOT__DUT__DOT__fifoTx_count))) 
-             & (~ ((0U == (IData)(vlSelfRef.uart_tb__DOT__DUT__DOT__fifoTx_count)) 
-                   & (IData)(vlSelfRef.uart_tb__DOT__DUT__DOT__fifoTx_REN))))) {
-            vlSelfRef.uart_tb__DOT__DUT__DOT__fifoTx__DOT__fifo_next 
-                = (((~ (0xffULL << (0x3fU & VL_SHIFTL_III(6,32,32, (IData)(vlSelfRef.uart_tb__DOT__DUT__DOT__fifoTx__DOT__write_ptr), 3U)))) 
-                    & vlSelfRef.uart_tb__DOT__DUT__DOT__fifoTx__DOT__fifo_next) 
-                   | ((QData)((IData)(((1U == (IData)(vlSelfRef.uart_tb__DOT__DUT__DOT__ren_wen_nidle))
-                                        ? (IData)(vlSelfRef.uart_tb__DOT__DUT__DOT__synced_output__DOT__buffer_2)
-                                        : 0U))) << 
-                      (0x3fU & VL_SHIFTL_III(6,32,32, (IData)(vlSelfRef.uart_tb__DOT__DUT__DOT__fifoTx__DOT__write_ptr), 3U))));
-        }
-    }
     vlSelfRef.uart_tb__DOT__DUT__DOT__txClk = ((1U 
                                                 < vlSelfRef.uart_tb__DOT__DUT__DOT__rate) 
                                                && (0U 
@@ -3021,21 +3042,55 @@ VL_INLINE_OPT void VAHBUart_tapeout___024root___nba_sequent__TOP__0(VAHBUart_tap
                                                       == (IData)(vlSelfRef.uart_tb__DOT__DUT__DOT__bg__DOT__rxCount))));
 }
 
+VL_INLINE_OPT void VAHBUart_tapeout___024root___nba_sequent__TOP__2(VAHBUart_tapeout___024root* vlSelf) {
+    (void)vlSelf;  // Prevent unused variable warning
+    VAHBUart_tapeout__Syms* const __restrict vlSymsp VL_ATTR_UNUSED = vlSelf->vlSymsp;
+    VL_DEBUG_IF(VL_DBG_MSGF("+    VAHBUart_tapeout___024root___nba_sequent__TOP__2\n"); );
+    auto &vlSelfRef = std::ref(*vlSelf).get();
+    // Body
+    vlSelfRef.uart_tb__DOT__DUT__DOT__sync_control_data__DOT__buffer_2 
+        = vlSelfRef.__Vdly__uart_tb__DOT__DUT__DOT__sync_control_data__DOT__buffer_2;
+}
+
+VL_INLINE_OPT void VAHBUart_tapeout___024root___nba_comb__TOP__1(VAHBUart_tapeout___024root* vlSelf) {
+    (void)vlSelf;  // Prevent unused variable warning
+    VAHBUart_tapeout__Syms* const __restrict vlSymsp VL_ATTR_UNUSED = vlSelf->vlSymsp;
+    VL_DEBUG_IF(VL_DBG_MSGF("+    VAHBUart_tapeout___024root___nba_comb__TOP__1\n"); );
+    auto &vlSelfRef = std::ref(*vlSelf).get();
+    // Body
+    vlSelfRef.uart_tb__DOT__DUT__DOT__fifoTx__DOT__fifo_next 
+        = vlSelfRef.uart_tb__DOT__DUT__DOT__fifoTx__DOT__fifo;
+    if ((3U != (IData)(vlSelfRef.uart_tb__DOT__DUT__DOT__ren_wen_nidle))) {
+        if ((((IData)(vlSelfRef.uart_tb__DOT__DUT__DOT__fifoTx_WEN) 
+              & (8U != (IData)(vlSelfRef.uart_tb__DOT__DUT__DOT__fifoTx_count))) 
+             & (~ ((0U == (IData)(vlSelfRef.uart_tb__DOT__DUT__DOT__fifoTx_count)) 
+                   & (IData)(vlSelfRef.uart_tb__DOT__DUT__DOT__fifoTx_REN))))) {
+            vlSelfRef.uart_tb__DOT__DUT__DOT__fifoTx__DOT__fifo_next 
+                = (((~ (0xffULL << (0x3fU & VL_SHIFTL_III(6,32,32, (IData)(vlSelfRef.uart_tb__DOT__DUT__DOT__fifoTx__DOT__write_ptr), 3U)))) 
+                    & vlSelfRef.uart_tb__DOT__DUT__DOT__fifoTx__DOT__fifo_next) 
+                   | ((QData)((IData)(((1U == (IData)(vlSelfRef.uart_tb__DOT__DUT__DOT__ren_wen_nidle))
+                                        ? (IData)(vlSelfRef.uart_tb__DOT__DUT__DOT__synced_tx_data__DOT__buffer_2)
+                                        : 0U))) << 
+                      (0x3fU & VL_SHIFTL_III(6,32,32, (IData)(vlSelfRef.uart_tb__DOT__DUT__DOT__fifoTx__DOT__write_ptr), 3U))));
+        }
+    }
+}
+
 void VAHBUart_tapeout___024root___timing_resume(VAHBUart_tapeout___024root* vlSelf) {
     (void)vlSelf;  // Prevent unused variable warning
     VAHBUart_tapeout__Syms* const __restrict vlSymsp VL_ATTR_UNUSED = vlSelf->vlSymsp;
     VL_DEBUG_IF(VL_DBG_MSGF("+    VAHBUart_tapeout___024root___timing_resume\n"); );
     auto &vlSelfRef = std::ref(*vlSelf).get();
     // Body
-    if ((4ULL & vlSelfRef.__VactTriggered.word(0U))) {
+    if ((8ULL & vlSelfRef.__VactTriggered.word(0U))) {
         vlSelfRef.__VtrigSched_hbd4f0004__0.resume(
                                                    "@(negedge uart_tb.tx)");
     }
-    if ((8ULL & vlSelfRef.__VactTriggered.word(0U))) {
+    if ((2ULL & vlSelfRef.__VactTriggered.word(0U))) {
         vlSelfRef.__VtrigSched_h24b22ba6__0.resume(
                                                    "@(posedge uart_tb.clk)");
     }
-    if ((2ULL & vlSelfRef.__VactTriggered.word(0U))) {
+    if ((4ULL & vlSelfRef.__VactTriggered.word(0U))) {
         vlSelfRef.__VdlySched.resume();
     }
 }
@@ -3046,11 +3101,11 @@ void VAHBUart_tapeout___024root___timing_commit(VAHBUart_tapeout___024root* vlSe
     VL_DEBUG_IF(VL_DBG_MSGF("+    VAHBUart_tapeout___024root___timing_commit\n"); );
     auto &vlSelfRef = std::ref(*vlSelf).get();
     // Body
-    if ((! (4ULL & vlSelfRef.__VactTriggered.word(0U)))) {
+    if ((! (8ULL & vlSelfRef.__VactTriggered.word(0U)))) {
         vlSelfRef.__VtrigSched_hbd4f0004__0.commit(
                                                    "@(negedge uart_tb.tx)");
     }
-    if ((! (8ULL & vlSelfRef.__VactTriggered.word(0U)))) {
+    if ((! (2ULL & vlSelfRef.__VactTriggered.word(0U)))) {
         vlSelfRef.__VtrigSched_h24b22ba6__0.commit(
                                                    "@(posedge uart_tb.clk)");
     }

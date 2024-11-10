@@ -550,7 +550,6 @@ VlCoroutine VAHBUart_tapeout___024root___eval_initial__TOP__Vtiming__0__0(VAHBUa
                                          "AHBUart_tapeout_tb.sv", 
                                          240);
     vlSelfRef.__Vm_traceActivity[1U] = 1U;
-    VL_WRITEF_NX("Testing for all ones\n",0);
     __Vtask_uart_tb__DOT__tx_buffer_write__9__data_to_write = 0xffU;
     vlSelfRef.uart_tb__DOT__nRst = 1U;
     vlSelfRef.uart_tb__DOT__ren_wen = 1U;
@@ -570,7 +569,7 @@ VlCoroutine VAHBUart_tapeout___024root___eval_initial__TOP__Vtiming__0__0(VAHBUa
     vlSelfRef.__Vm_traceActivity[1U] = 1U;
     co_await vlSelfRef.__VdlySched.delay(0xaULL, nullptr, 
                                          "AHBUart_tapeout_tb.sv", 
-                                         243);
+                                         242);
     vlSelfRef.__Vm_traceActivity[1U] = 1U;
     VL_WRITEF_NX("Test 1, writing to tx fifo buffer, complete!\n",0);
     vlSelfRef.uart_tb__DOT__test_num = ((IData)(1U) 
@@ -1994,7 +1993,7 @@ VlCoroutine VAHBUart_tapeout___024root___eval_initial__TOP__Vtiming__0__0(VAHBUa
     vlSelfRef.__Vm_traceActivity[1U] = 1U;
     co_await vlSelfRef.__VdlySched.delay(0x186a0ULL, 
                                          nullptr, "AHBUart_tapeout_tb.sv", 
-                                         259);
+                                         257);
     vlSelfRef.__Vm_traceActivity[1U] = 1U;
     VL_WRITEF_NX("Test 2, reading from the tx uart, completed!\n",0);
     vlSelfRef.uart_tb__DOT__test_num = ((IData)(1U) 
@@ -2625,7 +2624,7 @@ VlCoroutine VAHBUart_tapeout___024root___eval_initial__TOP__Vtiming__0__0(VAHBUa
     vlSelfRef.__Vm_traceActivity[1U] = 1U;
     co_await vlSelfRef.__VdlySched.delay(0x64ULL, nullptr, 
                                          "AHBUart_tapeout_tb.sv", 
-                                         276);
+                                         274);
     vlSelfRef.__Vm_traceActivity[1U] = 1U;
     VL_WRITEF_NX("Test 3, writing to the rx uart, completed!\n",0);
     vlSelfRef.uart_tb__DOT__test_num = ((IData)(1U) 
@@ -2650,7 +2649,7 @@ VlCoroutine VAHBUart_tapeout___024root___eval_initial__TOP__Vtiming__0__0(VAHBUa
     vlSelfRef.uart_tb__DOT__ren_wen = 0U;
     co_await vlSelfRef.__VdlySched.delay(0xaULL, nullptr, 
                                          "AHBUart_tapeout_tb.sv", 
-                                         285);
+                                         283);
     vlSelfRef.__Vm_traceActivity[1U] = 1U;
     __Vtask_uart_tb__DOT__rx_buffer_read__27__expected_data = 2U;
     vlSelfRef.uart_tb__DOT__ren_wen = 2U;
@@ -2672,7 +2671,7 @@ VlCoroutine VAHBUart_tapeout___024root___eval_initial__TOP__Vtiming__0__0(VAHBUa
     vlSelfRef.uart_tb__DOT__ren_wen = 0U;
     co_await vlSelfRef.__VdlySched.delay(0xaULL, nullptr, 
                                          "AHBUart_tapeout_tb.sv", 
-                                         287);
+                                         285);
     vlSelfRef.__Vm_traceActivity[1U] = 1U;
     __Vtask_uart_tb__DOT__rx_buffer_read__28__expected_data = 3U;
     vlSelfRef.uart_tb__DOT__ren_wen = 2U;
@@ -2694,7 +2693,7 @@ VlCoroutine VAHBUart_tapeout___024root___eval_initial__TOP__Vtiming__0__0(VAHBUa
     vlSelfRef.uart_tb__DOT__ren_wen = 0U;
     co_await vlSelfRef.__VdlySched.delay(0xaULL, nullptr, 
                                          "AHBUart_tapeout_tb.sv", 
-                                         289);
+                                         287);
     vlSelfRef.__Vm_traceActivity[1U] = 1U;
     __Vtask_uart_tb__DOT__rx_buffer_read__29__expected_data = 4U;
     vlSelfRef.uart_tb__DOT__ren_wen = 2U;
@@ -2716,7 +2715,7 @@ VlCoroutine VAHBUart_tapeout___024root___eval_initial__TOP__Vtiming__0__0(VAHBUa
     vlSelfRef.uart_tb__DOT__ren_wen = 0U;
     co_await vlSelfRef.__VdlySched.delay(0xaULL, nullptr, 
                                          "AHBUart_tapeout_tb.sv", 
-                                         291);
+                                         289);
     vlSelfRef.__Vm_traceActivity[1U] = 1U;
     __Vtask_uart_tb__DOT__rx_buffer_read__30__expected_data = 5U;
     vlSelfRef.uart_tb__DOT__ren_wen = 2U;
@@ -2738,7 +2737,7 @@ VlCoroutine VAHBUart_tapeout___024root___eval_initial__TOP__Vtiming__0__0(VAHBUa
     vlSelfRef.uart_tb__DOT__ren_wen = 0U;
     co_await vlSelfRef.__VdlySched.delay(0xaULL, nullptr, 
                                          "AHBUart_tapeout_tb.sv", 
-                                         293);
+                                         291);
     vlSelfRef.__Vm_traceActivity[1U] = 1U;
     __Vtask_uart_tb__DOT__rx_buffer_read__31__expected_data = 6U;
     vlSelfRef.uart_tb__DOT__ren_wen = 2U;
@@ -2760,7 +2759,7 @@ VlCoroutine VAHBUart_tapeout___024root___eval_initial__TOP__Vtiming__0__0(VAHBUa
     vlSelfRef.uart_tb__DOT__ren_wen = 0U;
     co_await vlSelfRef.__VdlySched.delay(0xaULL, nullptr, 
                                          "AHBUart_tapeout_tb.sv", 
-                                         295);
+                                         293);
     vlSelfRef.__Vm_traceActivity[1U] = 1U;
     __Vtask_uart_tb__DOT__rx_buffer_read__32__expected_data = 7U;
     vlSelfRef.uart_tb__DOT__ren_wen = 2U;
@@ -2782,7 +2781,7 @@ VlCoroutine VAHBUart_tapeout___024root___eval_initial__TOP__Vtiming__0__0(VAHBUa
     vlSelfRef.uart_tb__DOT__ren_wen = 0U;
     co_await vlSelfRef.__VdlySched.delay(0xaULL, nullptr, 
                                          "AHBUart_tapeout_tb.sv", 
-                                         297);
+                                         295);
     vlSelfRef.__Vm_traceActivity[1U] = 1U;
     __Vtask_uart_tb__DOT__rx_buffer_read__33__expected_data = 0xffU;
     vlSelfRef.uart_tb__DOT__ren_wen = 2U;
@@ -2804,11 +2803,11 @@ VlCoroutine VAHBUart_tapeout___024root___eval_initial__TOP__Vtiming__0__0(VAHBUa
     vlSelfRef.uart_tb__DOT__ren_wen = 0U;
     co_await vlSelfRef.__VdlySched.delay(0xaULL, nullptr, 
                                          "AHBUart_tapeout_tb.sv", 
-                                         299);
+                                         297);
     vlSelfRef.__Vm_traceActivity[1U] = 1U;
     co_await vlSelfRef.__VdlySched.delay(0x64ULL, nullptr, 
                                          "AHBUart_tapeout_tb.sv", 
-                                         301);
+                                         299);
     vlSelfRef.__Vm_traceActivity[1U] = 1U;
     VL_WRITEF_NX("Test 4, reading from the rx buffer, completed!\n",0);
     vlSelfRef.uart_tb__DOT__test_num = ((IData)(1U) 
@@ -3238,7 +3237,7 @@ VlCoroutine VAHBUart_tapeout___024root___eval_initial__TOP__Vtiming__0__0(VAHBUa
     vlSelfRef.__Vm_traceActivity[1U] = 1U;
     co_await vlSelfRef.__VdlySched.delay(0xaULL, nullptr, 
                                          "AHBUart_tapeout_tb.sv", 
-                                         317);
+                                         315);
     vlSelfRef.__Vm_traceActivity[1U] = 1U;
     __Vtask_uart_tb__DOT__tx_buffer_write__41__data_to_write = 0xbU;
     vlSelfRef.uart_tb__DOT__nRst = 1U;
@@ -3259,7 +3258,7 @@ VlCoroutine VAHBUart_tapeout___024root___eval_initial__TOP__Vtiming__0__0(VAHBUa
     vlSelfRef.__Vm_traceActivity[1U] = 1U;
     co_await vlSelfRef.__VdlySched.delay(0xaULL, nullptr, 
                                          "AHBUart_tapeout_tb.sv", 
-                                         319);
+                                         317);
     vlSelfRef.__Vm_traceActivity[1U] = 1U;
     __Vtask_uart_tb__DOT__tx_buffer_write__42__data_to_write = 0xcU;
     vlSelfRef.uart_tb__DOT__nRst = 1U;
@@ -3280,7 +3279,7 @@ VlCoroutine VAHBUart_tapeout___024root___eval_initial__TOP__Vtiming__0__0(VAHBUa
     vlSelfRef.__Vm_traceActivity[1U] = 1U;
     co_await vlSelfRef.__VdlySched.delay(0xaULL, nullptr, 
                                          "AHBUart_tapeout_tb.sv", 
-                                         321);
+                                         319);
     vlSelfRef.__Vm_traceActivity[1U] = 1U;
     __Vtask_uart_tb__DOT__tx_buffer_write__43__data_to_write = 0xdU;
     vlSelfRef.uart_tb__DOT__nRst = 1U;
@@ -3301,7 +3300,7 @@ VlCoroutine VAHBUart_tapeout___024root___eval_initial__TOP__Vtiming__0__0(VAHBUa
     vlSelfRef.__Vm_traceActivity[1U] = 1U;
     co_await vlSelfRef.__VdlySched.delay(0xaULL, nullptr, 
                                          "AHBUart_tapeout_tb.sv", 
-                                         323);
+                                         321);
     vlSelfRef.__Vm_traceActivity[1U] = 1U;
     __Vtask_uart_tb__DOT__tx_buffer_write__44__data_to_write = 0xeU;
     vlSelfRef.uart_tb__DOT__nRst = 1U;
@@ -3322,22 +3321,22 @@ VlCoroutine VAHBUart_tapeout___024root___eval_initial__TOP__Vtiming__0__0(VAHBUa
     vlSelfRef.__Vm_traceActivity[1U] = 1U;
     co_await vlSelfRef.__VdlySched.delay(0xaULL, nullptr, 
                                          "AHBUart_tapeout_tb.sv", 
-                                         325);
+                                         323);
     vlSelfRef.__Vm_traceActivity[1U] = 1U;
     vlSelfRef.uart_tb__DOT__ren_wen = 3U;
     co_await vlSelfRef.__VdlySched.delay(0xaULL, nullptr, 
                                          "AHBUart_tapeout_tb.sv", 
-                                         328);
+                                         326);
     vlSelfRef.__Vm_traceActivity[1U] = 1U;
     vlSelfRef.uart_tb__DOT__ren_wen = 0U;
     co_await vlSelfRef.__VdlySched.delay(0xaULL, nullptr, 
                                          "AHBUart_tapeout_tb.sv", 
-                                         330);
+                                         328);
     vlSelfRef.__Vm_traceActivity[1U] = 1U;
     VL_WRITEF_NX("Test 5, clearing the buffers, completed!\n",0);
     co_await vlSelfRef.__VdlySched.delay(0x64ULL, nullptr, 
                                          "AHBUart_tapeout_tb.sv", 
-                                         334);
+                                         332);
     vlSelfRef.__Vm_traceActivity[1U] = 1U;
     vlSelfRef.uart_tb__DOT__test_num = ((IData)(1U) 
                                         + vlSelfRef.uart_tb__DOT__test_num);
@@ -3377,7 +3376,7 @@ VlCoroutine VAHBUart_tapeout___024root___eval_initial__TOP__Vtiming__0__0(VAHBUa
     vlSelfRef.__Vm_traceActivity[1U] = 1U;
     co_await vlSelfRef.__VdlySched.delay(0xaULL, nullptr, 
                                          "AHBUart_tapeout_tb.sv", 
-                                         344);
+                                         342);
     vlSelfRef.__Vm_traceActivity[1U] = 1U;
     __Vtask_uart_tb__DOT__tx_buffer_write__47__data_to_write = 2U;
     vlSelfRef.uart_tb__DOT__nRst = 1U;
@@ -3398,7 +3397,7 @@ VlCoroutine VAHBUart_tapeout___024root___eval_initial__TOP__Vtiming__0__0(VAHBUa
     vlSelfRef.__Vm_traceActivity[1U] = 1U;
     co_await vlSelfRef.__VdlySched.delay(0xaULL, nullptr, 
                                          "AHBUart_tapeout_tb.sv", 
-                                         346);
+                                         344);
     vlSelfRef.__Vm_traceActivity[1U] = 1U;
     __Vtask_uart_tb__DOT__tx_buffer_write__48__data_to_write = 4U;
     vlSelfRef.uart_tb__DOT__nRst = 1U;
@@ -3419,7 +3418,7 @@ VlCoroutine VAHBUart_tapeout___024root___eval_initial__TOP__Vtiming__0__0(VAHBUa
     vlSelfRef.__Vm_traceActivity[1U] = 1U;
     co_await vlSelfRef.__VdlySched.delay(0xaULL, nullptr, 
                                          "AHBUart_tapeout_tb.sv", 
-                                         348);
+                                         346);
     vlSelfRef.__Vm_traceActivity[1U] = 1U;
     __Vtask_uart_tb__DOT__tx_buffer_write__49__data_to_write = 8U;
     vlSelfRef.uart_tb__DOT__nRst = 1U;
@@ -3440,7 +3439,7 @@ VlCoroutine VAHBUart_tapeout___024root___eval_initial__TOP__Vtiming__0__0(VAHBUa
     vlSelfRef.__Vm_traceActivity[1U] = 1U;
     co_await vlSelfRef.__VdlySched.delay(0xaULL, nullptr, 
                                          "AHBUart_tapeout_tb.sv", 
-                                         350);
+                                         348);
     vlSelfRef.__Vm_traceActivity[1U] = 1U;
     __Vtask_uart_tb__DOT__tx_buffer_write__50__data_to_write = 0x10U;
     vlSelfRef.uart_tb__DOT__nRst = 1U;
@@ -3461,7 +3460,7 @@ VlCoroutine VAHBUart_tapeout___024root___eval_initial__TOP__Vtiming__0__0(VAHBUa
     vlSelfRef.__Vm_traceActivity[1U] = 1U;
     co_await vlSelfRef.__VdlySched.delay(0xaULL, nullptr, 
                                          "AHBUart_tapeout_tb.sv", 
-                                         352);
+                                         350);
     vlSelfRef.__Vm_traceActivity[1U] = 1U;
     __Vtask_uart_tb__DOT__tx_buffer_write__51__data_to_write = 0x20U;
     vlSelfRef.uart_tb__DOT__nRst = 1U;
@@ -3482,7 +3481,7 @@ VlCoroutine VAHBUart_tapeout___024root___eval_initial__TOP__Vtiming__0__0(VAHBUa
     vlSelfRef.__Vm_traceActivity[1U] = 1U;
     co_await vlSelfRef.__VdlySched.delay(0xaULL, nullptr, 
                                          "AHBUart_tapeout_tb.sv", 
-                                         354);
+                                         352);
     vlSelfRef.__Vm_traceActivity[1U] = 1U;
     __Vtask_uart_tb__DOT__tx_buffer_write__52__data_to_write = 0x40U;
     vlSelfRef.uart_tb__DOT__nRst = 1U;
@@ -3503,7 +3502,7 @@ VlCoroutine VAHBUart_tapeout___024root___eval_initial__TOP__Vtiming__0__0(VAHBUa
     vlSelfRef.__Vm_traceActivity[1U] = 1U;
     co_await vlSelfRef.__VdlySched.delay(0xaULL, nullptr, 
                                          "AHBUart_tapeout_tb.sv", 
-                                         356);
+                                         354);
     vlSelfRef.__Vm_traceActivity[1U] = 1U;
     __Vtask_uart_tb__DOT__tx_buffer_write__53__data_to_write = 0x80U;
     vlSelfRef.uart_tb__DOT__nRst = 1U;
@@ -3524,7 +3523,7 @@ VlCoroutine VAHBUart_tapeout___024root___eval_initial__TOP__Vtiming__0__0(VAHBUa
     vlSelfRef.__Vm_traceActivity[1U] = 1U;
     co_await vlSelfRef.__VdlySched.delay(0xaULL, nullptr, 
                                          "AHBUart_tapeout_tb.sv", 
-                                         358);
+                                         356);
     vlSelfRef.__Vm_traceActivity[1U] = 1U;
     vlSelfRef.uart_tb__DOT__cts = 1U;
     __Vtask_uart_tb__DOT__tx_external_read__54__baud_rate = 0x4b00U;
@@ -4238,7 +4237,7 @@ VlCoroutine VAHBUart_tapeout___024root___eval_initial__TOP__Vtiming__0__0(VAHBUa
     vlSelfRef.uart_tb__DOT__cts = 0U;
     co_await vlSelfRef.__VdlySched.delay(0x7a120ULL, 
                                          nullptr, "AHBUart_tapeout_tb.sv", 
-                                         366);
+                                         364);
     vlSelfRef.__Vm_traceActivity[1U] = 1U;
     vlSelfRef.uart_tb__DOT__cts = 1U;
     __Vtask_uart_tb__DOT__tx_external_read__58__baud_rate = 0x4b00U;
@@ -4952,7 +4951,7 @@ VlCoroutine VAHBUart_tapeout___024root___eval_initial__TOP__Vtiming__0__0(VAHBUa
     vlSelfRef.uart_tb__DOT__cts = 0U;
     co_await vlSelfRef.__VdlySched.delay(0x64ULL, nullptr, 
                                          "AHBUart_tapeout_tb.sv", 
-                                         373);
+                                         371);
     vlSelfRef.__Vm_traceActivity[1U] = 1U;
     __Vtask_uart_tb__DOT__rx_external_write__62__baud_rate = 0x4b00U;
     __Vtask_uart_tb__DOT__rx_external_write__62__data_to_send = 1U;
@@ -5268,7 +5267,7 @@ VlCoroutine VAHBUart_tapeout___024root___eval_initial__TOP__Vtiming__0__0(VAHBUa
     vlSelfRef.__Vm_traceActivity[1U] = 1U;
     co_await vlSelfRef.__VdlySched.delay(0x7a120ULL, 
                                          nullptr, "AHBUart_tapeout_tb.sv", 
-                                         379);
+                                         377);
     vlSelfRef.__Vm_traceActivity[1U] = 1U;
     __Vtask_uart_tb__DOT__rx_external_write__66__baud_rate = 0x4b00U;
     __Vtask_uart_tb__DOT__rx_external_write__66__data_to_send = 0x10U;
@@ -5584,7 +5583,7 @@ VlCoroutine VAHBUart_tapeout___024root___eval_initial__TOP__Vtiming__0__0(VAHBUa
     vlSelfRef.__Vm_traceActivity[1U] = 1U;
     co_await vlSelfRef.__VdlySched.delay(0x64ULL, nullptr, 
                                          "AHBUart_tapeout_tb.sv", 
-                                         384);
+                                         382);
     vlSelfRef.__Vm_traceActivity[1U] = 1U;
     __Vtask_uart_tb__DOT__rx_buffer_read__70__expected_data = 1U;
     vlSelfRef.uart_tb__DOT__ren_wen = 2U;
@@ -5606,7 +5605,7 @@ VlCoroutine VAHBUart_tapeout___024root___eval_initial__TOP__Vtiming__0__0(VAHBUa
     vlSelfRef.uart_tb__DOT__ren_wen = 0U;
     co_await vlSelfRef.__VdlySched.delay(0xaULL, nullptr, 
                                          "AHBUart_tapeout_tb.sv", 
-                                         387);
+                                         385);
     vlSelfRef.__Vm_traceActivity[1U] = 1U;
     __Vtask_uart_tb__DOT__rx_buffer_read__71__expected_data = 2U;
     vlSelfRef.uart_tb__DOT__ren_wen = 2U;
@@ -5628,7 +5627,7 @@ VlCoroutine VAHBUart_tapeout___024root___eval_initial__TOP__Vtiming__0__0(VAHBUa
     vlSelfRef.uart_tb__DOT__ren_wen = 0U;
     co_await vlSelfRef.__VdlySched.delay(0xaULL, nullptr, 
                                          "AHBUart_tapeout_tb.sv", 
-                                         389);
+                                         387);
     vlSelfRef.__Vm_traceActivity[1U] = 1U;
     __Vtask_uart_tb__DOT__rx_buffer_read__72__expected_data = 4U;
     vlSelfRef.uart_tb__DOT__ren_wen = 2U;
@@ -5650,7 +5649,7 @@ VlCoroutine VAHBUart_tapeout___024root___eval_initial__TOP__Vtiming__0__0(VAHBUa
     vlSelfRef.uart_tb__DOT__ren_wen = 0U;
     co_await vlSelfRef.__VdlySched.delay(0xaULL, nullptr, 
                                          "AHBUart_tapeout_tb.sv", 
-                                         391);
+                                         389);
     vlSelfRef.__Vm_traceActivity[1U] = 1U;
     __Vtask_uart_tb__DOT__rx_buffer_read__73__expected_data = 8U;
     vlSelfRef.uart_tb__DOT__ren_wen = 2U;
@@ -5672,7 +5671,7 @@ VlCoroutine VAHBUart_tapeout___024root___eval_initial__TOP__Vtiming__0__0(VAHBUa
     vlSelfRef.uart_tb__DOT__ren_wen = 0U;
     co_await vlSelfRef.__VdlySched.delay(0xaULL, nullptr, 
                                          "AHBUart_tapeout_tb.sv", 
-                                         393);
+                                         391);
     vlSelfRef.__Vm_traceActivity[1U] = 1U;
     __Vtask_uart_tb__DOT__rx_buffer_read__74__expected_data = 0x10U;
     vlSelfRef.uart_tb__DOT__ren_wen = 2U;
@@ -5694,7 +5693,7 @@ VlCoroutine VAHBUart_tapeout___024root___eval_initial__TOP__Vtiming__0__0(VAHBUa
     vlSelfRef.uart_tb__DOT__ren_wen = 0U;
     co_await vlSelfRef.__VdlySched.delay(0xaULL, nullptr, 
                                          "AHBUart_tapeout_tb.sv", 
-                                         395);
+                                         393);
     vlSelfRef.__Vm_traceActivity[1U] = 1U;
     __Vtask_uart_tb__DOT__rx_buffer_read__75__expected_data = 0x20U;
     vlSelfRef.uart_tb__DOT__ren_wen = 2U;
@@ -5716,7 +5715,7 @@ VlCoroutine VAHBUart_tapeout___024root___eval_initial__TOP__Vtiming__0__0(VAHBUa
     vlSelfRef.uart_tb__DOT__ren_wen = 0U;
     co_await vlSelfRef.__VdlySched.delay(0xaULL, nullptr, 
                                          "AHBUart_tapeout_tb.sv", 
-                                         397);
+                                         395);
     vlSelfRef.__Vm_traceActivity[1U] = 1U;
     __Vtask_uart_tb__DOT__rx_buffer_read__76__expected_data = 0x40U;
     vlSelfRef.uart_tb__DOT__ren_wen = 2U;
@@ -5738,7 +5737,7 @@ VlCoroutine VAHBUart_tapeout___024root___eval_initial__TOP__Vtiming__0__0(VAHBUa
     vlSelfRef.uart_tb__DOT__ren_wen = 0U;
     co_await vlSelfRef.__VdlySched.delay(0xaULL, nullptr, 
                                          "AHBUart_tapeout_tb.sv", 
-                                         399);
+                                         397);
     vlSelfRef.__Vm_traceActivity[1U] = 1U;
     __Vtask_uart_tb__DOT__rx_buffer_read__77__expected_data = 0x80U;
     vlSelfRef.uart_tb__DOT__ren_wen = 2U;
@@ -5760,12 +5759,12 @@ VlCoroutine VAHBUart_tapeout___024root___eval_initial__TOP__Vtiming__0__0(VAHBUa
     vlSelfRef.uart_tb__DOT__ren_wen = 0U;
     co_await vlSelfRef.__VdlySched.delay(0xaULL, nullptr, 
                                          "AHBUart_tapeout_tb.sv", 
-                                         401);
+                                         399);
     vlSelfRef.__Vm_traceActivity[1U] = 1U;
     VL_WRITEF_NX("Test 6, checking 19200 baud rate, completed!\n",0);
     co_await vlSelfRef.__VdlySched.delay(0x64ULL, nullptr, 
                                          "AHBUart_tapeout_tb.sv", 
-                                         406);
+                                         404);
     vlSelfRef.__Vm_traceActivity[1U] = 1U;
     vlSelfRef.uart_tb__DOT__test_num = ((IData)(1U) 
                                         + vlSelfRef.uart_tb__DOT__test_num);
@@ -5805,7 +5804,7 @@ VlCoroutine VAHBUart_tapeout___024root___eval_initial__TOP__Vtiming__0__0(VAHBUa
     vlSelfRef.__Vm_traceActivity[1U] = 1U;
     co_await vlSelfRef.__VdlySched.delay(0xaULL, nullptr, 
                                          "AHBUart_tapeout_tb.sv", 
-                                         415);
+                                         413);
     vlSelfRef.__Vm_traceActivity[1U] = 1U;
     __Vtask_uart_tb__DOT__tx_buffer_write__80__data_to_write = 2U;
     vlSelfRef.uart_tb__DOT__nRst = 1U;
@@ -5826,7 +5825,7 @@ VlCoroutine VAHBUart_tapeout___024root___eval_initial__TOP__Vtiming__0__0(VAHBUa
     vlSelfRef.__Vm_traceActivity[1U] = 1U;
     co_await vlSelfRef.__VdlySched.delay(0xaULL, nullptr, 
                                          "AHBUart_tapeout_tb.sv", 
-                                         417);
+                                         415);
     vlSelfRef.__Vm_traceActivity[1U] = 1U;
     __Vtask_uart_tb__DOT__tx_buffer_write__81__data_to_write = 4U;
     vlSelfRef.uart_tb__DOT__nRst = 1U;
@@ -5847,7 +5846,7 @@ VlCoroutine VAHBUart_tapeout___024root___eval_initial__TOP__Vtiming__0__0(VAHBUa
     vlSelfRef.__Vm_traceActivity[1U] = 1U;
     co_await vlSelfRef.__VdlySched.delay(0xaULL, nullptr, 
                                          "AHBUart_tapeout_tb.sv", 
-                                         419);
+                                         417);
     vlSelfRef.__Vm_traceActivity[1U] = 1U;
     __Vtask_uart_tb__DOT__tx_buffer_write__82__data_to_write = 8U;
     vlSelfRef.uart_tb__DOT__nRst = 1U;
@@ -5868,7 +5867,7 @@ VlCoroutine VAHBUart_tapeout___024root___eval_initial__TOP__Vtiming__0__0(VAHBUa
     vlSelfRef.__Vm_traceActivity[1U] = 1U;
     co_await vlSelfRef.__VdlySched.delay(0xaULL, nullptr, 
                                          "AHBUart_tapeout_tb.sv", 
-                                         421);
+                                         419);
     vlSelfRef.__Vm_traceActivity[1U] = 1U;
     __Vtask_uart_tb__DOT__tx_buffer_write__83__data_to_write = 0x10U;
     vlSelfRef.uart_tb__DOT__nRst = 1U;
@@ -5889,7 +5888,7 @@ VlCoroutine VAHBUart_tapeout___024root___eval_initial__TOP__Vtiming__0__0(VAHBUa
     vlSelfRef.__Vm_traceActivity[1U] = 1U;
     co_await vlSelfRef.__VdlySched.delay(0xaULL, nullptr, 
                                          "AHBUart_tapeout_tb.sv", 
-                                         423);
+                                         421);
     vlSelfRef.__Vm_traceActivity[1U] = 1U;
     __Vtask_uart_tb__DOT__tx_buffer_write__84__data_to_write = 0x20U;
     vlSelfRef.uart_tb__DOT__nRst = 1U;
@@ -5910,7 +5909,7 @@ VlCoroutine VAHBUart_tapeout___024root___eval_initial__TOP__Vtiming__0__0(VAHBUa
     vlSelfRef.__Vm_traceActivity[1U] = 1U;
     co_await vlSelfRef.__VdlySched.delay(0xaULL, nullptr, 
                                          "AHBUart_tapeout_tb.sv", 
-                                         425);
+                                         423);
     vlSelfRef.__Vm_traceActivity[1U] = 1U;
     __Vtask_uart_tb__DOT__tx_buffer_write__85__data_to_write = 0x40U;
     vlSelfRef.uart_tb__DOT__nRst = 1U;
@@ -5931,7 +5930,7 @@ VlCoroutine VAHBUart_tapeout___024root___eval_initial__TOP__Vtiming__0__0(VAHBUa
     vlSelfRef.__Vm_traceActivity[1U] = 1U;
     co_await vlSelfRef.__VdlySched.delay(0xaULL, nullptr, 
                                          "AHBUart_tapeout_tb.sv", 
-                                         427);
+                                         425);
     vlSelfRef.__Vm_traceActivity[1U] = 1U;
     __Vtask_uart_tb__DOT__tx_buffer_write__86__data_to_write = 0x80U;
     vlSelfRef.uart_tb__DOT__nRst = 1U;
@@ -5952,7 +5951,7 @@ VlCoroutine VAHBUart_tapeout___024root___eval_initial__TOP__Vtiming__0__0(VAHBUa
     vlSelfRef.__Vm_traceActivity[1U] = 1U;
     co_await vlSelfRef.__VdlySched.delay(0xaULL, nullptr, 
                                          "AHBUart_tapeout_tb.sv", 
-                                         429);
+                                         427);
     vlSelfRef.__Vm_traceActivity[1U] = 1U;
     vlSelfRef.uart_tb__DOT__cts = 1U;
     __Vtask_uart_tb__DOT__tx_external_read__87__baud_rate = 0x9600U;
@@ -6666,7 +6665,7 @@ VlCoroutine VAHBUart_tapeout___024root___eval_initial__TOP__Vtiming__0__0(VAHBUa
     vlSelfRef.uart_tb__DOT__cts = 0U;
     co_await vlSelfRef.__VdlySched.delay(0x7a120ULL, 
                                          nullptr, "AHBUart_tapeout_tb.sv", 
-                                         437);
+                                         435);
     vlSelfRef.__Vm_traceActivity[1U] = 1U;
     vlSelfRef.uart_tb__DOT__cts = 1U;
     __Vtask_uart_tb__DOT__tx_external_read__91__baud_rate = 0x9600U;
@@ -7380,7 +7379,7 @@ VlCoroutine VAHBUart_tapeout___024root___eval_initial__TOP__Vtiming__0__0(VAHBUa
     vlSelfRef.uart_tb__DOT__cts = 0U;
     co_await vlSelfRef.__VdlySched.delay(0x64ULL, nullptr, 
                                          "AHBUart_tapeout_tb.sv", 
-                                         444);
+                                         442);
     vlSelfRef.__Vm_traceActivity[1U] = 1U;
     __Vtask_uart_tb__DOT__rx_external_write__95__baud_rate = 0x9600U;
     __Vtask_uart_tb__DOT__rx_external_write__95__data_to_send = 1U;
@@ -7696,7 +7695,7 @@ VlCoroutine VAHBUart_tapeout___024root___eval_initial__TOP__Vtiming__0__0(VAHBUa
     vlSelfRef.__Vm_traceActivity[1U] = 1U;
     co_await vlSelfRef.__VdlySched.delay(0x7a120ULL, 
                                          nullptr, "AHBUart_tapeout_tb.sv", 
-                                         450);
+                                         448);
     vlSelfRef.__Vm_traceActivity[1U] = 1U;
     __Vtask_uart_tb__DOT__rx_external_write__99__baud_rate = 0x9600U;
     __Vtask_uart_tb__DOT__rx_external_write__99__data_to_send = 0x10U;
@@ -8012,7 +8011,7 @@ VlCoroutine VAHBUart_tapeout___024root___eval_initial__TOP__Vtiming__0__0(VAHBUa
     vlSelfRef.__Vm_traceActivity[1U] = 1U;
     co_await vlSelfRef.__VdlySched.delay(0x64ULL, nullptr, 
                                          "AHBUart_tapeout_tb.sv", 
-                                         455);
+                                         453);
     vlSelfRef.__Vm_traceActivity[1U] = 1U;
     __Vtask_uart_tb__DOT__rx_buffer_read__103__expected_data = 1U;
     vlSelfRef.uart_tb__DOT__ren_wen = 2U;
@@ -8034,7 +8033,7 @@ VlCoroutine VAHBUart_tapeout___024root___eval_initial__TOP__Vtiming__0__0(VAHBUa
     vlSelfRef.uart_tb__DOT__ren_wen = 0U;
     co_await vlSelfRef.__VdlySched.delay(0xaULL, nullptr, 
                                          "AHBUart_tapeout_tb.sv", 
-                                         458);
+                                         456);
     vlSelfRef.__Vm_traceActivity[1U] = 1U;
     __Vtask_uart_tb__DOT__rx_buffer_read__104__expected_data = 2U;
     vlSelfRef.uart_tb__DOT__ren_wen = 2U;
@@ -8056,7 +8055,7 @@ VlCoroutine VAHBUart_tapeout___024root___eval_initial__TOP__Vtiming__0__0(VAHBUa
     vlSelfRef.uart_tb__DOT__ren_wen = 0U;
     co_await vlSelfRef.__VdlySched.delay(0xaULL, nullptr, 
                                          "AHBUart_tapeout_tb.sv", 
-                                         460);
+                                         458);
     vlSelfRef.__Vm_traceActivity[1U] = 1U;
     __Vtask_uart_tb__DOT__rx_buffer_read__105__expected_data = 4U;
     vlSelfRef.uart_tb__DOT__ren_wen = 2U;
@@ -8078,7 +8077,7 @@ VlCoroutine VAHBUart_tapeout___024root___eval_initial__TOP__Vtiming__0__0(VAHBUa
     vlSelfRef.uart_tb__DOT__ren_wen = 0U;
     co_await vlSelfRef.__VdlySched.delay(0xaULL, nullptr, 
                                          "AHBUart_tapeout_tb.sv", 
-                                         462);
+                                         460);
     vlSelfRef.__Vm_traceActivity[1U] = 1U;
     __Vtask_uart_tb__DOT__rx_buffer_read__106__expected_data = 8U;
     vlSelfRef.uart_tb__DOT__ren_wen = 2U;
@@ -8100,7 +8099,7 @@ VlCoroutine VAHBUart_tapeout___024root___eval_initial__TOP__Vtiming__0__0(VAHBUa
     vlSelfRef.uart_tb__DOT__ren_wen = 0U;
     co_await vlSelfRef.__VdlySched.delay(0xaULL, nullptr, 
                                          "AHBUart_tapeout_tb.sv", 
-                                         464);
+                                         462);
     vlSelfRef.__Vm_traceActivity[1U] = 1U;
     __Vtask_uart_tb__DOT__rx_buffer_read__107__expected_data = 0x10U;
     vlSelfRef.uart_tb__DOT__ren_wen = 2U;
@@ -8122,7 +8121,7 @@ VlCoroutine VAHBUart_tapeout___024root___eval_initial__TOP__Vtiming__0__0(VAHBUa
     vlSelfRef.uart_tb__DOT__ren_wen = 0U;
     co_await vlSelfRef.__VdlySched.delay(0xaULL, nullptr, 
                                          "AHBUart_tapeout_tb.sv", 
-                                         466);
+                                         464);
     vlSelfRef.__Vm_traceActivity[1U] = 1U;
     __Vtask_uart_tb__DOT__rx_buffer_read__108__expected_data = 0x20U;
     vlSelfRef.uart_tb__DOT__ren_wen = 2U;
@@ -8144,7 +8143,7 @@ VlCoroutine VAHBUart_tapeout___024root___eval_initial__TOP__Vtiming__0__0(VAHBUa
     vlSelfRef.uart_tb__DOT__ren_wen = 0U;
     co_await vlSelfRef.__VdlySched.delay(0xaULL, nullptr, 
                                          "AHBUart_tapeout_tb.sv", 
-                                         468);
+                                         466);
     vlSelfRef.__Vm_traceActivity[1U] = 1U;
     __Vtask_uart_tb__DOT__rx_buffer_read__109__expected_data = 0x40U;
     vlSelfRef.uart_tb__DOT__ren_wen = 2U;
@@ -8166,7 +8165,7 @@ VlCoroutine VAHBUart_tapeout___024root___eval_initial__TOP__Vtiming__0__0(VAHBUa
     vlSelfRef.uart_tb__DOT__ren_wen = 0U;
     co_await vlSelfRef.__VdlySched.delay(0xaULL, nullptr, 
                                          "AHBUart_tapeout_tb.sv", 
-                                         470);
+                                         468);
     vlSelfRef.__Vm_traceActivity[1U] = 1U;
     __Vtask_uart_tb__DOT__rx_buffer_read__110__expected_data = 0x80U;
     vlSelfRef.uart_tb__DOT__ren_wen = 2U;
@@ -8188,12 +8187,12 @@ VlCoroutine VAHBUart_tapeout___024root___eval_initial__TOP__Vtiming__0__0(VAHBUa
     vlSelfRef.uart_tb__DOT__ren_wen = 0U;
     co_await vlSelfRef.__VdlySched.delay(0xaULL, nullptr, 
                                          "AHBUart_tapeout_tb.sv", 
-                                         472);
+                                         470);
     vlSelfRef.__Vm_traceActivity[1U] = 1U;
     VL_WRITEF_NX("Test 7, checking 38400 baud rate, completed!\n",0);
     co_await vlSelfRef.__VdlySched.delay(0x64ULL, nullptr, 
                                          "AHBUart_tapeout_tb.sv", 
-                                         477);
+                                         475);
     vlSelfRef.__Vm_traceActivity[1U] = 1U;
     vlSelfRef.uart_tb__DOT__test_num = ((IData)(1U) 
                                         + vlSelfRef.uart_tb__DOT__test_num);
@@ -8233,7 +8232,7 @@ VlCoroutine VAHBUart_tapeout___024root___eval_initial__TOP__Vtiming__0__0(VAHBUa
     vlSelfRef.__Vm_traceActivity[1U] = 1U;
     co_await vlSelfRef.__VdlySched.delay(0xaULL, nullptr, 
                                          "AHBUart_tapeout_tb.sv", 
-                                         486);
+                                         484);
     vlSelfRef.__Vm_traceActivity[1U] = 1U;
     __Vtask_uart_tb__DOT__tx_buffer_write__113__data_to_write = 2U;
     vlSelfRef.uart_tb__DOT__nRst = 1U;
@@ -8254,7 +8253,7 @@ VlCoroutine VAHBUart_tapeout___024root___eval_initial__TOP__Vtiming__0__0(VAHBUa
     vlSelfRef.__Vm_traceActivity[1U] = 1U;
     co_await vlSelfRef.__VdlySched.delay(0xaULL, nullptr, 
                                          "AHBUart_tapeout_tb.sv", 
-                                         488);
+                                         486);
     vlSelfRef.__Vm_traceActivity[1U] = 1U;
     __Vtask_uart_tb__DOT__tx_buffer_write__114__data_to_write = 4U;
     vlSelfRef.uart_tb__DOT__nRst = 1U;
@@ -8275,7 +8274,7 @@ VlCoroutine VAHBUart_tapeout___024root___eval_initial__TOP__Vtiming__0__0(VAHBUa
     vlSelfRef.__Vm_traceActivity[1U] = 1U;
     co_await vlSelfRef.__VdlySched.delay(0xaULL, nullptr, 
                                          "AHBUart_tapeout_tb.sv", 
-                                         490);
+                                         488);
     vlSelfRef.__Vm_traceActivity[1U] = 1U;
     __Vtask_uart_tb__DOT__tx_buffer_write__115__data_to_write = 8U;
     vlSelfRef.uart_tb__DOT__nRst = 1U;
@@ -8296,7 +8295,7 @@ VlCoroutine VAHBUart_tapeout___024root___eval_initial__TOP__Vtiming__0__0(VAHBUa
     vlSelfRef.__Vm_traceActivity[1U] = 1U;
     co_await vlSelfRef.__VdlySched.delay(0xaULL, nullptr, 
                                          "AHBUart_tapeout_tb.sv", 
-                                         492);
+                                         490);
     vlSelfRef.__Vm_traceActivity[1U] = 1U;
     __Vtask_uart_tb__DOT__tx_buffer_write__116__data_to_write = 0x10U;
     vlSelfRef.uart_tb__DOT__nRst = 1U;
@@ -8317,7 +8316,7 @@ VlCoroutine VAHBUart_tapeout___024root___eval_initial__TOP__Vtiming__0__0(VAHBUa
     vlSelfRef.__Vm_traceActivity[1U] = 1U;
     co_await vlSelfRef.__VdlySched.delay(0xaULL, nullptr, 
                                          "AHBUart_tapeout_tb.sv", 
-                                         494);
+                                         492);
     vlSelfRef.__Vm_traceActivity[1U] = 1U;
     __Vtask_uart_tb__DOT__tx_buffer_write__117__data_to_write = 0x20U;
     vlSelfRef.uart_tb__DOT__nRst = 1U;
@@ -8338,7 +8337,7 @@ VlCoroutine VAHBUart_tapeout___024root___eval_initial__TOP__Vtiming__0__0(VAHBUa
     vlSelfRef.__Vm_traceActivity[1U] = 1U;
     co_await vlSelfRef.__VdlySched.delay(0xaULL, nullptr, 
                                          "AHBUart_tapeout_tb.sv", 
-                                         496);
+                                         494);
     vlSelfRef.__Vm_traceActivity[1U] = 1U;
     __Vtask_uart_tb__DOT__tx_buffer_write__118__data_to_write = 0x40U;
     vlSelfRef.uart_tb__DOT__nRst = 1U;

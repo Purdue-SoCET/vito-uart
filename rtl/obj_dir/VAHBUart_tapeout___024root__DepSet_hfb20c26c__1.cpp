@@ -20,11 +20,11 @@ void VAHBUart_tapeout___024root___eval_triggers__act(VAHBUart_tapeout___024root*
                                         & (~ (IData)(vlSelfRef.__Vtrigprevexpr___TOP__uart_tb__DOT__clk__0))) 
                                        | ((~ (IData)(vlSelfRef.uart_tb__DOT__nRst)) 
                                           & (IData)(vlSelfRef.__Vtrigprevexpr___TOP__uart_tb__DOT__nRst__0))));
-    vlSelfRef.__VactTriggered.set(1U, vlSelfRef.__VdlySched.awaitingCurrentTime());
-    vlSelfRef.__VactTriggered.set(2U, ((~ (IData)(vlSelfRef.uart_tb__DOT__tx)) 
-                                       & (IData)(vlSelfRef.__Vtrigprevexpr___TOP__uart_tb__DOT__tx__0)));
-    vlSelfRef.__VactTriggered.set(3U, ((IData)(vlSelfRef.uart_tb__DOT__clk) 
+    vlSelfRef.__VactTriggered.set(1U, ((IData)(vlSelfRef.uart_tb__DOT__clk) 
                                        & (~ (IData)(vlSelfRef.__Vtrigprevexpr___TOP__uart_tb__DOT__clk__0))));
+    vlSelfRef.__VactTriggered.set(2U, vlSelfRef.__VdlySched.awaitingCurrentTime());
+    vlSelfRef.__VactTriggered.set(3U, ((~ (IData)(vlSelfRef.uart_tb__DOT__tx)) 
+                                       & (IData)(vlSelfRef.__Vtrigprevexpr___TOP__uart_tb__DOT__tx__0)));
     vlSelfRef.__Vtrigprevexpr___TOP__uart_tb__DOT__clk__0 
         = vlSelfRef.uart_tb__DOT__clk;
     vlSelfRef.__Vtrigprevexpr___TOP__uart_tb__DOT__nRst__0 
