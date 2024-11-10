@@ -72,18 +72,16 @@ module uart_tb #();
 		cts = 1'b0;
 		
 		tx_data = 8'b0;
+		ren_wen = IDLE;
+		rate_control = 2'b0;
+		cts = 1'b1;
 		
 		nRst = 1'b0;
 		$display(":)");
-		#10; // wtf, how is this causing a segmentation error?
+		#50; // wtf, how is this causing a segmentation error?
 		$display(":)");
-		cts = 1'b1;
-		
-		ren_wen = IDLE;
-		
-		rate_control = 2'b0;
 
-		#50;
+		#20;
 		
 		nRst = 1'b1;
 		
