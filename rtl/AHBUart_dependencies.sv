@@ -1,17 +1,22 @@
-
 module synchronizer_data_input # (
   parameter WIDTH = 1
 )(
 	input clk,
+	input nReset,
 	input logic [WIDTH-1:0] async_signal,
 	output logic [WIDTH-1:0] sync_signal
 );
 
 logic [WIDTH-1:0] buffer_1, buffer_2;
 
-always_ff @(posedge clk) begin
+always_ff @(posedge clk, negedge nReset) begin
+ if(!nReset) begin
+	buffer_1 <= buffer_1;
+	buffer_2 <= buffer_2;
+ end else begin
 	buffer_1 <= async_signal;
 	buffer_2 <= buffer_2;
+end
 end
 
 assign sync_signal = buffer_2;

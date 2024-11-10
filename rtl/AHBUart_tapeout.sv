@@ -51,6 +51,7 @@ module AHBUart_tapeout #(
 
     synchronizer_data_input #(.WIDTH(4)) sync_control_data (
 	.clk(clk),
+	.nReset(nReset),
 	.async_signal(control),
 	.sync_signal(sync_control)
     );
@@ -91,6 +92,7 @@ module AHBUart_tapeout #(
   // synchronizing the input
   synchronizer_data_input #(.WIDTH(8)) synced_tx_data (
         .clk(clk),
+	.nReset(nReset),
         .async_signal(tx_data),
         .sync_signal(sync_tx_data)
   );
@@ -337,3 +339,4 @@ module AHBUart_tapeout #(
      end 
 
 endmodule
+
