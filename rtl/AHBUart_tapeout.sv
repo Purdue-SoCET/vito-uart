@@ -48,29 +48,13 @@ module AHBUart_tapeout #(
 );
 
     logic [3:0] sync_control;
-    logic sync_cts, sync_rx;
 
     synchronizer_data_input #(.WIDTH(4)) sync_control_data (
 	.clk(clk),
-	.nReset(nReset),
 	.async_signal(control),
 	.sync_signal(sync_control)
     );
     
-   synchronizer_data_input #(.WIDTH(1)) sync_cts_data (
-	.clk(clk),
-	.nReset(nReset),
-	.async_signal(cts),
-	.sync_signal(sync_cts)
-   );
-
-  synchronizer_data_input #(.WIDTH(1)) sync_rx_data (
-	.clk(clk),
-	.nReset(nReset),
-	.async_signal(rx),
-	.sync_signal(sync_rx)
-  );
-
     assign tx_buffer_full = fifoTx_full;
     assign rx_buffer_empty = fifoRx_empty;
 
@@ -107,7 +91,6 @@ module AHBUart_tapeout #(
   // synchronizing the input
   synchronizer_data_input #(.WIDTH(8)) synced_tx_data (
         .clk(clk),
-        .nReset(nReset),
         .async_signal(tx_data),
         .sync_signal(sync_tx_data)
   );
@@ -151,20 +134,13 @@ module AHBUart_tapeout #(
     logic txValid, txClk, txBusy, txDone;
     logic syncReset;
 
-   // always_ff @(posedge clk, negedge nReset) begin
-   //     if (!nReset) begin
-   //         syncReset <= 1;
-   //     end else begin
-   //         syncReset <= 0;
-   //     end
-   //  end
-
-   synchronizer_data_input #(.WIDTH(1)) sync_reset_data (
-	.clk(clk),
-	.nReset(nReset),
-	.async_signal(nReset),
-	.sync_signal(syncReset)
-    );
+   always_ff @(posedge clk, negedge nReset) begin
+        if (!nReset) begin
+            syncReset <= 1;
+        end else begin
+            syncReset <= 0;
+        end
+     end
 
     BaudRateGen #(2 ** 20, 1) bg (
         .phase(1'b0),
@@ -173,7 +149,7 @@ module AHBUart_tapeout #(
 
     UartRxEn uartRx (
         .en  (rxClk),
-        .in  (sync_rx),
+        .in  (rx),
         .data(rxData),
         .done(rxDone),
         .err (rxErr),
@@ -332,7 +308,7 @@ module AHBUart_tapeout #(
         fifoTx_wdata = 8'b0;
         fifoTx_WEN = 1'b0;
         if(ren_wen_nidle == to_TX) begin
-            fifoTx_wdata = tx_data; // assume we r sending it through the first byte at a time right now
+            fifoTx_wdata = sync_tx_data; // assume we r sending it through the first byte at a time right now
             fifoTx_WEN = 1'b1;
         end else begin
             fifoTx_wdata = 8'b0; // else writing nothing into the TX from the bus
