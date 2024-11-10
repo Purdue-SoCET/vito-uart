@@ -46,14 +46,39 @@ module AHBUart_tapeout #(
     //note to self: should we add pins for buffer count?
 
 );
-	assign tx_buffer_full = fifoTx_full;
-	assign rx_buffer_empty = fifoRx_empty;
+
+    logic [3:0] sync_control;
+    logic sync_cts, sync_rx;
+
+    synchronizer_data_input #(.WIDTH(4)) sync_control_data (
+	.clk(clk),
+	.nReset(nReset),
+	.async_signal(control),
+	.sync_signal(sync_control)
+    );
+    
+   synchronizer_data_input #(.WIDTH(1)) sync_cts_data (
+	.clk(clk),
+	.nReset(nReset),
+	.async_signal(cts),
+	.sync_signal(sync_cts)
+   );
+
+  synchronizer_data_input #(.WIDTH(1)) sync_rx_data (
+	.clk(clk),
+	.nReset(nReset),
+	.async_signal(rx),
+	.sync_signal(sync_rx)
+  );
+
+    assign tx_buffer_full = fifoTx_full;
+    assign rx_buffer_empty = fifoRx_empty;
 
     logic [1:0] rate_control, ren_wen;
     logic [19:0] rate, new_rate;
-    logic [1:0]  ren_wen_nidle, prev_ren_wen; // act as the direction
-	assign ren_wen = control[3:2];
-    assign rate_control = control[1:0];
+    logic [1:0] ren_wen_nidle, prev_ren_wen; // act as the direction
+	assign ren_wen = sync_control[3:2];
+    assign rate_control = sync_control[1:0];
     // tristate logic handling...
     logic [7:0] sync_tx_data;
     logic buffer_clear;
@@ -80,7 +105,7 @@ module AHBUart_tapeout #(
         end 
     end
   // synchronizing the input
-  synchronizer_data_input synced_output (
+  synchronizer_data_input #(.WIDTH(8)) synced_tx_data (
         .clk(clk),
         .nReset(nReset),
         .async_signal(tx_data),
@@ -126,13 +151,20 @@ module AHBUart_tapeout #(
     logic txValid, txClk, txBusy, txDone;
     logic syncReset;
 
-    always_ff @(posedge clk, negedge nReset) begin
-        if (!nReset) begin
-            syncReset <= 1;
-        end else begin
-            syncReset <= 0;
-        end
-    end
+   // always_ff @(posedge clk, negedge nReset) begin
+   //     if (!nReset) begin
+   //         syncReset <= 1;
+   //     end else begin
+   //         syncReset <= 0;
+   //     end
+   //  end
+
+   synchronizer_data_input #(.WIDTH(1)) sync_reset_data (
+	.clk(clk),
+	.nReset(nReset),
+	.async_signal(nReset),
+	.sync_signal(syncReset)
+    );
 
     BaudRateGen #(2 ** 20, 1) bg (
         .phase(1'b0),
@@ -141,7 +173,7 @@ module AHBUart_tapeout #(
 
     UartRxEn uartRx (
         .en  (rxClk),
-        .in  (rx),
+        .in  (sync_rx),
         .data(rxData),
         .done(rxDone),
         .err (rxErr),
@@ -300,7 +332,7 @@ module AHBUart_tapeout #(
         fifoTx_wdata = 8'b0;
         fifoTx_WEN = 1'b0;
         if(ren_wen_nidle == to_TX) begin
-            fifoTx_wdata = sync_tx_data; // assume we r sending it through the first byte at a time right now
+            fifoTx_wdata = tx_data; // assume we r sending it through the first byte at a time right now
             fifoTx_WEN = 1'b1;
         end else begin
             fifoTx_wdata = 8'b0; // else writing nothing into the TX from the bus

@@ -242,11 +242,12 @@ module uart_tb #();
 		tx_buffer_write(8'hFF);
 		#10
 		$display("Test 1, writing to tx fifo buffer, complete!");
-		
+	
+		#1000000;	
 		//Test 2: reading from the Tx_buffer
 		test_num++;
 		cts = 1'b1;
-
+		#10;
 		tx_external_read(8'h1, 9600);
 		tx_external_read(8'h2, 9600);
 		tx_external_read(8'h3, 9600);
