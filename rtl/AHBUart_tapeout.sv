@@ -47,14 +47,12 @@ module AHBUart_tapeout #(
 
 );
 
-	//control shit
-	logic [3:0] sync_control;
-	logic [3:0] dummy_bits_for_sync_control;
-    synchronizer_data_input i_sync_control_data (
+    logic [3:0] sync_control;
+
+    synchronizer_data_input #(.WIDTH(4)) sync_control_data (
 	.clk(clk),
-		.nReset(nReset),
-		.async_signal({4'b0, control}),
-		.sync_signal({dummy_bits_for_sync_control, sync_control})
+	.async_signal(control),
+	.sync_signal(sync_control)
     );
     
     assign tx_buffer_full = fifoTx_full;
@@ -91,9 +89,8 @@ module AHBUart_tapeout #(
         end 
     end
   // synchronizing the input
-  synchronizer_data_input i_sync_tx_data (
+  synchronizer_data_input #(.WIDTH(8)) synced_tx_data (
         .clk(clk),
-	  .nReset(nReset),
         .async_signal(tx_data),
         .sync_signal(sync_tx_data)
   );
@@ -277,9 +274,35 @@ module AHBUart_tapeout #(
 			end
 		end
     end
+
+
+	//buffer "bus" logic 
+	// FLAG; just whatever you had below this
+    // always_comb begin
+    //     // "bus" to tx_buffer
+    //     fifoTx_wdata = 8'b0;
+    //     fifoTx_WEN = 1'b0;
+    //     if(ren_wen_nidle == to_TX) begin
+    //         fifoTx_wdata = tx_data; // assume we r sending it through the first byte at a time right now
+    //         fifoTx_WEN = 1'b1;
+    //     end else begin
+    //         fifoTx_wdata = 8'b0; // else writing nothing into the TX from the bus
+    //         fifoTx_WEN = 1'b0; // write signal is disabled
+    //     end
+        
+    //     // Rx buffer to "bus"
+    //     rx_data = 8'b0;
+    //     fifoRx_REN = 1'b0;
+    //     if(ren_wen_nidle == from_RX) begin // checking if theres only 0's in the rx_data line...
+    //         rx_data = fifoRx_rdata;
+    //         fifoRx_REN = 1'b1;
+    //     end else begin
+    //         rx_data = 8'b0;
+    //         fifoRx_REN = 1'b0;
+    //     end
+    // end
     
     // "bus signal" mechanics
-	// m - Note to self: this should be a ff, remember later
     always_comb begin
         // "bus" to tx_buffer
         fifoTx_wdata = 8'b0;
@@ -314,3 +337,4 @@ module AHBUart_tapeout #(
      end 
 
 endmodule
+
