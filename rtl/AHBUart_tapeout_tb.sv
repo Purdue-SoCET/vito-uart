@@ -75,7 +75,7 @@ module uart_tb #();
 		
 		nRst = 1'b0;
 		$display(":)");
-		// #10;
+		@(posedge clk); // wtf
 		$display(":)");
 		cts = 1'b1;
 		
