@@ -68,7 +68,6 @@ module uart_tb #();
 		$display("reseting tb wires");
 		rx = 1'b1;
 		
-		// tx = 1'b0; 
 		cts = 1'b0;
 		
 		tx_data = 8'b0;
@@ -76,7 +75,7 @@ module uart_tb #();
 		rate_control = 2'b0;
 		cts = 1'b1;
 		
-		nRst = 1'b0;
+		// nRst = 1'b0;
 		$display(":)");
 		#50; // wtf, how is this causing a segmentation error?
 		$display(":)");
