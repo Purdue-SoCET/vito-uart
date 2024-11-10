@@ -1,3 +1,27 @@
+
+module synchronizer_data_input (
+	input clk,
+	input nReset,
+	input logic [7:0] async_signal,
+	output logic [7:0] sync_signal
+);
+
+logic [7:0] buffer_1, buffer_2;
+
+always_ff @(posedge clk, negedge nReset) begin
+if (!nReset) begin
+	buffer_1 <= 0;
+	buffer_2 <= 0;
+end else begin
+	buffer_1 <= async_signal;
+	buffer_2 <= buffer_2;
+end
+end
+
+assign sync_signal = buffer_2;
+
+endmodule
+
 module socetlib_fifo #(
     parameter type T = logic [7:0], // type of a FIFO entry
     parameter DEPTH = 8 // # of FIFO entries

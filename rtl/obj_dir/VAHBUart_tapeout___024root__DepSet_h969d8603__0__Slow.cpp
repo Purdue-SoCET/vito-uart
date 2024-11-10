@@ -137,10 +137,6 @@ VL_ATTR_COLD void VAHBUart_tapeout___024root___stl_sequent__TOP__0(VAHBUart_tape
     vlSelfRef.uart_tb__DOT__DUT__DOT__uartTx__DOT__nextState 
         = VAHBUart_tapeout__ConstPool__TABLE_h5f91972e_0
         [__Vtableidx2];
-    vlSelfRef.uart_tb__DOT__DUT__DOT__fifoTx_wdata 
-        = ((1U == (IData)(vlSelfRef.uart_tb__DOT__DUT__DOT__ren_wen_nidle))
-            ? (IData)(vlSelfRef.uart_tb__DOT__tx_data)
-            : 0U);
     vlSelfRef.uart_tb__DOT__DUT__DOT__fifoRx_REN = 
         (2U == (IData)(vlSelfRef.uart_tb__DOT__DUT__DOT__ren_wen_nidle));
     vlSelfRef.uart_tb__DOT__DUT__DOT__fifoTx_WEN = 
@@ -337,8 +333,10 @@ VL_ATTR_COLD void VAHBUart_tapeout___024root___stl_sequent__TOP__0(VAHBUart_tape
             vlSelfRef.uart_tb__DOT__DUT__DOT__fifoTx__DOT__fifo_next 
                 = (((~ (0xffULL << (0x3fU & VL_SHIFTL_III(6,32,32, (IData)(vlSelfRef.uart_tb__DOT__DUT__DOT__fifoTx__DOT__write_ptr), 3U)))) 
                     & vlSelfRef.uart_tb__DOT__DUT__DOT__fifoTx__DOT__fifo_next) 
-                   | ((QData)((IData)(vlSelfRef.uart_tb__DOT__DUT__DOT__fifoTx_wdata)) 
-                      << (0x3fU & VL_SHIFTL_III(6,32,32, (IData)(vlSelfRef.uart_tb__DOT__DUT__DOT__fifoTx__DOT__write_ptr), 3U))));
+                   | ((QData)((IData)(((1U == (IData)(vlSelfRef.uart_tb__DOT__DUT__DOT__ren_wen_nidle))
+                                        ? (IData)(vlSelfRef.uart_tb__DOT__DUT__DOT__synced_output__DOT__buffer_2)
+                                        : 0U))) << 
+                      (0x3fU & VL_SHIFTL_III(6,32,32, (IData)(vlSelfRef.uart_tb__DOT__DUT__DOT__fifoTx__DOT__write_ptr), 3U))));
         }
     }
     vlSelfRef.uart_tb__DOT__DUT__DOT__uartRx__DOT__edgeDetect 
@@ -488,10 +486,11 @@ VL_ATTR_COLD void VAHBUart_tapeout___024root___ctor_var_reset(VAHBUart_tapeout__
     vlSelf->uart_tb__DOT__DUT__DOT__fifoRx_count = VL_RAND_RESET_I(4);
     vlSelf->uart_tb__DOT__DUT__DOT__fifoTx_WEN = VL_RAND_RESET_I(1);
     vlSelf->uart_tb__DOT__DUT__DOT__fifoTx_REN = VL_RAND_RESET_I(1);
-    vlSelf->uart_tb__DOT__DUT__DOT__fifoTx_wdata = VL_RAND_RESET_I(8);
     vlSelf->uart_tb__DOT__DUT__DOT__fifoTx_underrun = VL_RAND_RESET_I(1);
     vlSelf->uart_tb__DOT__DUT__DOT__fifoTx_overrun = VL_RAND_RESET_I(1);
     vlSelf->uart_tb__DOT__DUT__DOT__fifoTx_count = VL_RAND_RESET_I(4);
+    vlSelf->uart_tb__DOT__DUT__DOT__synced_output__DOT__buffer_1 = VL_RAND_RESET_I(8);
+    vlSelf->uart_tb__DOT__DUT__DOT__synced_output__DOT__buffer_2 = VL_RAND_RESET_I(8);
     vlSelf->uart_tb__DOT__DUT__DOT__bg__DOT__totalWait = VL_RAND_RESET_I(20);
     vlSelf->uart_tb__DOT__DUT__DOT__bg__DOT__postWait = VL_RAND_RESET_I(20);
     vlSelf->uart_tb__DOT__DUT__DOT__bg__DOT__preWait = VL_RAND_RESET_I(20);

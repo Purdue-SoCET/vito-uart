@@ -55,7 +55,7 @@ module AHBUart_tapeout #(
 	assign ren_wen = control[3:2];
     assign rate_control = control[1:0];
     // tristate logic handling...
-
+    logic [7:0] sync_tx_data;
     logic buffer_clear;
     
     //configurations for ren_wen and derivatives
@@ -79,7 +79,14 @@ module AHBUart_tapeout #(
             prev_ren_wen <= ren_wen;
         end 
     end
-
+  // synchronizing the input
+  synchronizer_data_input synced_output (
+        .clk(clk),
+        .nReset(nReset),
+        .async_signal(tx_data),
+        .sync_signal(sync_tx_data)
+  );
+  
   always_comb begin
 	  //"rate" is defined as the amount of clock cycles between each bit send/received by UART
 	  //calculation is clock cycle/baudrate 
@@ -293,7 +300,7 @@ module AHBUart_tapeout #(
         fifoTx_wdata = 8'b0;
         fifoTx_WEN = 1'b0;
         if(ren_wen_nidle == to_TX) begin
-            fifoTx_wdata = tx_data; // assume we r sending it through the first byte at a time right now
+            fifoTx_wdata = sync_tx_data; // assume we r sending it through the first byte at a time right now
             fifoTx_WEN = 1'b1;
         end else begin
             fifoTx_wdata = 8'b0; // else writing nothing into the TX from the bus

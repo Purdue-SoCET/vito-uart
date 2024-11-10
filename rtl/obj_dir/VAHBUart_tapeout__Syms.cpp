@@ -44,7 +44,7 @@ VAHBUart_tapeout__Syms::VAHBUart_tapeout__Syms(VerilatedContext* contextp, const
     , TOP{this, namep}
 {
         // Check resources
-        Verilated::stackCheck(192);
+        Verilated::stackCheck(54);
     // Configure time unit / time precision
     _vm_contextp__->timeunit(-12);
     _vm_contextp__->timeprecision(-12);

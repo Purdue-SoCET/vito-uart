@@ -43,10 +43,11 @@ class alignas(VL_CACHE_LINE_BYTES) VAHBUart_tapeout___024root final : public Ver
         CData/*3:0*/ uart_tb__DOT__DUT__DOT__fifoRx_count;
         CData/*0:0*/ uart_tb__DOT__DUT__DOT__fifoTx_WEN;
         CData/*0:0*/ uart_tb__DOT__DUT__DOT__fifoTx_REN;
-        CData/*7:0*/ uart_tb__DOT__DUT__DOT__fifoTx_wdata;
         CData/*0:0*/ uart_tb__DOT__DUT__DOT__fifoTx_underrun;
         CData/*0:0*/ uart_tb__DOT__DUT__DOT__fifoTx_overrun;
         CData/*3:0*/ uart_tb__DOT__DUT__DOT__fifoTx_count;
+        CData/*7:0*/ uart_tb__DOT__DUT__DOT__synced_output__DOT__buffer_1;
+        CData/*7:0*/ uart_tb__DOT__DUT__DOT__synced_output__DOT__buffer_2;
         CData/*0:0*/ uart_tb__DOT__DUT__DOT__bg__DOT__inWait;
         CData/*2:0*/ uart_tb__DOT__DUT__DOT__uartRx__DOT__curState;
         CData/*2:0*/ uart_tb__DOT__DUT__DOT__uartRx__DOT__nextState;
@@ -80,9 +81,9 @@ class alignas(VL_CACHE_LINE_BYTES) VAHBUart_tapeout___024root final : public Ver
         CData/*2:0*/ uart_tb__DOT__DUT__DOT__fifoTx__DOT__write_ptr;
         CData/*2:0*/ uart_tb__DOT__DUT__DOT__fifoTx__DOT__write_ptr_next;
         CData/*2:0*/ uart_tb__DOT__DUT__DOT__fifoTx__DOT__read_ptr;
-        CData/*2:0*/ uart_tb__DOT__DUT__DOT__fifoTx__DOT__read_ptr_next;
     };
     struct {
+        CData/*2:0*/ uart_tb__DOT__DUT__DOT__fifoTx__DOT__read_ptr_next;
         CData/*3:0*/ uart_tb__DOT__DUT__DOT__fifoTx__DOT__count_next;
         QData/*63:0*/ uart_tb__DOT__DUT__DOT__fifoTx__DOT__fifo;
         QData/*63:0*/ uart_tb__DOT__DUT__DOT__fifoTx__DOT__fifo_next;
