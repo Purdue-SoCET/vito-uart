@@ -71,17 +71,19 @@ module uart_tb #();
 		// tx = 1'b0; 
 		cts = 1'b0;
 		
-		ren_wen = IDLE;
-		
-		rate_control = 2'b0;
-		
 		tx_data = 8'b0;
 		
 		nRst = 1'b0;
 		$display(":)");
-		#50;
+		#10;
 		$display(":)");
 		cts = 1'b1;
+		
+		ren_wen = IDLE;
+		
+		rate_control = 2'b0;
+
+		#50;
 		
 		nRst = 1'b1;
 		
