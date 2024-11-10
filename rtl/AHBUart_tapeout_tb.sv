@@ -173,7 +173,7 @@ module uart_tb #();
 		ren_wen = from_RX;
 		#5;
 		if(rx_data == expected_data) begin
-			$display("Rx buffer read: %x", rx_data);
+			$display("Rx buffer read: %x", rx_data); //cant figure out how to put this in decimal
 		end else begin
 			$display("Error: Invalid Rx buffer read. Expected %x, read %x.", expected_data, rx_data);
 		end
@@ -332,6 +332,222 @@ module uart_tb #();
 		$display("Test 5, clearing the buffers, completed!");
 		
 		#100;
+
+		
+
+		//Test 6: Checking 19200 baud rate
+		test_num++;
+		reset_all;
+		rate_control = 2'b1; //19200 baud rate
+
+		tx_buffer_write(8'd1);
+		#10;
+		tx_buffer_write(8'd2);
+		#10;
+		tx_buffer_write(8'd4);
+		#10;
+		tx_buffer_write(8'd8);
+		#10;
+		tx_buffer_write(8'd16);
+		#10;
+		tx_buffer_write(8'd32);
+		#10;
+		tx_buffer_write(8'd64);
+		#10;
+		tx_buffer_write(8'd128);
+		#10;
+
+		cts = 1'b1;
+		tx_external_read(8'd1, 19200);
+		tx_external_read(8'd2, 19200);
+		tx_external_read(8'd4, 19200);
+		tx_external_read(8'd8, 19200);
+		cts = 1'b0;
+		#500000;
+		cts = 1'b1;
+		tx_external_read(8'd16, 19200);
+		tx_external_read(8'd32, 19200);
+		tx_external_read(8'd64, 19200);
+		tx_external_read(8'd128, 19200);
+		cts = 1'b0;
+		#100;
+
+		rx_external_write(8'd1, 19200);
+		rx_external_write(8'd2, 19200);
+		rx_external_write(8'd4, 19200);
+		rx_external_write(8'd8, 19200);
+		#500000;
+		rx_external_write(8'd16, 19200);
+		rx_external_write(8'd32, 19200);
+		rx_external_write(8'd64, 19200);
+		rx_external_write(8'd128, 19200);
+		#100;
+
+		rx_buffer_read(8'd1);
+		#10;
+		rx_buffer_read(8'd2);
+		#10;
+		rx_buffer_read(8'd4);
+		#10;
+		rx_buffer_read(8'd8);
+		#10;
+		rx_buffer_read(8'd16);
+		#10;
+		rx_buffer_read(8'd32);
+		#10;
+		rx_buffer_read(8'd64);
+		#10;
+		rx_buffer_read(8'd128);
+		#10;
+
+
+		$display("Test 6, checking 19200 baud rate, completed!");
+		
+		#100;
+		
+
+		//Test 7: Checking 38400 baud rate
+		test_num++;
+		reset_all;
+		rate_control = 2'd2; //38400 baud rate
+
+		tx_buffer_write(8'd1);
+		#10;
+		tx_buffer_write(8'd2);
+		#10;
+		tx_buffer_write(8'd4);
+		#10;
+		tx_buffer_write(8'd8);
+		#10;
+		tx_buffer_write(8'd16);
+		#10;
+		tx_buffer_write(8'd32);
+		#10;
+		tx_buffer_write(8'd64);
+		#10;
+		tx_buffer_write(8'd128);
+		#10;
+
+		cts = 1'b1;
+		tx_external_read(8'd1, 38400);
+		tx_external_read(8'd2, 38400);
+		tx_external_read(8'd4, 38400);
+		tx_external_read(8'd8, 38400);
+		cts = 1'b0;
+		#500000;
+		cts = 1'b1;
+		tx_external_read(8'd16, 38400);
+		tx_external_read(8'd32, 38400);
+		tx_external_read(8'd64, 38400);
+		tx_external_read(8'd128, 38400);
+		cts = 1'b0;
+		#100;
+
+		rx_external_write(8'd1, 38400);
+		rx_external_write(8'd2, 38400);
+		rx_external_write(8'd4, 38400);
+		rx_external_write(8'd8, 38400);
+		#500000;
+		rx_external_write(8'd16, 38400);
+		rx_external_write(8'd32, 38400);
+		rx_external_write(8'd64, 38400);
+		rx_external_write(8'd128, 38400);
+		#100;
+
+		rx_buffer_read(8'd1);
+		#10;
+		rx_buffer_read(8'd2);
+		#10;
+		rx_buffer_read(8'd4);
+		#10;
+		rx_buffer_read(8'd8);
+		#10;
+		rx_buffer_read(8'd16);
+		#10;
+		rx_buffer_read(8'd32);
+		#10;
+		rx_buffer_read(8'd64);
+		#10;
+		rx_buffer_read(8'd128);
+		#10;
+
+
+		$display("Test 7, checking 38400 baud rate, completed!");
+		
+		#100;
+
+
+		//Test 8: Checking 115200 baud rate
+		test_num++;
+		reset_all;
+		rate_control = 2'd3; //115200 baud rate
+
+		tx_buffer_write(8'd1);
+		#10;
+		tx_buffer_write(8'd2);
+		#10;
+		tx_buffer_write(8'd4);
+		#10;
+		tx_buffer_write(8'd8);
+		#10;
+		tx_buffer_write(8'd16);
+		#10;
+		tx_buffer_write(8'd32);
+		#10;
+		tx_buffer_write(8'd64);
+		#10;
+		tx_buffer_write(8'd128);
+		#10;
+
+		cts = 1'b1;
+		tx_external_read(8'd1, 115200);
+		tx_external_read(8'd2, 115200);
+		tx_external_read(8'd4, 115200);
+		tx_external_read(8'd8, 115200);
+		cts = 1'b0;
+		#500000;
+		cts = 1'b1;
+		tx_external_read(8'd16, 115200);
+		tx_external_read(8'd32, 115200);
+		tx_external_read(8'd64, 115200);
+		tx_external_read(8'd128, 115200);
+		cts = 1'b0;
+		#100;
+
+		rx_external_write(8'd1, 115200);
+		rx_external_write(8'd2, 115200);
+		rx_external_write(8'd4, 115200);
+		rx_external_write(8'd8, 115200);
+		#5000;
+		rx_external_write(8'd16, 115200);
+		rx_external_write(8'd32, 115200);
+		rx_external_write(8'd64, 115200);
+		rx_external_write(8'd128, 115200);
+		#100;
+
+		rx_buffer_read(8'd1);
+		#10;
+		rx_buffer_read(8'd2);
+		#10;
+		rx_buffer_read(8'd4);
+		#10;
+		rx_buffer_read(8'd8);
+		#10;
+		rx_buffer_read(8'd16);
+		#10;
+		rx_buffer_read(8'd32);
+		#10;
+		rx_buffer_read(8'd64);
+		#10;
+		rx_buffer_read(8'd128);
+		#10;
+
+
+		$display("Test 8, checking 115200 baud rate, completed!");
+		
+		#100;
+		
+		
 		
 
 		$finish;
