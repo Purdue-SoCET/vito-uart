@@ -65,26 +65,17 @@ module uart_tb #();
 	);
 
 	task reset_all;
-		$display("reseting tb wires");
-		
-		nRst = 1'b0;
-		
 		rx = 1'b1;
-		tx_data = 8'b0;
-		cts = 1'b1;
-		
+		// tx = 1'b0; 
+		cts = 1'b0;
 		ren_wen = IDLE;
 		rate_control = 2'b0;
-		
-		
-		$display(":)");
-		#50; // wtf, how is this causing a segmentation error?
-		$display(":)");
+		tx_data = 8'b0;
+		nRst = 1'b0;
+		#10;
 
-		#20;
-		
+		cts = 1'b1;
 		nRst = 1'b1;
-		
 		#10;
 	endtask
 
@@ -213,15 +204,12 @@ module uart_tb #();
 		//$dumpfile("uart_wv.vcd");
 		$dumpfile("uart_wv.fst");
 		$dumpvars(0, uart_tb);
-
-		$display("Starting testbench :)");
 	
 		clk = 1;
 	
 		reset_all; //this does nothing...
 		
 		//Test 0: Reset test
-		$display("Starting test #0: reset test");
 		test_num = 0;
 		
 		nRst = 0;
@@ -229,7 +217,7 @@ module uart_tb #();
 		nRst = 1;
 		//checking initial reset values
 		#10; // wait 10 before reset is high
-		$display("Test #0 done, checked reset");
+		$display("Test #1 done, checked reset");
 		
 		//Test 1: writing to Tx_buffer
 		test_num++;
