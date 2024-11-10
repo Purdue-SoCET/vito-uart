@@ -204,6 +204,8 @@ module uart_tb #();
 		//$dumpfile("uart_wv.vcd");
 		$dumpfile("uart_wv.fst");
 		$dumpvars(0, uart_tb);
+
+		$display("Starting testbench :)");
 	
 		clk = 1;
 	
@@ -217,7 +219,7 @@ module uart_tb #();
 		nRst = 1;
 		//checking initial reset values
 		#10; // wait 10 before reset is high
-		$display("Test #1 done, checked reset");
+		$display("Test #0 done, checked reset");
 		
 		//Test 1: writing to Tx_buffer
 		test_num++;
