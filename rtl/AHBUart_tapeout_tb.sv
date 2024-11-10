@@ -67,24 +67,24 @@ module uart_tb #();
 	task reset_all;
 		$display("reseting tb wires");
 		rx = 1'b1;
-		$display(":)");
+		
 		// tx = 1'b0; 
 		cts = 1'b0;
-		$display(":)");
+		
 		ren_wen = IDLE;
-		$display(":)");
+		
 		rate_control = 2'b0;
-		$display(":)");
+		
 		tx_data = 8'b0;
-		$display(":)");
+		
 		nRst = 1'b0;
 		$display(":)");
-		#10;
+		#50;
 		$display(":)");
 		cts = 1'b1;
-		$display(":)");
+		
 		nRst = 1'b1;
-		$display(":)");
+		
 		#10;
 	endtask
 
