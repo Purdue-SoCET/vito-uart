@@ -48,9 +48,9 @@ module AHBUart_tapeout #(
 );
 
 	//control shit
-    logic [3:0] sync_control;
+	logic [3:0] sync_control;
 	logic [3:0] dummy_bits_for_sync_control;
-    synchronizer_data_input sync_control_data (
+    synchronizer_data_input i_sync_control_data (
 	.clk(clk),
 		.nReset(nReset),
 		.async_signal({4'b0, control}),
@@ -91,7 +91,7 @@ module AHBUart_tapeout #(
         end 
     end
   // synchronizing the input
-  synchronizer_data_input sync_tx_data (
+  synchronizer_data_input i_sync_tx_data (
         .clk(clk),
 	  .nReset(nReset),
         .async_signal(tx_data),
