@@ -75,7 +75,7 @@ module uart_tb #();
 		
 		nRst = 1'b0;
 		$display(":)");
-		@(posedge clk); // wtf
+		#10; // wtf, how is this causing a segmentation error?
 		$display(":)");
 		cts = 1'b1;
 		
