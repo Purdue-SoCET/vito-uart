@@ -47,6 +47,7 @@ module AHBUart #(
       BAUD_RATE = 16,          // address to change baud rate
       BUFFER_CLEAR = 20,       // address to clear Rx and Tx buffers
       USE_FLOW_CONTROL = 24    // address to turn flow control on or off
+      //PACKET_FORMAT = ,	   // address to determine the packet format
       //PAUSE = , //consider implementing later
       //ERROR_STATE =  //consider implementing later
     } ADDRS;
@@ -56,7 +57,7 @@ module AHBUart #(
     logic use_flow_control;
     logic buffer_clear;
     //logic [?:?] error_state; // might implement later
-    always_ff @(posedge clk) begin
+	always_ff @(posedge clk, negedge nReset) begin
         if(!nReset) begin
             rate <= DefaultRate;
             use_flow_control <= 1'b1;
@@ -94,7 +95,7 @@ module AHBUart #(
     logic txValid, txClk, txBusy, txDone;
     logic syncReset;
 
-    always_ff @(posedge clk) begin
+	always_ff @(posedge clk, negedge nReset) begin
     if (!nReset) begin
       syncReset <= 1;
     end else if (bp.wen) begin
@@ -180,43 +181,55 @@ module AHBUart #(
     assign fifoRx_clear = buffer_clear;
     assign fifoTx_clear = buffer_clear;
 
-  // UART - buffer signal mechanics
-  assign rts = fifoRx_full;
-  always_ff @(posedge clk) begin
-    //UART Rx to buffer Rx
-    if(rxDone && !rxErr) begin
-        if (fifoRx_overrun) begin
-         fifoRx_wdata <= fifoRx_wdata;
-         fifoRx_WEN <= 1'b0;
-        // do we want to keep or flush out the old data in the fifo register if its full and the rx wants to send in more data?
-        end else begin
-        // alt, check with fifo clear
-      fifoRx_wdata <= rxData; //do i need to account for overflow, probably not?
-      fifoRx_WEN <= 1'b1;
-        end
-    end else begin
-      fifoRx_wdata <= 8'b0; // clear out the data in the fifo and disable writing into it
-      fifoRx_WEN <= 1'b0;
-    end
+  	// UART - buffer signal mechanics
+  	assign rts = fifoRx_full;
+	always_ff @(posedge clk, negedge nReset) begin 
+    	//UART Rx to buffer Rx
+		if(!nReset) begin
+			fifoRx_wdata <= 8'b0;
+			fifoRx_WEN <= 1'b0;
+		end else begin if(rxDone && !rxErr) begin
+        	if (fifoRx_overrun) begin
+         		fifoRx_wdata <= 8'b0;
+         		fifoRx_WEN <= 1'b0;
+        		// do we want to keep or flush out the old data in the fifo register if its full and the rx wants to send in more data?
+			end else begin
+        		// alt, check with fifo clear
+      			fifoRx_wdata <= rxData;
+      			fifoRx_WEN <= 1'b1;
+        	end
+    	end else begin
+      		fifoRx_wdata <= 8'b0; // clear out the data in the fifo and disable writing into it
+      		fifoRx_WEN <= 1'b0;
+    	end
+	end
 
-    //buffer Tx to UART Tx
-      if((cts || !use_flow_control) && !txBusy && txDone) begin //is txDone or txBusy for this spot?? A: either signal should be fine, they are the converse of each other and I don't think its meaningful when
-                                                                  //both are high
-        if (fifoTx_underrun) begin
-        txData <= fifoTx_rdata;
-        txValid <= 1'b0;
-        fifoRx_REN <= 1'b1;
-        end else begin
-        txData <= fifoTx_rdata; //should i account for buffer capacity, maybe not? // should be fine, both are 8 bits...
-        txValid <= 1'b1; // the ts signal is valid
-        fifoTx_REN <= 1'b1;
-        end
-    end else begin
-      txData <= 8'b0;
-      txValid <= 1'b0;
-      fifoTx_REN <= 1'b0;
-    end
-  end
+	always_ff @(posedge clk, negedge nReset) begin 
+		//buffer Tx to UART Tx
+		if(!nReset) begin
+			txData <= 8'b0;
+			txValid <= 1'b0;
+			fifoTx_REN <= 1'b0;
+		end else if(fifoTx_empty || (!cts && use_flow_control) begin
+			txData <= 8'b0;
+			txValid <= 1'b0;
+			fifoTx_REN <= 1'b0;
+		end else if(txClk) begin
+			if(!txBusy) begin
+				txData <= fifoTx_rdata;
+				txValid <= 1'b1;
+				fifoTx_REN <= 1'b1;
+			end else begin
+				txData <= 8'b0;
+				txValid <= 1'b0;
+				fifoTx_REN <= 1'b0;
+			end
+		end else begin
+			txData <= 8'b0;
+			txValid <= 1'b0;
+			fifoTx_REN <= 1'b0;
+		end
+  	end
 
 
     // bus signal mechanics
