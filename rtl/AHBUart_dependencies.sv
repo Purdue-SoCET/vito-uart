@@ -206,7 +206,9 @@ module UartRxEn #(
     input en,
     input in,
 
-    output logic [7:0] data,
+	input logic [3:0] bit_count, //number of data bits to send in a packet
+	
+	output logic [11:0] data,
 
     output logic done,
     output logic err
@@ -285,11 +287,11 @@ module UartRxEn #(
     end
   end
 
-  logic [7:0] readBuf;
+	logic [11:0] readBuf;
 
   always_ff @(posedge clk, negedge nReset) begin
     if (!nReset) begin
-      readCount <= 8;
+      readCount <= bit_count;
       data <= 0;
       readBuf <= 0;
     end else begin
@@ -299,10 +301,10 @@ module UartRxEn #(
       end
 
       if (nextState != DATA_A && nextState != DATA_B) begin
-        readCount <= en ? 8 : readCount;
+        readCount <= en ? bit_count : readCount;
       end else if (sampleCount == halfSampleCount) begin
         readCount <= en ? readCount - 1 : readCount;
-        readBuf   <= en ? {in, readBuf[7:1]} : readBuf;
+		  readBuf   <= en ? {in, readBuf[bit_count-1:1]} : readBuf;
       end
 
     end
