@@ -364,7 +364,8 @@ module UartTxEn (
     input nReset,
 
     input en,
-    input logic [7:0] data,
+	input logic [3:0] bit_count, //number of bits to send in a packet
+	input logic [11:0] data,
     input valid,
 
     output logic out,
@@ -385,7 +386,7 @@ module UartTxEn (
   logic hasData;
   logic enterStart;
 
-  logic [7:0] writeBuf;
+	logic [11:0] writeBuf;
   logic [3:0] writeCount;
 
   always_comb begin
@@ -406,7 +407,7 @@ module UartTxEn (
   always_ff @(posedge clk, negedge nReset) begin
     if (!nReset) begin
       curState   <= IDLE;
-      writeCount <= 8;
+      writeCount <= bit_count;
       writeBuf   <= 0;
       hasData    <= 0;
       enterStart <= 0;
@@ -417,7 +418,7 @@ module UartTxEn (
         if (valid) begin
           enterStart <= en ? 1 : enterStart;
           hasData    <= 1;
-          writeCount <= 8;
+          writeCount <= bit_count;
           writeBuf   <= data;
         end else if (hasData) begin
           enterStart <= en ? 1 : enterStart;
@@ -431,7 +432,7 @@ module UartTxEn (
 
       if (nextState == DATA) begin
         writeCount <= en ? writeCount - 1 : writeCount;
-        writeBuf   <= en ? 8'(writeBuf[7:1]) : writeBuf;
+		  writeBuf   <= en ? 8'(writeBuf[bit_count-1:1]) : writeBuf;
       end
 
     end
