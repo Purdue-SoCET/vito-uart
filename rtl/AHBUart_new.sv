@@ -46,7 +46,8 @@ module AHBUart #(
       TX_STATE  = 12,          // address to see Tx buffer state
       BAUD_RATE = 16,          // address to change baud rate
       BUFFER_CLEAR = 20,       // address to clear Rx and Tx buffers
-      USE_FLOW_CONTROL = 24    // address to turn flow control on or off
+      USE_FLOW_CONTROL = 24,    // address to turn flow control on or off
+      SET_PARITY = 28,
       //PACKET_FORMAT = ,	   // address to determine the packet format
      // PARTIY = 28 // do we assume a parity? Let's assume even parity? Otherwise odd, 
       //PAUSE = , //consider implementing later
@@ -71,12 +72,19 @@ module AHBUart #(
     logic [15:0] rate;
     logic use_flow_control;
     logic buffer_clear;
-    //logic [?:?] error_state; // might implement later
+    logic [4:0] set_size_parity;
+    logic PARITY_EN, PARITY_VAL, BIT_COUNT;
+    assign PARITY_EN = set_size_parity[1];
+    assign PARITY_VAL = set_size_parity[0];
+    assign PARITY_COUNT = set_size_parity[4:2];
+
 	always_ff @(posedge clk, negedge nReset) begin
         if(!nReset) begin
             rate <= DefaultRate;
             use_flow_control <= 1'b1;
             buffer_clear <= 1'b1;
+	    set_size_parity <= 5'b10000; /// {OFF, 0 for even parity}
+	    // set parity and bit width mechanisms to the default value
         end else begin
             // set value for rate
             if(bp.addr == BAUD_RATE && bp.wen) begin
@@ -86,18 +94,24 @@ module AHBUart #(
             end
             // set value for use_flow_control
             if(bp.addr == USE_FLOW_CONTROL && bp.wen) begin
-                use_flow_control <= |bp.wdata; // the not of the write data?
+                use_flow_control <= |bp.wdata; // the bitwise or wdata 
             end else begin
                 use_flow_control <= use_flow_control;
             end
 
             // set value for buffer_clear
-            if(bp.addr == BUFFER_CLEAR && bp.wen && |bp.wdata) begin
+	    if(bp.addr == BUFFER_CLEAR && bp.wen && |bp.wdata) begin // cant have write data enabled simultaneosly with the bp.wen, because we clear out the buffers
                 buffer_clear <= 1'b1;
             end else begin
                 //only hold buffer clear for one cycle if possible
                 buffer_clear <= 1'b0;
             end
+
+	    if(bp.addr = SET_PARITY && bp.wen) begin
+		    set_parity <= bp.wdata[4:0]; // sets the parity size 
+            end else begin
+		    set_parity <= set_parity; // the parity maintains itself if the address is enabled...
+	    end
         end
     end
 
@@ -133,7 +147,7 @@ module AHBUart #(
 	// oversample
 	// Parity check enable, which is defaulted to 0
 	// parity check value, which assumes 0 for even parity (and 1 for odd parity)
-    UartRxEn uartRx (
+    UartRxEn #(.BIT_COUNT(BIT_COUNT), .PARITY_EN(PARITY_EN), .PARITY_VAL(PARITY_VAL)) uartRx (
         .en  (rxClk),
         .in  (rx),
         .data(rxData),
