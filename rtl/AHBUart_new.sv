@@ -48,10 +48,25 @@ module AHBUart #(
       BUFFER_CLEAR = 20,       // address to clear Rx and Tx buffers
       USE_FLOW_CONTROL = 24    // address to turn flow control on or off
       //PACKET_FORMAT = ,	   // address to determine the packet format
+     // PARTIY = 28 // do we assume a parity? Let's assume even parity? Otherwise odd, 
       //PAUSE = , //consider implementing later
       //ERROR_STATE =  //consider implementing later
     } ADDRS;
 
+	// logic [8:0] data;
+	// if check_parity
+	// partiy = 0, 1 , even or odd
+	// acc_daata = data[7:0]; duh
+	// parity = 2,
+	// imagine send data llike this {9 - partiy enable, 8 - parity value, 7:0 beig my daata}
+	// if data[9] 
+	// check parity (even or odd)
+	// ese do not check parity
+	
+	
+
+    // parity as a state has to be 2 bits; cuz 3 states (NO APRITY, ODD, EVEN)
+	
     // configuration bits
     logic [15:0] rate;
     logic use_flow_control;
@@ -71,7 +86,7 @@ module AHBUart #(
             end
             // set value for use_flow_control
             if(bp.addr == USE_FLOW_CONTROL && bp.wen) begin
-                use_flow_control <= |bp.wdata;
+                use_flow_control <= |bp.wdata; // the not of the write data?
             end else begin
                 use_flow_control <= use_flow_control;
             end
@@ -232,11 +247,11 @@ module AHBUart #(
   	end
 
 
-    // bus signal mechanics
+    // bus signal mechanics, handling the data as a sequential logic 
     always_ff @(posedge clk) begin
         // bus to Tx buffer
         if(bp.addr == TX_DATA && bp.wen) begin
-            fifoTx_wdata <= bp.wdata[7:0]; // assume we r sending it through the first byte at a time right now
+		fifoTx_wdata <= bp.wdata[7:0]; // assume we r sending it through the first byte at a time right now // send in the 8 bits, as well as the parity value 
             fifoTx_WEN <= 1'b1;
         end
         else begin
@@ -261,6 +276,7 @@ module AHBUart #(
  assign bp.error = fifoRx_overrun || fifoTx_underrun;
  logic err, avail;
 
+			    // added logic: check if the parity is correct or not,  and parity check happens with the receiver
  always_ff @(posedge clk) begin
     if (!nReset) begin
       err   <= 0;
