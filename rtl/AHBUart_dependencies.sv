@@ -197,8 +197,11 @@ module BaudRateGen #(
   end
 endmodule
 
-module UartRxEn #(
-    int Oversample = 16
+module UartRxEn #( // receive and group the data into bytes 
+    int Oversample = 16,
+    parameter BIT_COUNT = 8,
+    parameter PARITY_EN = 0, // parity check is defaulted to false. If on, then the last bit (assuming no start or stop bits as given for an N bit segment is assumed as the parity bit...)
+    parameter PARITY_VAL = 0 // and if on, parity check is defaulted to odd parity, sum of 1's + itself = odd number 
 ) (
     input clk,
     input nReset,
@@ -206,14 +209,14 @@ module UartRxEn #(
     input en,
     input in,
 
-	input logic [3:0] bit_count, //number of data bits to send in a packet
+	//input logic [3:0] BIT_COUNT, //number of data bits to send in a packet, could be better to set this as a parameter because its used as constant value 
 	
-	output logic [11:0] data,
+	output logic [11:0] data, // 12 bit width of the data? for the receiver....
 
     output logic done,
     output logic err
 );
-
+	
   localparam sampleWidth = $clog2(Oversample);
   localparam fullSampleCount = sampleWidth'(Oversample - 1);
   localparam halfSampleCount = sampleWidth'(Oversample / 2);
@@ -249,24 +252,26 @@ module UartRxEn #(
 
   logic edgeDetect;
   logic badSync;
+  logic badParity;
+	
   logic reSync;
   logic advance;
   logic badStop;
   logic fastStart;
-
   logic [sampleWidth-1:0] sampleCount;
   logic [3:0] readCount;
   logic edgeCmp;
 
   always_comb begin
     edgeDetect = en ? fall || rise : 0;
-    badSync = edgeDetect && edgeCmp && (sampleCount >= halfSampleCount);
+    badSync = edgeDetect && edgeCmp && (sampleCount >= halfSampleCount); // bad sync if the edge detect is high and the edge comparaison 
     reSync = edgeDetect && (sampleCount < halfSampleCount);
+    badParity = PARITY_EN && (^data[BIT_COUNT-2:0] == data[BIT_COUNT-1]);
     advance = reSync || (en && (sampleCount == 0));
     done = advance && (readCount == 0);
     badStop = en && in == 0 && sampleCount == halfSampleCount;
     fastStart = en && fall && sampleCount < halfSampleCount;
-    err = nextState == ERROR;
+    err = nextState == ERROR; // set the error state through another case -- bad parity check. Parity is seen here. 
   end
 
   always_ff @(posedge clk, negedge nReset) begin
@@ -291,20 +296,20 @@ module UartRxEn #(
 
   always_ff @(posedge clk, negedge nReset) begin
     if (!nReset) begin
-      readCount <= bit_count;
-      data <= 0;
+      readCount <= BIT_COUNT;
+      data <= 0; // reset data back to 0
       readBuf <= 0;
     end else begin
 
       if (readCount == 0) begin
-        data <= en ? readBuf : data;
+        data <= en ? readBuf : data; // if the enable is on, read the buffer or not...
       end
 
       if (nextState != DATA_A && nextState != DATA_B) begin
-        readCount <= en ? bit_count : readCount;
+        readCount <= en ? BIT_COUNT : readCount;
       end else if (sampleCount == halfSampleCount) begin
         readCount <= en ? readCount - 1 : readCount;
-		  readBuf   <= en ? {in, readBuf[bit_count-1:1]} : readBuf;
+	      readBuf   <= en ? {in, readBuf[BIT_COUNT-1:1]} : readBuf; // basic shifting algorithm, shift to right (fill the MSB first case..)
       end
 
     end
@@ -322,28 +327,28 @@ module UartRxEn #(
       end
 
       START:
-      if (badSync) begin
+      if (badSync || badParity) begin
         nextState = ERROR;
       end else if (advance) begin
         nextState = DATA_A;
       end
 
       DATA_A:
-      if (badSync) begin
+      if (badSync || badParity) begin
         nextState = ERROR;
       end else if (advance) begin
         nextState = readCount > 0 ? DATA_B : STOP;
       end
 
       DATA_B:
-      if (badSync) begin
+      if (badSync || badParity) begin
         nextState = ERROR;
       end else if (advance) begin
         nextState = readCount > 0 ? DATA_A : STOP;
       end
 
       STOP:
-      if (badSync || badStop) begin
+      if (badSync || badStop || badParity) begin
         nextState = ERROR;
       end else if (fastStart) begin
         nextState = START;
@@ -359,12 +364,14 @@ module UartRxEn #(
 
 endmodule
 
-module UartTxEn (
+module UartTxEn #(
+	parameter BIT_COUNT = 8
+)(
     input clk,
     input nReset,
 
     input en,
-	input logic [3:0] bit_count, //number of bits to send in a packet
+	//input logic [3:0] BIT_COUNT, //number of bits to send in a packet
 	input logic [11:0] data,
     input valid,
 
@@ -407,7 +414,7 @@ module UartTxEn (
   always_ff @(posedge clk, negedge nReset) begin
     if (!nReset) begin
       curState   <= IDLE;
-      writeCount <= bit_count;
+      writeCount <= BIT_COUNT;
       writeBuf   <= 0;
       hasData    <= 0;
       enterStart <= 0;
@@ -418,7 +425,7 @@ module UartTxEn (
         if (valid) begin
           enterStart <= en ? 1 : enterStart;
           hasData    <= 1;
-          writeCount <= bit_count;
+          writeCount <= BIT_COUNT;
           writeBuf   <= data;
         end else if (hasData) begin
           enterStart <= en ? 1 : enterStart;
@@ -432,7 +439,7 @@ module UartTxEn (
 
       if (nextState == DATA) begin
         writeCount <= en ? writeCount - 1 : writeCount;
-		  writeBuf   <= en ? 8'(writeBuf[bit_count-1:1]) : writeBuf;
+		  writeBuf   <= en ? 8'(writeBuf[BIT_COUNT-1:1]) : writeBuf;
       end
 
     end
