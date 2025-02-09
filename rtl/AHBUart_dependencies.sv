@@ -199,7 +199,7 @@ endmodule
 
 module UartRxEn #( // receive and group the data into bytes 
     int Oversample = 16,
-    parameter BIT_COUNT = 8,
+    parameter BIT_COUNT = 8, // including the parity bit, if enabled..
     parameter PARITY_EN = 0, // parity check is defaulted to false. If on, then the last bit (assuming no start or stop bits as given for an N bit segment is assumed as the parity bit...)
     parameter PARITY_VAL = 0 // and if on, parity check is defaulted to odd parity, sum of 1's + itself = odd number 
 ) (
