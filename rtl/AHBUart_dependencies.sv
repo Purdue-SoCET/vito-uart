@@ -266,7 +266,7 @@ module UartRxEn #( // receive and group the data into bytes
     edgeDetect = en ? fall || rise : 0;
     badSync = edgeDetect && edgeCmp && (sampleCount >= halfSampleCount); // bad sync if the edge detect is high and the edge comparaison 
     reSync = edgeDetect && (sampleCount < halfSampleCount);
-    badParity = PARITY_EN && (^data[BIT_COUNT-2:0] == data[BIT_COUNT-1]);
+    badParity = PARITY_EN && (^data[BIT_COUNT-1:0] == PARITY_VAL);
     advance = reSync || (en && (sampleCount == 0));
     done = advance && (readCount == 0);
     badStop = en && in == 0 && sampleCount == halfSampleCount;
