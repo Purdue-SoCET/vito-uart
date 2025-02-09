@@ -129,6 +129,10 @@ module AHBUart #(
         .*
     );
 
+	// The parameters for this module are;
+	// oversample
+	// Parity check enable, which is defaulted to 0
+	// parity check value, which assumes 0 for even parity (and 1 for odd parity)
     UartRxEn uartRx (
         .en  (rxClk),
         .in  (rx),
