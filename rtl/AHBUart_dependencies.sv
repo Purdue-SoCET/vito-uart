@@ -364,11 +364,9 @@ module UartRxEn #( // receive and group the data into bytes
 
 endmodule
 
-module UartTxEn #(
-	parameter BIT_COUNT = 8
-)(
+module UartTxEn (
     input clk,
-    input nReset,
+    input nReset, 
 
     input en,
 	//input logic [3:0] BIT_COUNT, //number of bits to send in a packet
