@@ -31,6 +31,8 @@ module AHBUart #(
 
     input  rx,
     output tx,
+    output logic rx_trigger,
+    output logic tx_trigger,
 
     bus_protocol_if.peripheral_vital bp
 );
@@ -38,7 +40,8 @@ module AHBUart #(
     RX_STATE = 0,
     RX_DATA  = 4,
     TX_STATE = 8,
-    TX_DATA  = 12
+    TX_DATA  = 12,
+    TRIGGER  = 16
   } ADDRS;
 
   // Not meaningful in a UART context
@@ -158,6 +161,22 @@ module AHBUart #(
     end
   end
 
+  // DMA trigger pulses
+  logic [1:0] trigEn;
+  logic donePrev;
+
+  always_ff @(posedge clk) begin
+    if (!nReset) begin
+      donePrev   <= 1;
+      rx_trigger <= 0;
+      tx_trigger <= 0;
+    end else begin
+      donePrev   <= done;
+      rx_trigger <= trigEn[0] && rxDone;
+      tx_trigger <= trigEn[1] && done && !donePrev;
+    end
+  end
+
   // We're only compatible with 32-bit words
 
   // status[31:24]: wStatus only: Counter MSB
@@ -205,6 +224,7 @@ module AHBUart #(
         RX_DATA:  bp.rdata = rData;
         TX_STATE: bp.rdata = wStatus;
         TX_DATA:  bp.rdata = wData;
+        TRIGGER:  bp.rdata = {30'(0), trigEn};
         default: bp.rdata = 0;
       endcase
     end else begin
@@ -219,6 +239,7 @@ module AHBUart #(
       wFIFOCount <= 0;
       wFIFOMaxIndex <= 0;
       wFIFO <= '{default: 0};
+      trigEn <= 0;
     end else begin
 
     if (bp.wen) begin
@@ -238,6 +259,9 @@ module AHBUart #(
           if (bp.strobe[1]) wFIFO[1] <= bpData[1];
           if (bp.strobe[0]) wFIFO[0] <= bpData[0];
         end
+
+        TRIGGER:
+        if (bp.strobe[0]) trigEn <= bpData[0][1:0];
       endcase
     end
     end
