@@ -13,6 +13,9 @@ module Loopback_tb (
     output done_rx,
     output err,
 
+    output rx_trigger,
+    output tx_trigger,
+
     input wen,
     input ren,
     input [31:0] addr,

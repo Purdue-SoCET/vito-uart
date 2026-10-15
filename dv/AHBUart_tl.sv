@@ -6,6 +6,8 @@ module AHBUart_tl #(
 
     input  rx,
     output tx,
+    output rx_trigger,
+    output tx_trigger,
 
     input wen,
     input ren,
