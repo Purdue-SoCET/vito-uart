@@ -26,3 +26,15 @@ target_compile_features(tests PRIVATE cxx_std_23)
 
 include(Catch)
 catch_discover_tests(tests)
+
+add_executable(trigger_tb)
+
+nyu_add_sv(trigger_tb bus_protocol_if.sv AHBUart_trigger_tb.sv)
+nyu_link_sv(trigger_tb PRIVATE ahbuart)
+
+nyu_target_verilate(trigger_tb
+  TOP_MODULES AHBUart_trigger_tb
+  ARGS VERILATOR_ARGS --timing --main
+)
+
+add_test(NAME AHBUart_trigger_tb COMMAND trigger_tb)
